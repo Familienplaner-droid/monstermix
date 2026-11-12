@@ -25,6 +25,11 @@
 
         </activity>
 
+        <!-- AdMob: App-ID (zurzeit Googles Test-App-ID, später die eigene aus dem AdMob-Konto) -->
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="@string/admob_app_id" />
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.fileprovider"

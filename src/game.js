@@ -9,6 +9,7 @@ const MonsterGame = (() => {
   const FAMILIES = ['fire', 'water'];
   const DROP_STAGES = [1, 1, 1, 1, 2, 2, 2, 3];   // was von oben kommt: meist klein
   const STEP = 1000 / 60, COOLDOWN = 450, GRACE = 1200, OVER_AFTER = 1500;
+  const REVIVE_CUT = 0.5;          // Weiterspielen: Monster, die über die halbe Topfhöhe ragen, verschwinden
 
   function rng(seed) {             // fester Startwert -> gleiche Reihenfolge (später fürs Tagesrätsel)
     let a = seed >>> 0;
@@ -115,6 +116,20 @@ const MonsterGame = (() => {
       events.push({ type: 'shake' });
       return true;
     }
+    // Weiterspielen nach „Topf voll“ (Belohnung für ein freiwilliges Werbevideo):
+    // alle Monster, die in die obere Topfhälfte ragen, verschwinden, der Rest bekommt eine Schonfrist.
+    function revive() {
+      if (!game.over) return false;
+      const removed = [];
+      for (const m of [...game.monsters.values()]) {
+        if (m.body.position.y - m.r < H * REVIVE_CUT) { removed.push({ family: m.family, x: m.body.position.x, y: m.body.position.y, r: m.r }); remove(m); }
+      }
+      for (const m of game.monsters.values()) { m.above = 0; m.since = game.time; m.merging = false; }
+      queue = [];
+      game.over = false; game.readyAt = game.time + COOLDOWN;
+      events.push({ type: 'revive', removed });
+      return true;
+    }
     function monsterAt(x, y) {
       let best = null, bestD = Infinity;
       for (const m of game.monsters.values()) {
@@ -124,7 +139,7 @@ const MonsterGame = (() => {
       return best;
     }
 
-    return Object.assign(game, { drop, step, add, transform, shake, monsterAt, ready: () => !game.over && game.time >= game.readyAt });
+    return Object.assign(game, { drop, step, add, transform, shake, revive, monsterAt, ready: () => !game.over && game.time >= game.readyAt });
   }
 
   return { W, H, LINE_Y, DROP_Y, RADII, FAMILIES, STEP, create };

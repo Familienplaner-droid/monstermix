@@ -108,7 +108,10 @@ Jedes Monster wird beim ersten Erscheinen freigeschaltet und im Album mit Bild, 
 
 Das Spiel ist kostenlos und zeigt nur Werbung, die der Spieler selbst auslöst; dazu gibt es einen einmaligen Kauf „Werbefrei“.
 
-- **Belohnungs-Werbung:** nur auf Knopfdruck, z. B. „Video ansehen für 1× Verwandeln“. Keine Banner, keine Zwangs-Werbung.
+- **Belohnungs-Werbung:** nur auf Knopfdruck. Keine Banner, keine Zwangs-Werbung.
+  - **Weiterspielen** (umgesetzt, mit Google-Test-Anzeigen): Bei „Topf voll“ einmal pro Runde ein Video ansehen; dafür verschwinden alle Monster, die in die obere Topfhälfte ragen. Bricht man das Video ab, gibt es keine Belohnung.
+  - *Vorschlag, noch offen:* Mischen 1× pro Runde gegen Video statt gratis; +1 Verwandeln gegen Video mit Tageslimit.
+- **Einwilligung (DSGVO):** Vor dem ersten Video fragt Googles Einwilligungs-Tool (UMP) nach, falls nötig. In den Einstellungen lässt sich die Einwilligung später ändern (umgesetzt; das Formular selbst wird im AdMob-Konto eingerichtet).
 - **Kauf „Werbefrei“:** einmalig, 1,99 €. *Vorschlag:* Danach gibt es die Belohnungen ohne Video, mit gleicher Begrenzung.
 - **Technik:** Werbung über Google AdMob, Kauf über Google Play Billing (*Vorschlag*).
 - **Ohne Internet** muss das Spiel voll spielbar sein; nur Werbung und Kauf brauchen eine Verbindung.
@@ -154,8 +157,8 @@ Bildschirme:
 | 3 | Sammelalbum, Speichern, Einstellungen | Fertig |
 | 4 | Hilfen Verwandeln und Mischen (ohne Werbung) | Fertig |
 | 5 | Ausbalancieren nach Probespielen: Topfgröße, Monstergrößen, Punkte, Häufigkeiten | Offen |
-| 6 | Android-App: mit Capacitor verpacken, auf dem eigenen Handy installieren, App-Symbol | Offen |
-| 7 | Werbung und Kauf: Belohnungs-Videos, Einwilligungsabfrage, „Werbefrei“ | Offen |
+| 6 | Android-App: mit Capacitor verpacken, auf dem eigenen Handy installieren, App-Symbol | Fertig (automatischer Bau über GitHub; vorläufiges Symbol) |
+| 7 | Werbung und Kauf: Belohnungs-Videos, Einwilligungsabfrage, „Werbefrei“ | Weiterspielen gegen Video fertig (Test-Anzeigen); AdMob-Konto, weitere Belohnungen und „Werbefrei“ offen |
 | 8 | Veröffentlichung: Store-Texte und Bilder, Datenschutzerklärung, zuerst ein geschlossener Test im Play Store | Offen |
 
 Nach jedem Schritt gibt es eine spielbare Version zum Ausprobieren.

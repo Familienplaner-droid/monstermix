@@ -43,6 +43,17 @@ for (let i = 0; i < 14; i++) g.add('sorte' + i, 1 + i % 4, 30 + i * 22, 400 - (i
 run(g, 3000); assert.equal(g.shake(), true); run(g, 2000);
 assert.equal(g.monsters.size, 14); assert.equal(g.over, false);
 for (const m of g.monsters.values()) assert.ok(m.body.position.x >= m.r - 1 && m.body.position.x <= G.W - m.r + 1 && m.body.position.y <= G.H - m.r + 1);
+// Weiterspielen: Topf voll -> obere Hälfte wird geleert, Spiel läuft weiter, unten bleibt liegen
+g = G.create(Matter, { seed: 1 });
+assert.equal(g.revive(), false);
+for (let i = 0; i < 40 && !g.over; i++) { g.add('sorte' + i, 5, 180, 60); run(g, 2500); }
+assert.equal(g.over, true);
+const before = g.monsters.size;
+assert.equal(g.revive(), true); assert.equal(g.over, false);
+assert.ok(g.monsters.size < before && g.monsters.size > 0, 'Weiterspielen entfernt nur einen Teil');
+for (const m of g.monsters.values()) assert.ok(m.body.position.y - m.r >= G.H * 0.5 - 1);
+run(g, 4000); assert.equal(g.over, false, 'nach dem Weiterspielen nicht sofort wieder voll');
+assert.equal(g.drop(180), true);
 console.log('Regel-Tests: alle bestanden');
 
 // 60 Zufallspartien: nichts fällt aus dem Topf, jede Partie endet, es wird verschmolzen

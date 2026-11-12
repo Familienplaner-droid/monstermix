@@ -91,6 +91,17 @@ h2 { font-family: var(--font-display); font-weight: 800; font-size: 1.7rem; line
 .veil p { margin: 0; color: var(--ink-soft); font-weight: 700; }
 .veil .pts { font-family: var(--font-display); font-weight: 800; font-size: 3rem; line-height: 1; font-variant-numeric: tabular-nums; }
 .veil .btn { margin-top: 10px; }
+.veil .row-btns { display: flex; flex-direction: column; align-items: center; gap: 8px; margin-top: 10px; }
+.veil .row-btns .btn { margin-top: 0; }
+.btn.video { display: inline-flex; align-items: center; gap: 8px; }
+.btn.video svg { width: 18px; height: 18px; flex: none; }
+.veil .small { font-size: .85rem; max-width: 26ch; }
+.veil .fail { color: var(--danger); }
+.adsim { position: fixed; inset: 0; z-index: 50; background: #101418; color: #FFFFFF; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; padding: 24px max(16px, env(safe-area-inset-right, 0px)) 24px max(16px, env(safe-area-inset-left, 0px)); text-align: center; }
+.adsim b { font-family: var(--font-display); font-size: 1.5rem; }
+.adsim p { margin: 0; opacity: .8; max-width: 30ch; }
+.adsim .count { font-family: var(--font-display); font-size: 3rem; font-variant-numeric: tabular-nums; }
+.adsim .btn { background: #FFFFFF; color: #101418; }
 @keyframes appear { from { transform: scale(.96); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 
 .helps { display: flex; gap: 8px; justify-content: center; }
@@ -159,6 +170,7 @@ h2 { font-family: var(--font-display); font-weight: 800; font-size: 1.7rem; line
     <div class="row"><span data-t="sfx"></span><div class="switch" data-set="sfx"><button id="sfx-on" type="button" data-v="1" data-t="on"></button><button id="sfx-off" type="button" data-v="0" data-t="off"></button></div></div>
     <div class="row"><span data-t="music"></span><div class="switch" data-set="music"><button id="music-on" type="button" data-v="1" data-t="on"></button><button id="music-off" type="button" data-v="0" data-t="off"></button></div></div>
     <div class="row"><span data-t="language"></span><div class="switch" data-set="lang"><button id="lang-de" type="button" data-v="de">Deutsch</button><button id="lang-en" type="button" data-v="en">English</button></div></div>
+    <div class="row" id="privacy-row" hidden><span data-t="privacyAds"></span><button class="btn small" id="privacy-ads" type="button" data-t="change"></button></div>
     <p data-t="resetInfo"></p>
     <button class="btn ghost wide" id="reset" type="button"></button>
   </div>
@@ -179,6 +191,10 @@ h2 { font-family: var(--font-display); font-weight: 800; font-size: 1.7rem; line
       transform: 'Verwandeln', shake: 'Mischen', tapMonster: 'Tippe ein Monster an',
       hint1: 'Finger ziehen zum Zielen,', hint2: 'loslassen zum Fallenlassen.', hint3: 'Zwei gleiche Monster verschmelzen.',
       over: 'Topf voll!', newBest: 'Neuer Bestwert!', points: 'Punkte', again: 'Nochmal',
+      revive: 'Weiterspielen', reviveHint: 'Kurzes Video ansehen – dafür wird die obere Hälfte des Topfs geleert.',
+      adFail: 'Gerade ist kein Video verfügbar. Bist du mit dem Internet verbunden?', adNoReward: 'Video abgebrochen – kein Weiterspielen.',
+      adSimTitle: 'Werbung (Vorschau)', adSimText: 'In der App läuft an dieser Stelle ein echtes Werbevideo.', adSimCancel: 'Abbrechen',
+      privacyAds: 'Werbe-Einwilligung', change: 'Ändern',
       found: 'Neu entdeckt', bonus: '+1 Verwandeln',
       albumCount: (n, left) => `${n} von 12 Monstern entdeckt.` + (n < 12 ? ` Noch ${left} bis zum nächsten Verwandeln.` : ''),
       unknown: '???', unknownText: 'Noch nicht entdeckt.',
@@ -201,6 +217,10 @@ h2 { font-family: var(--font-display); font-weight: 800; font-size: 1.7rem; line
       transform: 'Transform', shake: 'Shake', tapMonster: 'Tap a monster',
       hint1: 'Drag to aim,', hint2: 'let go to drop.', hint3: 'Two identical monsters merge.',
       over: 'Pot is full!', newBest: 'New best score!', points: 'points', again: 'Play again',
+      revive: 'Keep playing', reviveHint: 'Watch a short video – the top half of the pot gets cleared.',
+      adFail: 'No video available right now. Are you connected to the internet?', adNoReward: 'Video cancelled – no extra round.',
+      adSimTitle: 'Ad (preview)', adSimText: 'In the app, a real video ad plays here.', adSimCancel: 'Cancel',
+      privacyAds: 'Ad consent', change: 'Change',
       found: 'Discovered', bonus: '+1 Transform',
       albumCount: (n, left) => `${n} of 12 monsters discovered.` + (n < 12 ? ` ${left} more until the next Transform.` : ''),
       unknown: '???', unknownText: 'Not discovered yet.',
@@ -261,6 +281,73 @@ h2 { font-family: var(--font-display); font-weight: 800; font-size: 1.7rem; line
     if (!art) { const b = new Image(); b.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(monsterSVG(f, s, 1)); SPRITE[f + s + 'b'] = b; }
   }
 
+  // ---------- Werbung: nur freiwillige Belohnungs-Videos (Google AdMob) ----------
+  // In der Android-App läuft AdMob. Im Browser (Vorschau) wird ein Platzhalter gezeigt.
+  const Ads = (() => {
+    const CONFIG = {
+      testing: true,                                           // vor der Veröffentlichung auf false stellen
+      rewardedId: 'ca-app-pub-3940256099942544/5224354917',    // Google-Test-Anzeige; später eigene ID aus dem AdMob-Konto
+    };
+    const C = window.Capacitor;
+    const AdMob = window.PotlingsAdMob && window.PotlingsAdMob.AdMob;
+    const native = !!(C && C.isNativePlatform && C.isNativePlatform() && AdMob);
+    let setup = null, loaded = null, privacyNeeded = false;
+
+    function init() {
+      if (!setup) setup = (async () => {
+        let info = await AdMob.requestConsentInfo();
+        if (info.isConsentFormAvailable && info.status === 'REQUIRED') info = await AdMob.showConsentForm();
+        privacyNeeded = info.privacyOptionsRequirementStatus === 'REQUIRED';
+        if (info.canRequestAds === false) throw new Error('keine Einwilligung');
+        await AdMob.initialize({ initializeForTesting: CONFIG.testing });
+      })().catch(err => { setup = null; throw err; });
+      return setup;
+    }
+    function load() {
+      if (!loaded) loaded = init().then(() => AdMob.prepareRewardVideoAd({ adId: CONFIG.rewardedId, isTesting: CONFIG.testing }))
+        .catch(err => { loaded = null; throw err; });
+      return loaded;
+    }
+    // Zeigt ein Video. Ergebnis: 'reward' (ganz angesehen), 'cancel' (abgebrochen) oder 'fail' (nicht verfügbar)
+    async function showNative() {
+      try { await load(); } catch (e) { return 'fail'; }
+      loaded = null;
+      return new Promise(resolve => {
+        let rewarded = false, done = false;
+        const handles = [];
+        const finish = r => { if (done) return; done = true; handles.forEach(h => h.then(x => x.remove()).catch(() => {})); resolve(r); setTimeout(() => load().catch(() => {}), 1000); };
+        handles.push(AdMob.addListener('onRewardedVideoAdReward', () => { rewarded = true; }));
+        handles.push(AdMob.addListener('onRewardedVideoAdDismissed', () => finish(rewarded ? 'reward' : 'cancel')));
+        handles.push(AdMob.addListener('onRewardedVideoAdFailedToShow', () => finish('fail')));
+        AdMob.showRewardVideoAd().then(() => { rewarded = true; }).catch(() => finish('fail'));
+      });
+    }
+    function showPreview() {
+      return new Promise(resolve => {
+        const el = document.createElement('div');
+        el.className = 'adsim';
+        el.innerHTML = `<b>${t().adSimTitle}</b><p>${t().adSimText}</p><div class="count">3</div><button class="btn" type="button">${t().adSimCancel}</button>`;
+        document.body.appendChild(el);
+        let n = 3;
+        const timer = setInterval(() => { n--; el.querySelector('.count').textContent = n; if (n <= 0) end('reward'); }, 1000);
+        el.querySelector('button').addEventListener('click', () => end('cancel'));
+        function end(r) { clearInterval(timer); el.remove(); resolve(r); }
+      });
+    }
+    async function show() {
+      paused = true;
+      if (audio.ctx) audio.ctx.suspend().catch(() => {});
+      try { return await (native ? showNative() : showPreview()); }
+      finally { paused = false; wakeAudio(); }
+    }
+    return {
+      native, show,
+      preload() { if (native) load().catch(() => {}); },
+      privacyAvailable: () => native && privacyNeeded,
+      privacyForm() { return native ? AdMob.showPrivacyOptionsForm() : Promise.resolve(); },
+    };
+  })();
+
   // ---------- Speichern auf dem Gerät ----------
   const KEYS = ['lang', 'best', 'album', 'transforms', 'sound', 'game'];
   const store = {
@@ -270,7 +357,7 @@ h2 { font-family: var(--font-display); font-weight: 800; font-size: 1.7rem; line
   };
 
   let lang, game, best = 0, bestAtStart = 0, aimX = G.W / 2, aiming = false;
-  let album = [], transforms = 0, shakesLeft = 1, mode = null, paused = false;
+  let album = [], transforms = 0, shakesLeft = 1, revivesLeft = 1, mode = null, paused = false;
   let sound = { sfx: true, music: true };
   let effects = [], born = new Map(), colors = {}, shownScore = -1;
   const t = () => TEXT[lang];
@@ -448,7 +535,8 @@ h2 { font-family: var(--font-display); font-weight: 800; font-size: 1.7rem; line
           sfx.fireworks();
         } else if (e.type === 'transform') { born.set(e.id, now); burst(e.x, e.y, G.RADII[e.stage], colors.accent, now, 450, 10); sfx.transform(); }
         else if (e.type === 'shake') sfx.shake();
-        else if (e.type === 'over') { sfx.over(); store.del('game'); setMode(null); showOver(); }
+        else if (e.type === 'revive') { for (const r of e.removed) burst(r.x, r.y, r.r, PAL[r.family] ? PAL[r.family].l : colors.accent, now, 500, 10); sfx.fireworks(); }
+        else if (e.type === 'over') { sfx.over(); store.del('game'); setMode(null); overNote = ''; showOver(); }
       }
     }
     if (game.score !== shownScore) {
@@ -461,32 +549,48 @@ h2 { font-family: var(--font-display); font-weight: 800; font-size: 1.7rem; line
   }
 
   function snapshot() {
-    return { score: game.score, drops: game.drops, current: game.current, shakesLeft,
+    return { score: game.score, drops: game.drops, current: game.current, shakesLeft, revivesLeft,
       monsters: [...game.monsters.values()].map(m => ({ family: m.family, stage: m.stage, x: Math.round(m.body.position.x * 10) / 10, y: Math.round(m.body.position.y * 10) / 10, angle: Math.round(m.body.angle * 100) / 100 })) };
   }
   function saveGame() { if (game && !game.over && game.drops > 0) store.set('game', snapshot()); }
 
+  const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="4" fill="currentColor" opacity=".25"/><path d="M10 8.5v7l6-3.5z" fill="currentColor"/></svg>';
+  let adBusy = false, overNote = '';
   function showOver() {
     hideOver();
     const veil = document.createElement('div');
     veil.className = 'veil';
+    const canRevive = revivesLeft > 0;
     veil.innerHTML = `<h2>${t().over}</h2><div class="pts">${game.score}</div><p>${game.score > bestAtStart && game.score > 0 ? t().newBest : t().points}</p>
-      <button class="btn" type="button" id="again">${t().again}</button>`;
+      <div class="row-btns">
+        ${canRevive ? `<button class="btn video" type="button" id="revive">${PLAY_ICON}<span>${t().revive}</span></button><p class="small">${t().reviveHint}</p>` : ''}
+        <button class="btn${canRevive ? ' ghost' : ''}" type="button" id="again">${t().again}</button>
+        ${overNote ? `<p class="small fail">${overNote}</p>` : ''}
+      </div>`;
     pot.appendChild(veil);
     $('again').addEventListener('click', () => { wakeAudio(); newGame(); });
+    if (canRevive) $('revive').addEventListener('click', async () => {
+      if (adBusy) return; adBusy = true; $('revive').disabled = true;
+      const result = await Ads.show();
+      adBusy = false;
+      if (result === 'reward' && game.revive()) { revivesLeft--; overNote = ''; hideOver(); saveGame(); return; }
+      overNote = result === 'cancel' ? t().adNoReward : t().adFail;
+      showOver();
+    });
   }
   function hideOver() { const v = pot.querySelector('.veil'); if (v) v.remove(); }
 
   function newGame(saved) {
     hideOver(); store.del('game');
     game = G.create(Matter);
-    born = new Map(); effects = []; shownScore = -1; aimX = G.W / 2; shakesLeft = 1; mode = null;
+    born = new Map(); effects = []; shownScore = -1; aimX = G.W / 2; shakesLeft = 1; revivesLeft = 1; overNote = ''; mode = null;
     bestAtStart = best;
     if (saved && Array.isArray(saved.monsters)) {
       for (const m of saved.monsters) if (PAL[m.family] && G.RADII[m.stage]) game.add(m.family, m.stage, m.x, m.y, m.angle || 0);
       game.score = saved.score || 0; game.drops = saved.drops || 0;
       if (saved.current && PAL[saved.current.family]) game.current = saved.current;
       shakesLeft = saved.shakesLeft === 0 ? 0 : 1;
+      revivesLeft = saved.revivesLeft === 0 ? 0 : 1;
     }
     renderHelps();
   }
@@ -532,7 +636,8 @@ h2 { font-family: var(--font-display); font-weight: 800; font-size: 1.7rem; line
   $('restart').addEventListener('click', () => { wakeAudio(); newGame(); });
 
   // ---------- Album- und Einstellungs-Fenster ----------
-  function openSheet(id) { paused = true; setMode(null); resetArmed(false); if (id === 'sheet-album') renderAlbum(); $(id).hidden = false; $(id).scrollTop = 0; }
+  function openSheet(id) { paused = true; setMode(null); resetArmed(false); if (id === 'sheet-album') renderAlbum(); $('privacy-row').hidden = !Ads.privacyAvailable(); $(id).hidden = false; $(id).scrollTop = 0; }
+  $('privacy-ads').addEventListener('click', () => { Ads.privacyForm().catch(() => {}); });
   $('open-album').addEventListener('click', () => { wakeAudio(); openSheet('sheet-album'); });
   $('open-settings').addEventListener('click', () => { wakeAudio(); openSheet('sheet-settings'); });
   document.querySelectorAll('[data-close]').forEach(b => b.addEventListener('click', () => { b.closest('.sheet').hidden = true; paused = false; }));
@@ -587,6 +692,7 @@ h2 { font-family: var(--font-display); font-weight: 800; font-size: 1.7rem; line
     matchMedia('(prefers-color-scheme: dark)').addEventListener('change', readColors);
     new MutationObserver(readColors).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
     requestAnimationFrame(frame);
+    Ads.preload();
   }
   const hot = window.claude && window.claude.hot;
   if (hot && hot.snapshot) hot.snapshot(() => ({ lang, game: game.over ? null : snapshot() }));

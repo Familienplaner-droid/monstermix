@@ -19,6 +19,12 @@ fs.writeFileSync('dist/Potlings.html', html);
 const matter = fs.readFileSync('node_modules/matter-js/build/matter.min.js', 'utf8');
 const app = html.replace(/<script src="https:\/\/cdnjs[^"]+"><\/script>/, () => '<script>' + matter + '</script>');
 if (app === html) throw new Error('Physik-Bibliothek konnte nicht eingebaut werden');
+// Capacitor-Grundgerüst und Werbe-Erweiterung (AdMob) nur in der App
+const capCore = fs.readFileSync('node_modules/@capacitor/core/dist/capacitor.js', 'utf8');
+const admob = fs.readFileSync('node_modules/@capacitor-community/admob/dist/plugin.js', 'utf8');
+const admobVar = (admob.match(/^var (\w+) = \(function/m) || [])[1];
+if (!admobVar || !/exports\.AdMob = AdMob/.test(admob)) throw new Error('AdMob-Erweiterung hat ein unerwartetes Format');
+const nativeScripts = `<script>${capCore}</script>\n<script>${admob}\nwindow.PotlingsAdMob = ${admobVar};</script>\n`;
 fs.writeFileSync('www/index.html', `<!doctype html>
 <html lang="de">
 <head>
@@ -32,7 +38,7 @@ fs.writeFileSync('www/index.html', `<!doctype html>
 </style>
 </head>
 <body>
-${app}
+${nativeScripts}${app}
 </body>
 </html>
 `);

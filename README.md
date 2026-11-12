@@ -35,3 +35,13 @@ npm run android    # Spiel bauen und ins Android-Projekt kopieren
 ```
 
 Neues Monster-Bild einbauen: PNG nach `assets/original/` legen (z. B. `feuer2.png`), dann `python3 tools/bilder.py` und `npm run build`.
+
+## Werbung
+
+Nur freiwillige Belohnungs-Videos über Google AdMob (Erweiterung `@capacitor-community/admob`). Zurzeit laufen **Google-Test-Anzeigen**. Im Browser erscheint statt des Videos ein Platzhalter.
+
+Vor der Veröffentlichung umstellen:
+
+1. In `src/page.html` im Abschnitt „Werbung“: `testing: false` und die eigene Anzeigenblock-ID bei `rewardedId` eintragen.
+2. In `android/app/src/main/res/values/strings.xml`: `admob_app_id` durch die eigene App-ID aus dem AdMob-Konto ersetzen.
+3. Im AdMob-Konto die Einwilligungs-Abfrage (DSGVO-Nachricht) für die App anlegen.
