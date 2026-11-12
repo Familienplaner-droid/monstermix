@@ -10,6 +10,9 @@ const MonsterGame = (() => {
   const DROP_STAGES = [1, 1, 1, 1, 2, 2, 2, 3];   // was von oben kommt: meist klein
   const STEP = 1000 / 60, COOLDOWN = 450, GRACE = 1200, OVER_AFTER = 1500;
   const REVIVE_CUT = 0.5;          // Weiterspielen: Monster, die über die halbe Topfhöhe ragen, verschwinden
+  // Tempo-Bonus: Wer innerhalb von TEMPO ms erneut fallen lässt und seit dem letzten Wurf etwas verschmolzen hat,
+  // verlängert seine Serie. Ab STREAK_BONUS Würfen in Folge zählen alle Punkte doppelt.
+  const TEMPO = 3000, STREAK_BONUS = 3, BONUS = 2;
 
   function rng(seed) {             // fester Startwert -> gleiche Reihenfolge (später fürs Tagesrätsel)
     let a = seed >>> 0;
@@ -28,7 +31,12 @@ const MonsterGame = (() => {
     ]);
     const random = rng(opts.seed == null ? (Math.random() * 2 ** 32) : opts.seed);
     const families = opts.families || FAMILIES;
-    const game = { monsters: new Map(), score: 0, time: 0, over: false, readyAt: 0, current: null, drops: 0 };
+    const game = { monsters: new Map(), score: 0, time: 0, over: false, readyAt: 0, current: null, drops: 0,
+      streak: 0, lastDropAt: -Infinity, mergedSinceDrop: false,
+      aimX: W / 2,                       // Zielposition (für automatisches Fallen)
+      autoDrop: opts.autoDrop || 0,      // Gewitter-Modus: Monster fällt nach so vielen ms von allein (0 = aus)
+      hold: false,                       // true hält den Gewitter-Zähler an (z. B. während „Verwandeln“)
+      families };
     const byBody = new Map();
     let nextId = 1, queue = [], events = [];
 
@@ -58,18 +66,29 @@ const MonsterGame = (() => {
     Events.on(engine, 'collisionStart', touch);
     Events.on(engine, 'collisionActive', touch);
 
-    function drop(x) {
+    const multiplier = () => game.streak >= STREAK_BONUS && game.time - game.lastDropAt <= TEMPO ? BONUS : 1;
+
+    function drop(x = game.aimX, auto = false) {
       if (game.over || game.time < game.readyAt) return false;
+      const quick = game.time - game.lastDropAt <= TEMPO && game.mergedSinceDrop;
+      game.streak = quick ? game.streak + 1 : 0;
+      game.mergedSinceDrop = false; game.lastDropAt = game.time;
       const m = add(game.current.family, game.current.stage, x, DROP_Y);
       game.drops++; game.readyAt = game.time + COOLDOWN; game.current = pick();
-      events.push({ type: 'drop', id: m.id, family: m.family, stage: m.stage });
+      events.push({ type: 'drop', id: m.id, family: m.family, stage: m.stage, streak: game.streak, auto });
       return true;
     }
 
     function step() {
       if (game.over) return [];
+      // Gewitter-Modus: Zähler läuft ab der Bereitschaft; „hold“ hält ihn an
+      if (game.autoDrop) {
+        if (game.hold) game.readyAt += STEP;
+        else if (game.time >= game.readyAt + game.autoDrop) drop(game.aimX, true);
+      }
       Engine.update(engine, STEP);
       game.time += STEP;
+      if (game.streak && game.time - game.lastDropAt > TEMPO) { game.streak = 0; events.push({ type: 'streakEnd' }); }
       for (const [a, b] of queue) {
         const x = (a.body.position.x + b.body.position.x) / 2, y = (a.body.position.y + b.body.position.y) / 2;
         const vx = (a.body.velocity.x + b.body.velocity.x) / 2, vy = (a.body.velocity.y + b.body.velocity.y) / 2;
@@ -77,11 +96,13 @@ const MonsterGame = (() => {
         if (a.stage < 6) {
           const m = add(a.family, a.stage + 1, x, y, a.body.angle);
           Body.setVelocity(m.body, { x: vx, y: vy });
-          game.score += POINTS[m.stage];
-          events.push({ type: 'merge', id: m.id, family: m.family, stage: m.stage, x, y });
+          const mult = multiplier(), points = POINTS[m.stage] * mult;
+          game.score += points; game.mergedSinceDrop = true;
+          events.push({ type: 'merge', id: m.id, family: m.family, stage: m.stage, x, y, points, mult });
         } else {
-          game.score += DRAGON_BONUS;
-          events.push({ type: 'fireworks', family: a.family, x, y });
+          const mult = multiplier(), points = DRAGON_BONUS * mult;
+          game.score += points; game.mergedSinceDrop = true;
+          events.push({ type: 'fireworks', family: a.family, x, y, points, mult });
         }
       }
       queue = [];
@@ -101,6 +122,7 @@ const MonsterGame = (() => {
     function transform(id, toFamily) {
       const m = game.monsters.get(id);
       if (!m || game.over || m.merging) return false;
+      if (toFamily === m.family) return false;
       m.family = toFamily || families[(families.indexOf(m.family) + 1) % families.length];
       events.push({ type: 'transform', id: m.id, family: m.family, stage: m.stage, x: m.body.position.x, y: m.body.position.y });
       return true;
@@ -126,7 +148,7 @@ const MonsterGame = (() => {
       }
       for (const m of game.monsters.values()) { m.above = 0; m.since = game.time; m.merging = false; }
       queue = [];
-      game.over = false; game.readyAt = game.time + COOLDOWN;
+      game.over = false; game.readyAt = game.time + COOLDOWN; game.streak = 0; game.mergedSinceDrop = false;
       events.push({ type: 'revive', removed });
       return true;
     }
@@ -139,9 +161,16 @@ const MonsterGame = (() => {
       return best;
     }
 
-    return Object.assign(game, { drop, step, add, transform, shake, revive, monsterAt, ready: () => !game.over && game.time >= game.readyAt });
+    return Object.assign(game, {
+      drop, step, add, transform, shake, revive, monsterAt, multiplier,
+      ready: () => !game.over && game.time >= game.readyAt,
+      // Restzeit bis zum automatischen Fallen (0–1), null wenn der Gewitter-Modus aus ist
+      autoLeft: () => game.autoDrop ? Math.max(0, Math.min(1, (game.readyAt + game.autoDrop - game.time) / game.autoDrop)) : null,
+      // Restzeit der Serie (0–1)
+      tempoLeft: () => game.streak ? Math.max(0, 1 - (game.time - game.lastDropAt) / TEMPO) : 0,
+    });
   }
 
-  return { W, H, LINE_Y, DROP_Y, RADII, FAMILIES, STEP, create };
+  return { W, H, LINE_Y, DROP_Y, RADII, FAMILIES, STEP, TEMPO, STREAK_BONUS, BONUS, create };
 })();
 if (typeof module !== 'undefined') module.exports = MonsterGame;

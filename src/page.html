@@ -130,6 +130,17 @@ h2 { font-family: var(--font-display); font-weight: 800; font-size: 1.7rem; line
 
 .chain { display: flex; align-items: center; justify-content: center; gap: 2px; flex-wrap: wrap; }
 .chain img { width: 24px; height: 24px; object-fit: contain; }
+.chain.many img { width: 19px; height: 19px; }
+.chain.many .gap { width: 8px; }
+.cnote { margin: -4px 0 0; text-align: center; font-size: .8rem; font-weight: 800; letter-spacing: .04em; color: var(--accent); }
+.picker { position: absolute; left: 8px; right: 8px; top: 18%; z-index: 3; background: var(--veil); border-radius: 20px; padding: 12px; display: flex; flex-direction: column; align-items: center; gap: 10px; box-shadow: 0 3px 0 var(--shade); animation: appear .2s ease-out; }
+.picker p { margin: 0; font-weight: 800; text-align: center; }
+.picker .opts { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+.picker .opt { display: flex; flex-direction: column; align-items: center; gap: 2px; background: var(--card); border-radius: 16px; padding: 6px 8px; min-width: 64px; font-size: .8rem; font-weight: 800; box-shadow: 0 2px 0 var(--shade); }
+.picker .opt img { width: 44px; height: 44px; }
+.sheet h3.sec { margin-top: 10px; }
+#fam-note { margin: 0; font-weight: 800; color: var(--accent); }
+.switch.wide button { padding: 6px 12px; }
 .chain .gap { width: 12px; }
 
 .sheet { position: absolute; inset: 0; z-index: 5; background: var(--bg); display: flex; flex-direction: column; gap: 12px; overflow-y: auto; animation: appear .2s ease-out; }
@@ -189,6 +200,7 @@ h2 { font-family: var(--font-display); font-weight: 800; font-size: 1.7rem; line
 
   <button class="potline" id="open-pots" type="button"><img alt="" id="pot-icon"><span id="pot-name"></span>
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+  <p class="cnote" id="challenge-note" hidden></p>
 
   <div class="stage" id="stage">
     <div class="pot" id="pot"><canvas id="canvas" tabindex="0"></canvas></div>
@@ -231,6 +243,12 @@ h2 { font-family: var(--font-display); font-weight: 800; font-size: 1.7rem; line
     <div class="row"><span data-t="sfx"></span><div class="switch" data-set="sfx"><button id="sfx-on" type="button" data-v="1" data-t="on"></button><button id="sfx-off" type="button" data-v="0" data-t="off"></button></div></div>
     <div class="row"><span data-t="music"></span><div class="switch" data-set="music"><button id="music-on" type="button" data-v="1" data-t="on"></button><button id="music-off" type="button" data-v="0" data-t="off"></button></div></div>
     <div class="row"><span data-t="language"></span><div class="switch" data-set="lang"><button id="lang-de" type="button" data-v="de">Deutsch</button><button id="lang-en" type="button" data-v="en">English</button></div></div>
+    <h3 class="sec" data-t="challenge"></h3>
+    <p data-t="challengeInfo"></p>
+    <div class="row"><span data-t="familiesLabel"></span><div class="switch wide" data-set="families"><button id="fam-2" type="button" data-v="2">2</button><button id="fam-3" type="button" data-v="3">3</button><button id="fam-4" type="button" data-v="4">4</button><button id="fam-5" type="button" data-v="5">5</button></div></div>
+    <div class="row"><span data-t="stormLabel"></span><div class="switch" data-set="storm"><button id="storm-on" type="button" data-v="1" data-t="on"></button><button id="storm-off" type="button" data-v="0" data-t="off"></button></div></div>
+    <p data-t="stormHint"></p>
+    <p class="hint" id="fam-note" hidden data-t="nextRound"></p>
     <div class="row" id="privacy-row" hidden><span data-t="privacyAds"></span><button class="btn small" id="privacy-ads" type="button" data-t="change"></button></div>
     <p data-t="resetInfo"></p>
     <button class="btn ghost wide" id="reset" type="button"></button>
@@ -284,17 +302,25 @@ h2 { font-family: var(--font-display); font-weight: 800; font-size: 1.7rem; line
       sfx: 'Ton', music: 'Musik', language: 'Sprache', on: 'An', off: 'Aus',
       resetInfo: 'Löscht Bestwert, Album, Hilfen und die laufende Partie auf diesem Gerät.', reset: 'Alles zurücksetzen', resetSure: 'Wirklich alles löschen?',
       pot: 'Topf – mit Pfeiltasten zielen, mit Leertaste fallen lassen',
-      fam: { fire: 'Feuer', water: 'Wasser', earth: 'Erde', air: 'Luft' },
+      fam: { fire: 'Feuer', water: 'Wasser', earth: 'Erde', air: 'Luft', candy: 'Zucker' },
+      challenge: 'Herausforderung', challengeInfo: 'Für alle, die es schwerer mögen. Gilt für jeden Topf.',
+      familiesLabel: 'Familien im Topf', stormLabel: 'Gewitter-Modus',
+      stormHint: 'Im Gewitter-Modus fällt das Monster nach 4 Sekunden von allein.',
+      nextRound: 'Die Zahl der Familien gilt ab der nächsten Runde.',
+      challengeNote: (n, storm) => [storm ? 'Gewitter-Modus' : '', n > 2 ? `${n} Familien` : ''].filter(Boolean).join(' · '),
+      streak: n => `Serie ${n}`, pickFamily: 'In welche Familie verwandeln?', cancel: 'Abbrechen',
       names: {
         fire: ['Funke', 'Flämmchen', 'Glutling', 'Feuerkobold', 'Lavatroll', 'Glutdrache'],
         water: ['Tropfen', 'Blubb', 'Pfützling', 'Wellenwicht', 'Nebelgeist', 'Meeresdrache'],
         earth: ['Steinchen', 'Kiesel', 'Felsling', 'Erdkobold', 'Felstroll', 'Erddrache'],
         air: ['Wölkchen', 'Windhauch', 'Böling', 'Sturmkobold', 'Wolkengeist', 'Sturmdrache'],
+        candy: ['Zuckerkrümel', 'Bonbon', 'Gummling', 'Zuckerkobold', 'Lollitroll', 'Zuckerdrache'],
       },
       lore: {
         fire: ['Winzig, warm und sehr aufgeregt. Zündet vor allem Gespräche an.', 'Tanzt den ganzen Tag. Fürchtet nur Leute, die Geburtstagskerzen auspusten.', 'Hält sich für gefährlich. Ist in Wahrheit ein prima Handwärmer.', 'Röstet heimlich Marshmallows über dem eigenen Kopf.', 'Sehr langsam. Wo er einmal saß, wächst kein Gras mehr.', 'Der Chef im Topf. Treffen sich zwei, gibt es Feuerwerk.'],
         water: ['Fällt gern irgendwo herunter. Meistens auf Nasen.', 'Kennt nur ein einziges Wort. Rate mal, welches.', 'Wartet geduldig auf Gummistiefel.', 'Surft auf sich selbst. Angeber.', 'Wollte gruselig sein. Ist aber nur feucht.', 'Kennt jeden Fisch beim Vornamen. Treffen sich zwei, bleibt nur Gischt.'],
         earth: ['Hat einen Keimling auf dem Kopf und ist sehr stolz darauf. Gießen erwünscht.', 'Liegt am liebsten im Fluss herum und staunt. Über alles.', 'Trägt zwei Steine auf dem Kopf. Keiner weiß, wie sie da hingekommen sind.', 'Gräbt Löcher, nur um zu sehen, ob sie halten.', 'Grummelt seit hundert Jahren. Auf ihm wachsen trotzdem Pilze.', 'Sammelt grüne Kristalle. Treffen sich zwei, bebt kurz der ganze Topf.'],
+        candy: ['Klebt an allem. Vor allem an Fingern.', 'Raschelt beim Laufen in seinem Papier. Sehr stolz darauf.', 'Wackelt, wenn es lacht. Und es lacht dauernd.', 'Versteckt Zucker in fremden Taschen. Aus Liebe.', 'Hat einen Lolli als Keule. Lutscht aber nur daran.', 'Kommt nur zu Besuch, wenn alle anderen schon da sind. Treffen sich zwei, regnet es Streusel.'],
         air: ['So leicht, dass es manchmal vergisst herunterzufallen.', 'Pustet heimlich Kerzen aus. Das Flämmchen ist nicht begeistert.', 'Hat vier kleine Flügel und benutzt keinen davon.', 'Reibt sich an Teppichen und verteilt kleine Stromschläge.', 'Donnert, wenn er schlecht geschlafen hat. Also meistens.', 'Thront über den Wolken. Treffen sich zwei, gibt es einen Regenbogen.'],
       },
     },
@@ -335,17 +361,25 @@ h2 { font-family: var(--font-display); font-weight: 800; font-size: 1.7rem; line
       sfx: 'Sound', music: 'Music', language: 'Language', on: 'On', off: 'Off',
       resetInfo: 'Deletes best score, album, helpers and the current game on this device.', reset: 'Reset everything', resetSure: 'Really delete everything?',
       pot: 'Pot – aim with the arrow keys, drop with the space bar',
-      fam: { fire: 'Fire', water: 'Water', earth: 'Earth', air: 'Air' },
+      fam: { fire: 'Fire', water: 'Water', earth: 'Earth', air: 'Air', candy: 'Candy' },
+      challenge: 'Challenge', challengeInfo: 'For anyone who likes it harder. Applies to every pot.',
+      familiesLabel: 'Families in the pot', stormLabel: 'Storm mode',
+      stormHint: 'In storm mode, the monster drops by itself after 4 seconds.',
+      nextRound: 'The number of families applies from the next round.',
+      challengeNote: (n, storm) => [storm ? 'Storm mode' : '', n > 2 ? `${n} families` : ''].filter(Boolean).join(' · '),
+      streak: n => `Streak ${n}`, pickFamily: 'Transform into which family?', cancel: 'Cancel',
       names: {
         fire: ['Spark', 'Flamelet', 'Emberling', 'Fire Goblin', 'Lava Troll', 'Ember Dragon'],
         water: ['Droplet', 'Blub', 'Puddling', 'Wave Imp', 'Mist Ghost', 'Sea Dragon'],
         earth: ['Pebblet', 'Pebble', 'Rockling', 'Earth Goblin', 'Rock Troll', 'Earth Dragon'],
         air: ['Cloudlet', 'Breeze', 'Gustling', 'Storm Goblin', 'Cloud Ghost', 'Storm Dragon'],
+        candy: ['Sugar Crumb', 'Bonbon', 'Gummling', 'Sugar Goblin', 'Lolli Troll', 'Candy Dragon'],
       },
       lore: {
         fire: ['Tiny, warm and very excited. Mostly sets conversations on fire.', 'Dances all day. Only fears people who blow out birthday candles.', 'Thinks it is dangerous. Is actually a great hand warmer.', 'Secretly toasts marshmallows over its own head.', 'Very slow. Where it once sat, no grass will grow.', 'Boss of the pot. When two meet, there are fireworks.'],
         water: ['Loves falling off things. Mostly onto noses.', 'Knows exactly one word. Guess which.', 'Waits patiently for rubber boots.', 'Surfs on itself. Show-off.', 'Wanted to be spooky. Is only damp.', 'Knows every fish by first name. When two meet, only spray remains.'],
         earth: ['Has a sprout on its head and is very proud of it. Watering welcome.', 'Likes lying around in rivers, amazed. By everything.', 'Carries two stones on its head. Nobody knows how they got there.', 'Digs holes just to see if they hold.', 'Has been grumbling for a hundred years. Mushrooms grow on it anyway.', 'Collects green crystals. When two meet, the whole pot shakes for a moment.'],
+        candy: ['Sticks to everything. Especially fingers.', 'Rustles in its wrapper when it walks. Very proud of it.', 'Wobbles when it laughs. And it laughs all the time.', 'Hides sugar in other people’s pockets. Out of love.', 'Carries a lollipop as a club. Only ever licks it.', 'Only visits once everyone else is already there. When two meet, it rains sprinkles.'],
         air: ['So light that it sometimes forgets to fall down.', 'Secretly blows out candles. The Flamelet is not amused.', 'Has four tiny wings and uses none of them.', 'Rubs itself on carpets and hands out little electric shocks.', 'Thunders when it slept badly. So, mostly.', 'Reigns above the clouds. When two meet, there is a rainbow.'],
       },
     },
@@ -357,10 +391,13 @@ h2 { font-family: var(--font-display); font-weight: 800; font-size: 1.7rem; line
     water: { c: '#4FA8F5', d: '#2A6FD6', l: '#BDE6FF' },
     earth: { c: '#B9804A', d: '#7A4E2A', l: '#E9C99A' },
     air:   { c: '#B79CF0', d: '#7F5AD6', l: '#EDE4FF' },
+    candy: { c: '#FF7FBF', d: '#E0408F', l: '#FFD6EC' },
   };
   function monsterSVG(family, stage, blink) {
     const { c, d, l } = PAL[family];
-    const tuft = family === 'fire'
+    const tuft = family === 'candy'
+      ? `<rect x="57" y="2" width="6" height="26" rx="3" fill="#FFFFFF"/><circle cx="60" cy="10" r="10" fill="${l}" stroke="${d}" stroke-width="3"/><path d="M60 10 m-5 0 a5 5 0 1 0 10 0 a3 3 0 1 0 -6 0" fill="none" stroke="${d}" stroke-width="2.5"/>`
+      : family === 'fire'
       ? `<path d="M60 0 C68 12 80 16 75 30 L45 30 C40 18 54 14 60 0Z" fill="${d}"/><path d="M60 12 C64 19 70 22 68 30 L52 30 C50 23 57 20 60 12Z" fill="${l}"/>`
       : `<path d="M60 0 C66 12 76 18 73 30 L47 30 C44 18 54 12 60 0Z" fill="${c}"/><ellipse cx="55" cy="21" rx="3" ry="6" fill="${l}" transform="rotate(-18 55 21)"/>`;
     const nubs = stage === 3 ? `<circle cx="27" cy="22" r="9" fill="${d}"/><circle cx="93" cy="22" r="9" fill="${d}"/>` : '';
@@ -387,7 +424,7 @@ h2 { font-family: var(--font-display); font-weight: 800; font-size: 1.7rem; line
   // Fertige Monster-Bilder (aus assets/monster, beim Bauen eingebettet). Fehlt eines, springt die einfache SVG-Zeichnung ein.
   const ART = /*__ART__*/{};
   const SPRITE = {}, SIZE = {};              // SIZE: Bildbreite im Verhältnis zum Körper-Durchmesser
-  const FAMILIES = ['fire', 'water', 'earth', 'air'];
+  const FAMILIES = ['fire', 'water', 'earth', 'air', 'candy'];
   // Töpfe: je zwei Familien. Ein Topf öffnet sich, wenn im vorherigen der Bestwert UNLOCK erreicht ist.
   const UNLOCK = 300;
   const POTS = [
@@ -481,11 +518,15 @@ h2 { font-family: var(--font-display); font-weight: 800; font-size: 1.7rem; line
 
   let lang, game, best = 0, bestAtStart = 0, aimX = G.W / 2, aiming = false;
   let potId = 'wiese', bests = {};
+  let challenge = { families: 2, storm: false };
+  const STORM_MS = 4000;
+  // Familien einer Runde: die zwei des Topfs, dann weitere in fester Reihenfolge
+  const familiesFor = id => { const base = potOf(id).families; return base.concat(FAMILIES.filter(f => !base.includes(f))).slice(0, challenge.families); };
   const potOf = id => POTS.find(p => p.id === id) || POTS[0];
   const potUnlocked = i => i === 0 || (bests[POTS[i - 1].id] || 0) >= UNLOCK;
   let album = [], transforms = 0, shakesLeft = 1, revivesLeft = 1, mode = null, paused = false;
   let sound = { sfx: true, music: true };
-  let effects = [], born = new Map(), colors = {}, shownScore = -1;
+  let effects = [], floats = [], born = new Map(), colors = {}, shownScore = -1;
   const t = () => TEXT[lang];
   const nameOf = (f, s) => t().names[f][s - 1];
   const canvas = $('canvas'), ctx = canvas.getContext('2d'), pot = $('pot');
@@ -526,6 +567,8 @@ h2 { font-family: var(--font-display); font-weight: 800; font-size: 1.7rem; line
     found() { const n = sfx.now(); [5, 6, 7, 8].forEach((i, k) => tone(audio.sfx, NOTE[i], n + .12 + k * .09, .18, 'square', .07)); },
     fireworks() { const n = sfx.now(); for (let i = 0; i < 9; i++) tone(audio.sfx, NOTE[3 + (i * 5) % 6] * 2, n + i * .07, .22, 'triangle', .13); },
     transform() { const n = sfx.now(); tone(audio.sfx, 300, n, .22, 'sine', .2, 760); tone(audio.sfx, 600, n + .12, .2, 'sine', .14, 1100); },
+    tick() { tone(audio.sfx, 1400, sfx.now(), .05, 'square', .05); },
+    streak(n) { const s0 = sfx.now(), f = NOTE[Math.min(8, 3 + n)]; tone(audio.sfx, f * 2, s0 + .05, .1, 'triangle', .1); tone(audio.sfx, f * 3, s0 + .12, .12, 'triangle', .08); },
     shake() { const n = sfx.now(); for (let i = 0; i < 5; i++) tone(audio.sfx, 110 + i * 12, n + i * .05, .12, 'sawtooth', .1, 70); },
     over() { const n = sfx.now(); [3, 2, 0].forEach((i, k) => tone(audio.sfx, NOTE[i], n + k * .2, .32, 'triangle', .2)); tone(audio.sfx, 131, n + .6, .6, 'sine', .2); },
   };
@@ -586,6 +629,23 @@ h2 { font-family: var(--font-display); font-weight: 800; font-size: 1.7rem; line
       ctx.strokeStyle = colors.guide; ctx.lineWidth = 2;
       ctx.beginPath(); ctx.moveTo(x, G.DROP_Y + r); ctx.lineTo(x, G.H); ctx.stroke();
       drawMonster(cur.family, cur.stage, x, G.DROP_Y, r, 0, 1, game.ready() ? 1 : .35, blinking(0, now));
+      const left = game.autoLeft();
+      if (left !== null && game.ready()) {                                  // Gewitter-Modus: Ablauf-Ring
+        ctx.lineWidth = 4; ctx.lineCap = 'round';
+        ctx.strokeStyle = colors.guide; ctx.beginPath(); ctx.arc(x, G.DROP_Y, r + 7, 0, 7); ctx.stroke();
+        ctx.strokeStyle = left < .25 ? colors.danger : colors.accent;
+        ctx.beginPath(); ctx.arc(x, G.DROP_Y, r + 7, -Math.PI / 2, -Math.PI / 2 + left * Math.PI * 2); ctx.stroke();
+        ctx.lineCap = 'butt';
+      }
+    }
+    if (game.streak > 0 && !game.over) {                                    // Serie und Tempo-Bonus
+      const bonus = game.multiplier() > 1, tl = game.tempoLeft();
+      ctx.textAlign = 'left'; ctx.font = '800 15px Nunito, system-ui, sans-serif';
+      ctx.fillStyle = bonus ? '#D99A00' : colors['ink-soft'];
+      const label = t().streak(game.streak) + (bonus ? `  ×${G.BONUS}` : '');
+      ctx.fillText(label, 10, 22);
+      ctx.fillStyle = colors.guide; ctx.fillRect(10, 29, 84, 4);
+      ctx.fillStyle = bonus ? '#FFC93C' : colors.accent; ctx.fillRect(10, 29, 84 * tl, 4);
     }
 
     for (const m of game.monsters.values()) {
@@ -598,6 +658,14 @@ h2 { font-family: var(--font-display); font-weight: 800; font-size: 1.7rem; line
       drawMonster(m.family, m.stage, m.body.position.x, m.body.position.y, m.r, m.body.angle, k, 1, blinking(m.id, now) || age < 240);
     }
 
+    floats = floats.filter(f => now - f.t0 < 900);
+    for (const f of floats) {
+      const p = (now - f.t0) / 900;
+      ctx.globalAlpha = 1 - p * p; ctx.textAlign = 'center'; ctx.font = '800 20px "Baloo 2", Nunito, system-ui, sans-serif';
+      ctx.lineWidth = 4; ctx.strokeStyle = 'rgba(58, 42, 0, .55)'; ctx.strokeText(f.text, f.x, f.y - p * 40);
+      ctx.fillStyle = '#FFC93C'; ctx.fillText(f.text, f.x, f.y - p * 40);
+    }
+    ctx.globalAlpha = 1;
     effects = effects.filter(e => now - e.t0 < e.life);
     for (const e of effects) {
       if (now < e.t0) continue;
@@ -652,21 +720,31 @@ h2 { font-family: var(--font-display); font-weight: 800; font-size: 1.7rem; line
   function frame(now) {
     const dt = Math.min(100, now - (last || now)); last = now;
     if (!paused) acc += dt;
+    const tickBefore = game.autoLeft();
     while (acc >= G.STEP) {
       acc -= G.STEP;
+      game.aimX = Math.max(0, Math.min(G.W, aimX));
+      game.hold = mode === 'transform' || !!pot.querySelector('.picker');
       for (const e of game.step()) {
-        if (e.type === 'drop') { sfx.drop(); discover(e.family, e.stage); }
+        if (e.type === 'drop') { sfx.drop(); discover(e.family, e.stage); if (e.auto) aiming = false; if (e.streak >= G.STREAK_BONUS) sfx.streak(e.streak); }
         else if (e.type === 'merge') {
           born.set(e.id, now); burst(e.x, e.y, G.RADII[e.stage], PAL[e.family].l, now);
           sfx.merge(e.stage); discover(e.family, e.stage);
+          if (e.mult > 1) floats.push({ x: e.x, y: e.y - G.RADII[e.stage], text: `+${e.points}`, t0: now });
         } else if (e.type === 'fireworks') {
+          if (e.mult > 1) floats.push({ x: e.x, y: e.y, text: `+${e.points}`, t0: now });
           for (let i = 0; i < 5; i++) burst(e.x + (Math.random() - .5) * 140, e.y + (Math.random() - .5) * 140, 30 + Math.random() * 40, i % 2 ? '#FFC93C' : PAL[e.family].c, now + i * 90, 700, 12);
           sfx.fireworks();
         } else if (e.type === 'transform') { born.set(e.id, now); burst(e.x, e.y, G.RADII[e.stage], colors.accent, now, 450, 10); sfx.transform(); }
         else if (e.type === 'shake') sfx.shake();
         else if (e.type === 'revive') { for (const r of e.removed) burst(r.x, r.y, r.r, PAL[r.family] ? PAL[r.family].l : colors.accent, now, 500, 10); sfx.fireworks(); }
-        else if (e.type === 'over') { sfx.over(); store.del('game.' + potId); setMode(null); overNote = ''; showOver(); }
+        else if (e.type === 'over') { closePicker(); sfx.over(); store.del('game.' + potId); setMode(null); overNote = ''; showOver(); }
       }
+    }
+    const tickAfter = game.autoLeft();
+    if (tickBefore !== null && tickAfter !== null && !game.over) {          // leises Ticken in der letzten Sekunde
+      const secB = Math.ceil(tickBefore * STORM_MS / 1000), secA = Math.ceil(tickAfter * STORM_MS / 1000);
+      if (secA < secB && secA <= 1 && secA >= 1) sfx.tick();
     }
     if (game.score !== shownScore) {
       shownScore = game.score; $('score').textContent = shownScore;
@@ -678,7 +756,7 @@ h2 { font-family: var(--font-display); font-weight: 800; font-size: 1.7rem; line
   }
 
   function snapshot() {
-    return { score: game.score, drops: game.drops, current: game.current, shakesLeft, revivesLeft,
+    return { score: game.score, drops: game.drops, current: game.current, shakesLeft, revivesLeft, families: game.families,
       monsters: [...game.monsters.values()].map(m => ({ family: m.family, stage: m.stage, x: Math.round(m.body.position.x * 10) / 10, y: Math.round(m.body.position.y * 10) / 10, angle: Math.round(m.body.angle * 100) / 100 })) };
   }
   function saveGame() { if (game && !game.over && game.drops > 0) store.set('game.' + potId, snapshot()); }
@@ -785,18 +863,20 @@ h2 { font-family: var(--font-display); font-weight: 800; font-size: 1.7rem; line
 
   function newGame(saved) {
     hideOver(); store.del('game.' + potId);
-    game = G.create(Matter, { families: potOf(potId).families });
+    const savedFams = saved && Array.isArray(saved.families) && saved.families.every(f => PAL[f]) ? saved.families : null;
+    game = G.create(Matter, { families: savedFams || familiesFor(potId), autoDrop: challenge.storm ? STORM_MS : 0 });
     born = new Map(); effects = []; shownScore = -1; aimX = G.W / 2; shakesLeft = 1; revivesLeft = 1; overNote = ''; mode = null;
     bestAtStart = best;
     if (saved && Array.isArray(saved.monsters)) {
-      const fams = potOf(potId).families;
+      const fams = game.families;
       for (const m of saved.monsters) if (fams.includes(m.family) && G.RADII[m.stage]) game.add(m.family, m.stage, m.x, m.y, m.angle || 0);
       game.score = saved.score || 0; game.drops = saved.drops || 0;
       if (saved.current && fams.includes(saved.current.family)) game.current = saved.current;
       shakesLeft = saved.shakesLeft === 0 ? 0 : 1;
       revivesLeft = saved.revivesLeft === 0 ? 0 : 1;
     }
-    renderHelps();
+    renderHelps(); closePicker();
+    if (typeof renderPotUI === 'function' && $('pot-name').textContent) renderPotUI();
   }
 
   // ---------- Hilfen ----------
@@ -805,26 +885,48 @@ h2 { font-family: var(--font-display); font-weight: 800; font-size: 1.7rem; line
     $('n-transform').textContent = transforms; $('n-shake').textContent = shakesLeft;
     $('help-transform').disabled = transforms < 1; $('help-shake').disabled = shakesLeft < 1;
   }
-  $('help-transform').addEventListener('click', () => { wakeAudio(); if (game.over || !game.monsters.size) return; setMode(mode === 'transform' ? null : 'transform'); });
+  $('help-transform').addEventListener('click', () => { wakeAudio(); closePicker(); if (game.over || !game.monsters.size) return; setMode(mode === 'transform' ? null : 'transform'); });
   $('help-shake').addEventListener('click', () => {
     wakeAudio(); setMode(null);
     if (shakesLeft > 0 && game.shake()) { shakesLeft--; renderHelps(); }
   });
 
+  function doTransform(m, fam) {
+    closePicker();
+    if (transforms > 0 && game.transform(m.id, fam)) { transforms--; store.set('transforms', transforms); renderHelps(); setMode(null); }
+  }
+  function openPicker(m, fams) {
+    closePicker();
+    const el = document.createElement('div');
+    el.className = 'picker';
+    el.innerHTML = `<p>${t().pickFamily}</p><div class="opts">${fams.map(f => `<button class="opt" type="button" data-f="${f}"><img alt="" src="${SPRITE[f + m.stage].src}"><span>${t().fam[f]}</span></button>`).join('')}</div>
+      <button class="btn ghost small" type="button" data-cancel>${t().cancel}</button>`;
+    el.addEventListener('click', ev => {
+      const b = ev.target.closest('button'); if (!b) return;
+      if (b.dataset.f) { if (game.monsters.get(m.id)) doTransform(m, b.dataset.f); else closePicker(); }
+      else closePicker();
+    });
+    pot.appendChild(el);
+  }
+  function closePicker() { const el = pot.querySelector('.picker'); if (el) el.remove(); }
+
   // ---------- Steuerung: Finger/Maus ziehen und loslassen, oder Pfeiltasten + Leertaste ----------
   function toWorld(e) { const b = canvas.getBoundingClientRect(); return { x: (e.clientX - b.left) / b.width * G.W, y: (e.clientY - b.top) / b.height * G.H }; }
   canvas.addEventListener('pointerdown', e => {
     wakeAudio();
-    if (mode === 'transform') return;
+    if (mode === 'transform' || pot.querySelector('.picker')) return;
     aiming = true; aimX = toWorld(e).x;
     try { canvas.setPointerCapture(e.pointerId); } catch (err) { /* nicht nötig */ }
   });
   canvas.addEventListener('pointermove', e => { if (aiming || e.pointerType === 'mouse') aimX = toWorld(e).x; });
   canvas.addEventListener('pointerup', e => {
     const p = toWorld(e);
+    if (pot.querySelector('.picker')) return;
     if (mode === 'transform') {
       const m = game.monsterAt(p.x, p.y);
-      if (m && transforms > 0 && game.transform(m.id)) { transforms--; store.set('transforms', transforms); renderHelps(); setMode(null); }
+      if (!m || transforms < 1) return;
+      const others = game.families.filter(f => f !== m.family);
+      if (others.length === 1) doTransform(m, others[0]); else openPicker(m, others);
       return;
     }
     if (!aiming) return;
@@ -840,7 +942,7 @@ h2 { font-family: var(--font-display); font-weight: 800; font-size: 1.7rem; line
   $('restart').addEventListener('click', () => { wakeAudio(); newGame(); });
 
   // ---------- Album- und Einstellungs-Fenster ----------
-  function openSheet(id) { paused = true; setMode(null); resetArmed(false); if (id === 'sheet-album') renderAlbum(); $('privacy-row').hidden = !Ads.privacyAvailable(); $(id).hidden = false; $(id).scrollTop = 0; }
+  function openSheet(id) { paused = true; setMode(null); closePicker(); $('fam-note').hidden = !game || game.families.length === challenge.families; resetArmed(false); if (id === 'sheet-album') renderAlbum(); $('privacy-row').hidden = !Ads.privacyAvailable(); $(id).hidden = false; $(id).scrollTop = 0; }
   $('privacy-ads').addEventListener('click', () => { Ads.privacyForm().catch(() => {}); });
   $('open-album').addEventListener('click', () => { wakeAudio(); openSheet('sheet-album'); });
   $('open-pots').addEventListener('click', () => { wakeAudio(); renderPots(); openSheet('sheet-pots'); });
@@ -876,12 +978,15 @@ h2 { font-family: var(--font-display); font-weight: 800; font-size: 1.7rem; line
     $('pot-icon').src = SPRITE[p.families[0] + '1'].src;
     $('pot-name').textContent = t().potNames[p.id];
     $('open-pots').setAttribute('aria-label', t().pots + ': ' + t().potNames[p.id]);
-    const chain = $('chain'); chain.innerHTML = '';
-    p.families.forEach((f, i) => {
+    const fams = game ? game.families : p.families;
+    const chain = $('chain'); chain.innerHTML = ''; chain.classList.toggle('many', fams.length > 2);
+    const note = t().challengeNote(fams.length, challenge.storm);
+    $('challenge-note').textContent = note; $('challenge-note').hidden = !note;
+    fams.forEach((f, i) => {
       if (i) { const gap = document.createElement('span'); gap.className = 'gap'; chain.appendChild(gap); }
       for (let s = 1; s <= 6; s++) { const img = document.createElement('img'); img.src = SPRITE[f + s].src; img.alt = ''; chain.appendChild(img); }
     });
-    chain.setAttribute('aria-label', t().chainIntro + p.families.map(f => t().chainOf(t().fam[f], nameOf(f, 1), nameOf(f, 6))).join(', '));
+    chain.setAttribute('aria-label', t().chainIntro + fams.map(f => t().chainOf(t().fam[f], nameOf(f, 1), nameOf(f, 6))).join(', '));
   }
   $('open-settings').addEventListener('click', () => { wakeAudio(); openSheet('sheet-settings'); });
   document.querySelectorAll('[data-close]').forEach(b => b.addEventListener('click', () => { b.closest('.sheet').hidden = true; paused = false; }));
@@ -889,7 +994,14 @@ h2 { font-family: var(--font-display); font-weight: 800; font-size: 1.7rem; line
     wakeAudio();
     const what = b.parentElement.dataset.set;
     if (what === 'lang') { lang = b.dataset.v; store.set('lang', lang); }
-    else { sound[what] = b.dataset.v === '1'; store.set('sound', sound); applySound(); }
+    else if (what === 'families') {
+      challenge.families = +b.dataset.v; store.set('challenge', challenge);
+      if (game.drops === 0 || game.over) newGame(); else $('fam-note').hidden = game.families.length === challenge.families;
+    } else if (what === 'storm') {
+      challenge.storm = b.dataset.v === '1'; store.set('challenge', challenge);
+      game.autoDrop = challenge.storm ? STORM_MS : 0;
+      if (game.autoDrop) game.readyAt = Math.max(game.readyAt, game.time);
+    } else { sound[what] = b.dataset.v === '1'; store.set('sound', sound); applySound(); }
     renderTexts();
   }));
   let armed = false;
@@ -907,7 +1019,8 @@ h2 { font-family: var(--font-display); font-weight: 800; font-size: 1.7rem; line
     document.documentElement.lang = lang;
     document.querySelectorAll('[data-t]').forEach(el => { el.textContent = t()[el.dataset.t]; });
     document.querySelectorAll('.switch').forEach(sw => {
-      const cur = sw.dataset.set === 'lang' ? lang : (sound[sw.dataset.set] ? '1' : '0');
+      const k = sw.dataset.set;
+      const cur = k === 'lang' ? lang : k === 'families' ? String(challenge.families) : k === 'storm' ? (challenge.storm ? '1' : '0') : (sound[k] ? '1' : '0');
       sw.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.v === cur)));
     });
     renderPotUI();
@@ -937,6 +1050,8 @@ h2 { font-family: var(--font-display); font-weight: 800; font-size: 1.7rem; line
     best = bests[potId] || 0; $('best').textContent = best;
     const a = store.get('album', []); album = Array.isArray(a) ? a.filter(k => SPRITE[k]) : [];
     transforms = Math.max(0, +store.get('transforms', 0) || 0);
+    const ch = store.get('challenge', null);
+    if (ch && typeof ch === 'object') challenge = { families: Math.min(5, Math.max(2, +ch.families || 2)), storm: !!ch.storm };
     const snd = store.get('sound', null); if (snd && typeof snd === 'object') sound = { sfx: snd.sfx !== false, music: snd.music !== false };
     newGame(data.game || store.get('game.' + potId, null));
     renderTexts(); readColors(); resize();

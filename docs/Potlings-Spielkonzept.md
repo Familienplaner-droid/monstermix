@@ -59,6 +59,8 @@ Ablauf (umgesetzt):
 
 Weitere Regeln:
 
+- **Tempo-Bonus (Serie):** Wer innerhalb von 3 Sekunden erneut fallen lässt und seit dem letzten Wurf etwas verschmolzen hat, verlängert seine Serie. Ab der dritten schnellen Folge zählen alle Punkte doppelt (×2), bis die Serie abreißt. Anzeige oben links im Topf mit ablaufendem Balken; doppelte Punkte steigen als goldene Zahl auf (umgesetzt). Wer lange überlegt, verliert nichts, bekommt nur keinen Bonus.
+
 - **Nachschub:** rein zufällig, ohne Vorschau auf das übernächste Monster. Von oben kommen nur die Stufen 1 bis 3, kleine häufiger als große (umgesetzt: Stufe 1 zu 50 %, Stufe 2 zu 37,5 %, Stufe 3 zu 12,5 %).
 - **Pause zwischen zwei Würfen:** knapp eine halbe Sekunde.
 - **Punkte:** für jede Verschmelzung, höhere Stufen zählen mehr (*Vorschlag*, umgesetzt: 2 / 5 / 10 / 20 / 40 Punkte für das Erschaffen der Stufen 2 bis 6, 100 Punkte für ein Drachen-Feuerwerk).
@@ -67,24 +69,34 @@ Weitere Regeln:
 
 ## Monsterfamilien
 
-Es gibt vier Familien mit je 6 Stufen (alle umgesetzt, mit Bildern). In jedem Topf spielen immer genau zwei davon.
+Es gibt fünf Familien mit je 6 Stufen. Feuer, Wasser, Erde und Luft haben Bilder; Zucker (rosa) gibt es nur für die Herausforderung „5 Familien“ und hat bisher Platzhalter-Zeichnungen. In jedem Topf spielen normalerweise zwei Familien.
 
-| Stufe | Feuer | Wasser | Erde | Luft |
-| --- | --- | --- | --- | --- |
-| 1 | Funke | Tropfen | Steinchen | Wölkchen |
-| 2 | Flämmchen | Blubb | Kiesel | Windhauch |
-| 3 | Glutling | Pfützling | Felsling | Böling |
-| 4 | Feuerkobold | Wellenwicht | Erdkobold | Sturmkobold |
-| 5 | Lavatroll | Nebelgeist | Felstroll | Wolkengeist |
-| 6 | Glutdrache | Meeresdrache | Erddrache | Sturmdrache |
+| Stufe | Feuer | Wasser | Erde | Luft | Zucker |
+| --- | --- | --- | --- | --- | --- |
+| 1 | Funke | Tropfen | Steinchen | Wölkchen | Zuckerkrümel |
+| 2 | Flämmchen | Blubb | Kiesel | Windhauch | Bonbon |
+| 3 | Glutling | Pfützling | Felsling | Böling | Gummling |
+| 4 | Feuerkobold | Wellenwicht | Erdkobold | Sturmkobold | Zuckerkobold |
+| 5 | Lavatroll | Nebelgeist | Felstroll | Wolkengeist | Lollitroll |
+| 6 | Glutdrache | Meeresdrache | Erddrache | Sturmdrache | Zuckerdrache |
 
-Englische Namen: Spark, Flamelet, Emberling, Fire Goblin, Lava Troll, Ember Dragon · Droplet, Blub, Puddling, Wave Imp, Mist Ghost, Sea Dragon · Pebblet, Pebble, Rockling, Earth Goblin, Rock Troll, Earth Dragon · Cloudlet, Breeze, Gustling, Storm Goblin, Cloud Ghost, Storm Dragon.
+Englische Namen: Spark, Flamelet, Emberling, Fire Goblin, Lava Troll, Ember Dragon · Droplet, Blub, Puddling, Wave Imp, Mist Ghost, Sea Dragon · Pebblet, Pebble, Rockling, Earth Goblin, Rock Troll, Earth Dragon · Cloudlet, Breeze, Gustling, Storm Goblin, Cloud Ghost, Storm Dragon · Sugar Crumb, Bonbon, Gummling, Sugar Goblin, Lolli Troll, Candy Dragon.
 
 Gestaltungsregeln für die Figuren:
 
-- Jede Familie hat eine klare Grundfarbe (Feuer orange-rot, Wasser blau, Erde ocker-braun, Luft weiß-violett).
+- Jede Familie hat eine klare Grundfarbe (Feuer orange-rot, Wasser blau, Erde ocker-braun, Luft weiß-violett, Zucker rosa).
 - Jede Stufe ist sichtbar größer und bekommt etwas Neues: Bäckchen, Hörnchen, Hörner, Reißzähne, Krone und Flügel.
 - Unter dem Topf zeigt eine Leiste die beiden Reihen des aktuellen Topfs von klein bis groß.
+
+## Herausforderung (freiwillig)
+
+Für erfahrene Spieler, die es schwerer haben möchten. In den Einstellungen, gilt für jeden Topf (umgesetzt):
+
+- **Familien im Topf: 2 bis 5.** Zu den zwei Familien des Topfs kommen weitere in fester Reihenfolge (Feuer, Wasser, Erde, Luft, Zucker). Gilt ab der nächsten Runde; eine laufende Runde behält ihre Familien.
+- **Gewitter-Modus:** Ein Ring um das wartende Monster läuft in 4 Sekunden ab, dann fällt es von allein an der zuletzt gezielten Stelle. In der letzten Sekunde tickt es leise. Während „Verwandeln“ ist der Ring angehalten.
+- Unter dem Topf-Knopf steht, welche Herausforderung aktiv ist (z. B. „Gewitter-Modus · 5 Familien“).
+- Bei mehr als zwei Familien wählt man beim Verwandeln die Zielfamilie aus.
+- Bestwerte gelten gemeinsam; mit Herausforderung sind sie schwerer zu erreichen, nicht leichter.
 
 ## Töpfe
 

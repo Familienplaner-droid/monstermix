@@ -54,6 +54,35 @@ assert.ok(g.monsters.size < before && g.monsters.size > 0, 'Weiterspielen entfer
 for (const m of g.monsters.values()) assert.ok(m.body.position.y - m.r >= G.H * 0.5 - 1);
 run(g, 4000); assert.equal(g.over, false, 'nach dem Weiterspielen nicht sofort wieder voll');
 assert.equal(g.drop(180), true);
+// Tempo-Bonus: schnelle Würfe mit Verschmelzung bauen eine Serie auf, ab der dritten zählen Punkte doppelt
+g = G.create(Matter, { seed: 5 });
+const scoresAfter = [];
+[40, 110, 180, 250, 320].forEach(x => {
+  g.add('fire', 1, x, G.H - 20); g.current = { family: 'fire', stage: 1 };
+  assert.equal(g.drop(x), true); run(g, 2000); scoresAfter.push([g.streak, g.score]);
+});
+assert.deepEqual(scoresAfter, [[0, 2], [1, 4], [2, 6], [3, 10], [4, 14]]);
+run(g, 3500); assert.equal(g.streak, 0, 'Serie endet nach der Tempo-Zeit');
+g.current = { family: 'water', stage: 1 }; g.drop(180); assert.equal(g.streak, 0);
+// Langsamer Wurf ohne Verschmelzung beendet die Serie ebenfalls
+g = G.create(Matter, { seed: 5 });
+g.current = { family: 'fire', stage: 1 }; g.drop(60); run(g, 1000);
+g.current = { family: 'water', stage: 1 }; g.drop(300); assert.equal(g.streak, 0);
+// Gewitter-Modus: Monster fällt nach der eingestellten Zeit von allein, „hold“ hält den Zähler an
+g = G.create(Matter, { seed: 6, autoDrop: 4000 });
+g.aimX = 90; run(g, 3800); assert.equal(g.drops, 0); assert.ok(g.autoLeft() > 0 && g.autoLeft() < 0.1);
+run(g, 400); assert.equal(g.drops, 1);
+const m1 = [...g.monsters.values()][0]; assert.ok(Math.abs(m1.body.position.x - 90) < 30, 'fällt an der Zielposition');
+g.hold = true; run(g, 9000); assert.equal(g.drops, 1, 'angehalten');
+g.hold = false; run(g, 4600); assert.equal(g.drops, 2);
+assert.equal(G.create(Matter, { seed: 1 }).autoLeft(), null);
+// Fünf Familien: alle kommen von oben, Verwandeln in eine gewählte Familie
+g = G.create(Matter, { seed: 7, families: ['fire', 'water', 'earth', 'air', 'candy'] });
+const seen = new Set(); for (let i = 0; i < 200; i++) { seen.add(g.current.family); g.readyAt = 0; g.drop(180); g.monsters.forEach(m => g.monsters.size > 5 && 0); }
+assert.equal(seen.size, 5);
+g = G.create(Matter, { seed: 7, families: ['fire', 'water', 'earth'] });
+const tm = g.add('fire', 3, 180, 400);
+assert.equal(g.transform(tm.id, 'fire'), false); assert.equal(g.transform(tm.id, 'earth'), true); assert.equal(tm.family, 'earth');
 console.log('Regel-Tests: alle bestanden');
 
 // 60 Zufallspartien: nichts fällt aus dem Topf, jede Partie endet, es wird verschmolzen
