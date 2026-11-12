@@ -1,0 +1,595 @@
+<title>Monsterbrei</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Nunito:wght@500;700;800&display=swap">
+<style>
+/* Layout: eine Handy-Spalte – Kopfzeile, Punkte, der Topf füllt den Rest, darunter Hilfen und die Monster-Reihenfolge. */
+:root {
+  --bg: #E6F5E4;          /* Monsterwiese */
+  --bg-deep: #CDEBCB;
+  --pot: #FFF9EC;         /* Topf-Inneres */
+  --pot-rim: #5B4A6B;     /* Topfwand */
+  --card: #FFFFFF;
+  --ink: #1D3A2C;
+  --ink-soft: #4F6F5E;
+  --accent: #7A4DE0;      /* Zauber-Violett für Knöpfe */
+  --on-accent: #FFFFFF;
+  --danger: #E8502A;
+  --gold: #FFC93C; --on-gold: #3A2A00;
+  --guide: rgba(29, 58, 44, .22);
+  --shade: rgba(29, 58, 44, .16);
+  --veil: rgba(255, 249, 236, .9);
+  --silhouette: brightness(0);
+  --font-display: "Baloo 2", "Nunito", "Trebuchet MS", system-ui, sans-serif;
+  --font-body: "Nunito", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #12211A; --bg-deep: #0D1913; --pot: #1B2A33; --pot-rim: #8E7AA6; --card: #1F382B;
+    --ink: #E7F5EA; --ink-soft: #A3C2B0; --accent: #A98BFF; --on-accent: #1B1038; --danger: #FF8A6B;
+    --guide: rgba(231, 245, 234, .25); --shade: rgba(0, 0, 0, .4); --veil: rgba(27, 42, 51, .9);
+    --silhouette: brightness(0) invert(1);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #12211A; --bg-deep: #0D1913; --pot: #1B2A33; --pot-rim: #8E7AA6; --card: #1F382B;
+  --ink: #E7F5EA; --ink-soft: #A3C2B0; --accent: #A98BFF; --on-accent: #1B1038; --danger: #FF8A6B;
+  --guide: rgba(231, 245, 234, .25); --shade: rgba(0, 0, 0, .4); --veil: rgba(27, 42, 51, .9);
+  --silhouette: brightness(0) invert(1);
+  color-scheme: dark;
+}
+
+html, body { height: 100%; }
+body {
+  background: var(--bg); color: var(--ink);
+  font-family: var(--font-body); font-size: 16px; font-weight: 500;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 10px;
+  box-sizing: border-box;
+  display: flex; justify-content: center;
+  overscroll-behavior: none;
+}
+*, *::before, *::after { box-sizing: border-box; }
+button { font: inherit; color: inherit; cursor: pointer; border: 0; }
+button:focus-visible, canvas:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+h2 { font-family: var(--font-display); font-weight: 800; font-size: 1.7rem; line-height: 1.1; margin: 0; text-wrap: balance; }
+
+.app { position: relative; width: 100%; max-width: 440px; display: flex; flex-direction: column; gap: 10px; min-width: 0; min-height: 0; }
+
+.top { display: flex; align-items: center; gap: 8px; }
+.logo { font-family: var(--font-display); font-weight: 800; font-size: 1.8rem; line-height: 1; margin: 0 auto 0 0; letter-spacing: -.01em; }
+.logo span:nth-child(odd) { color: #E8502A; }
+.logo span:nth-child(even) { color: #2F86E8; }
+
+.btn { background: var(--accent); color: var(--on-accent); border-radius: 999px; padding: 10px 20px; font-weight: 800; min-height: 44px; box-shadow: 0 3px 0 var(--shade); }
+.btn.ghost { background: var(--card); color: var(--ink); }
+.btn.small { padding: 8px 16px; min-height: 40px; }
+.btn.icon { padding: 0; width: 40px; min-height: 40px; display: grid; place-items: center; }
+.btn.icon svg { width: 22px; height: 22px; }
+.btn:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--shade); }
+.btn:disabled { opacity: .45; cursor: default; }
+.btn[aria-pressed="true"].help { background: var(--accent); color: var(--on-accent); }
+
+.bar { display: flex; align-items: center; gap: 16px; }
+.stat .k { font-size: .7rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-soft); }
+.stat b { display: block; font-family: var(--font-display); font-size: 1.6rem; line-height: 1; font-variant-numeric: tabular-nums; }
+.stat.small b { font-size: 1.15rem; color: var(--ink-soft); line-height: 1.35; }
+.bar .btn { margin-left: auto; }
+
+.stage { flex: 1; min-height: 300px; display: flex; justify-content: center; align-items: flex-start; }
+.pot { position: relative; max-width: 100%; border: 5px solid var(--pot-rim); border-top: 0; border-radius: 0 0 26px 26px; background: var(--pot); overflow: hidden; box-shadow: 0 4px 0 var(--shade); }
+.pot canvas { display: block; width: 100%; height: 100%; touch-action: none; user-select: none; -webkit-user-select: none; cursor: grab; }
+
+.toast { position: absolute; left: 50%; top: 20%; transform: translateX(-50%); display: flex; align-items: center; gap: 8px; background: var(--gold); color: var(--on-gold); border-radius: 999px; padding: 4px 16px 4px 6px; font-weight: 800; white-space: nowrap; max-width: calc(100% - 16px); pointer-events: none; box-shadow: 0 3px 0 var(--shade); animation: toast 2.6s ease-out forwards; }
+.toast img { width: 40px; height: 40px; flex: none; }
+.toast small { display: block; font-size: .7rem; letter-spacing: .06em; text-transform: uppercase; line-height: 1.1; }
+.toast span { display: block; line-height: 1.15; overflow: hidden; text-overflow: ellipsis; }
+@keyframes toast { 0% { opacity: 0; transform: translate(-50%, -120%); } 10% { opacity: 1; transform: translate(-50%, 0) scale(1.06); } 16% { transform: translate(-50%, 0) scale(1); } 85% { opacity: 1; } 100% { opacity: 0; transform: translate(-50%, 0); } }
+
+.veil { position: absolute; inset: 0; background: var(--veil); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; padding: 16px; text-align: center; animation: appear .25s ease-out; }
+.veil p { margin: 0; color: var(--ink-soft); font-weight: 700; }
+.veil .pts { font-family: var(--font-display); font-weight: 800; font-size: 3rem; line-height: 1; font-variant-numeric: tabular-nums; }
+.veil .btn { margin-top: 10px; }
+@keyframes appear { from { transform: scale(.96); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+.helps { display: flex; gap: 8px; justify-content: center; }
+.help { display: flex; align-items: center; gap: 8px; padding: 8px 10px 8px 16px; }
+.help .n { background: var(--bg-deep); color: var(--ink); border-radius: 999px; min-width: 26px; height: 26px; padding: 0 6px; display: grid; place-items: center; font-variant-numeric: tabular-nums; font-size: .9rem; }
+
+.chain { display: flex; align-items: center; justify-content: center; gap: 2px; flex-wrap: wrap; }
+.chain img { width: 24px; height: 24px; object-fit: contain; }
+.chain .gap { width: 12px; }
+
+.sheet { position: absolute; inset: 0; z-index: 5; background: var(--bg); display: flex; flex-direction: column; gap: 12px; overflow-y: auto; animation: appear .2s ease-out; }
+.sheet-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.sheet p { margin: 0; color: var(--ink-soft); font-weight: 700; line-height: 1.4; }
+.sheet h3 { font-family: var(--font-display); font-weight: 800; font-size: 1.2rem; margin: 6px 0 -4px; }
+.cards { display: flex; flex-direction: column; gap: 8px; }
+.card { display: flex; align-items: center; gap: 12px; background: var(--card); border-radius: 18px; padding: 8px 14px 8px 8px; min-width: 0; }
+.card img { width: 60px; height: 60px; flex: none; }
+.card .who { min-width: 0; }
+.card b { display: block; font-family: var(--font-display); font-weight: 800; font-size: 1.15rem; line-height: 1.2; }
+.card span { display: block; color: var(--ink-soft); font-size: .9rem; font-weight: 700; line-height: 1.35; }
+.card.unknown img { filter: var(--silhouette); opacity: .22; }
+.card.unknown b { color: var(--ink-soft); }
+.row { display: flex; align-items: center; justify-content: space-between; gap: 12px; background: var(--card); border-radius: 18px; padding: 10px 10px 10px 16px; font-weight: 800; }
+.switch { display: flex; background: var(--bg-deep); border-radius: 999px; padding: 3px; }
+.switch button { background: transparent; border-radius: 999px; padding: 6px 14px; font-weight: 800; font-size: .9rem; color: var(--ink-soft); min-height: 38px; }
+.switch button[aria-pressed="true"] { background: var(--accent); color: var(--on-accent); }
+.sheet .btn.wide { align-self: flex-start; }
+
+@media (prefers-reduced-motion: reduce) { .veil, .sheet { animation: none; } .toast { animation-timing-function: step-end; } }
+</style>
+
+<div class="app">
+  <div class="top">
+    <h1 class="logo" aria-label="Monsterbrei"><span>Mon</span><span>ster</span><span>brei</span></h1>
+    <button class="btn ghost small" id="open-album" type="button" data-t="album"></button>
+    <button class="btn ghost icon" id="open-settings" type="button">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2.4"/><circle cx="8" cy="17" r="2.4"/></svg>
+    </button>
+  </div>
+
+  <div class="bar">
+    <div class="stat"><div class="k" data-t="score"></div><b id="score">0</b></div>
+    <div class="stat small"><div class="k" data-t="best"></div><b id="best">0</b></div>
+    <button class="btn ghost small" id="restart" type="button" data-t="restart"></button>
+  </div>
+
+  <div class="stage" id="stage">
+    <div class="pot" id="pot"><canvas id="canvas" tabindex="0"></canvas></div>
+  </div>
+
+  <div class="helps">
+    <button class="btn ghost help" id="help-transform" type="button" aria-pressed="false"><span data-t="transform"></span><span class="n" id="n-transform">0</span></button>
+    <button class="btn ghost help" id="help-shake" type="button"><span data-t="shake"></span><span class="n" id="n-shake">1</span></button>
+  </div>
+
+  <div class="chain" id="chain" role="img"></div>
+
+  <div class="sheet" id="sheet-album" hidden>
+    <div class="sheet-head"><h2 data-t="album"></h2><button class="btn small" type="button" data-close data-t="close"></button></div>
+    <p id="album-count"></p>
+    <div id="album-list"></div>
+  </div>
+
+  <div class="sheet" id="sheet-settings" hidden>
+    <div class="sheet-head"><h2 data-t="settings"></h2><button class="btn small" type="button" data-close data-t="close"></button></div>
+    <div class="row"><span data-t="sfx"></span><div class="switch" data-set="sfx"><button id="sfx-on" type="button" data-v="1" data-t="on"></button><button id="sfx-off" type="button" data-v="0" data-t="off"></button></div></div>
+    <div class="row"><span data-t="music"></span><div class="switch" data-set="music"><button id="music-on" type="button" data-v="1" data-t="on"></button><button id="music-off" type="button" data-v="0" data-t="off"></button></div></div>
+    <div class="row"><span data-t="language"></span><div class="switch" data-set="lang"><button id="lang-de" type="button" data-v="de">Deutsch</button><button id="lang-en" type="button" data-v="en">English</button></div></div>
+    <p data-t="resetInfo"></p>
+    <button class="btn ghost wide" id="reset" type="button"></button>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.19.0/matter.min.js"></script>
+<script>
+/*__GAME__*/
+</script>
+<script>
+(() => {
+  const G = MonsterGame, $ = id => document.getElementById(id);
+
+  // ---------- Texte (Deutsch / Englisch) ----------
+  const TEXT = {
+    de: {
+      score: 'Punkte', best: 'Bestwert', restart: 'Neustart', album: 'Album', settings: 'Einstellungen', close: 'Schließen',
+      transform: 'Verwandeln', shake: 'Mischen', tapMonster: 'Tippe ein Monster an',
+      hint1: 'Finger ziehen zum Zielen,', hint2: 'loslassen zum Fallenlassen.', hint3: 'Zwei gleiche Monster verschmelzen.',
+      over: 'Topf voll!', newBest: 'Neuer Bestwert!', points: 'Punkte', again: 'Nochmal',
+      found: 'Neu entdeckt', bonus: '+1 Verwandeln',
+      albumCount: (n, left) => `${n} von 12 Monstern entdeckt.` + (n < 12 ? ` Noch ${left} bis zum nächsten Verwandeln.` : ''),
+      unknown: '???', unknownText: 'Noch nicht entdeckt.',
+      sfx: 'Ton', music: 'Musik', language: 'Sprache', on: 'An', off: 'Aus',
+      resetInfo: 'Löscht Bestwert, Album, Hilfen und die laufende Partie auf diesem Gerät.', reset: 'Alles zurücksetzen', resetSure: 'Wirklich alles löschen?',
+      chain: 'Reihenfolge der Monster: Feuer von Funke bis Glutdrache, Wasser von Tropfen bis Meeresdrache',
+      pot: 'Topf – mit Pfeiltasten zielen, mit Leertaste fallen lassen',
+      fam: { fire: 'Feuer', water: 'Wasser' },
+      names: {
+        fire: ['Funke', 'Flämmchen', 'Glutling', 'Feuerkobold', 'Lavatroll', 'Glutdrache'],
+        water: ['Tropfen', 'Blubb', 'Pfützling', 'Wellenwicht', 'Nebelgeist', 'Meeresdrache'],
+      },
+      lore: {
+        fire: ['Winzig, warm und sehr aufgeregt. Zündet vor allem Gespräche an.', 'Tanzt den ganzen Tag. Fürchtet nur Leute, die Geburtstagskerzen auspusten.', 'Hält sich für gefährlich. Ist in Wahrheit ein prima Handwärmer.', 'Röstet heimlich Marshmallows über dem eigenen Kopf.', 'Sehr langsam. Wo er einmal saß, wächst kein Gras mehr.', 'Der Chef im Topf. Treffen sich zwei, gibt es Feuerwerk.'],
+        water: ['Fällt gern irgendwo herunter. Meistens auf Nasen.', 'Kennt nur ein einziges Wort. Rate mal, welches.', 'Wartet geduldig auf Gummistiefel.', 'Surft auf sich selbst. Angeber.', 'Wollte gruselig sein. Ist aber nur feucht.', 'Kennt jeden Fisch beim Vornamen. Treffen sich zwei, bleibt nur Gischt.'],
+      },
+    },
+    en: {
+      score: 'Score', best: 'Best', restart: 'Restart', album: 'Album', settings: 'Settings', close: 'Close',
+      transform: 'Transform', shake: 'Shake', tapMonster: 'Tap a monster',
+      hint1: 'Drag to aim,', hint2: 'let go to drop.', hint3: 'Two identical monsters merge.',
+      over: 'Pot is full!', newBest: 'New best score!', points: 'points', again: 'Play again',
+      found: 'Discovered', bonus: '+1 Transform',
+      albumCount: (n, left) => `${n} of 12 monsters discovered.` + (n < 12 ? ` ${left} more until the next Transform.` : ''),
+      unknown: '???', unknownText: 'Not discovered yet.',
+      sfx: 'Sound', music: 'Music', language: 'Language', on: 'On', off: 'Off',
+      resetInfo: 'Deletes best score, album, helpers and the current game on this device.', reset: 'Reset everything', resetSure: 'Really delete everything?',
+      chain: 'Monster order: fire from Spark to Ember Dragon, water from Droplet to Sea Dragon',
+      pot: 'Pot – aim with the arrow keys, drop with the space bar',
+      fam: { fire: 'Fire', water: 'Water' },
+      names: {
+        fire: ['Spark', 'Flamelet', 'Emberling', 'Fire Goblin', 'Lava Troll', 'Ember Dragon'],
+        water: ['Droplet', 'Blub', 'Puddling', 'Wave Imp', 'Mist Ghost', 'Sea Dragon'],
+      },
+      lore: {
+        fire: ['Tiny, warm and very excited. Mostly sets conversations on fire.', 'Dances all day. Only fears people who blow out birthday candles.', 'Thinks it is dangerous. Is actually a great hand warmer.', 'Secretly toasts marshmallows over its own head.', 'Very slow. Where it once sat, no grass will grow.', 'Boss of the pot. When two meet, there are fireworks.'],
+        water: ['Loves falling off things. Mostly onto noses.', 'Knows exactly one word. Guess which.', 'Waits patiently for rubber boots.', 'Surfs on itself. Show-off.', 'Wanted to be spooky. Is only damp.', 'Knows every fish by first name. When two meet, only spray remains.'],
+      },
+    },
+  };
+
+  // ---------- Monster-Grafiken (SVG, pro Familie und Stufe einzeln austauschbar) ----------
+  const PAL = {
+    fire:  { c: '#FF8A4C', d: '#E8502A', l: '#FFD27A' },
+    water: { c: '#4FA8F5', d: '#2A6FD6', l: '#BDE6FF' },
+  };
+  function monsterSVG(family, stage, blink) {
+    const { c, d, l } = PAL[family];
+    const tuft = family === 'fire'
+      ? `<path d="M60 0 C68 12 80 16 75 30 L45 30 C40 18 54 14 60 0Z" fill="${d}"/><path d="M60 12 C64 19 70 22 68 30 L52 30 C50 23 57 20 60 12Z" fill="${l}"/>`
+      : `<path d="M60 0 C66 12 76 18 73 30 L47 30 C44 18 54 12 60 0Z" fill="${c}"/><ellipse cx="55" cy="21" rx="3" ry="6" fill="${l}" transform="rotate(-18 55 21)"/>`;
+    const nubs = stage === 3 ? `<circle cx="27" cy="22" r="9" fill="${d}"/><circle cx="93" cy="22" r="9" fill="${d}"/>` : '';
+    const horns = stage >= 4 ? `<path d="M30 34 L14 6 L46 20Z" fill="${d}"/><path d="M90 34 L106 6 L74 20Z" fill="${d}"/>` : '';
+    const wings = stage >= 6 ? `<path d="M14 56 C-4 40 -2 70 4 84 C8 76 14 76 18 78Z" fill="${d}"/><path d="M106 56 C124 40 122 70 116 84 C112 76 106 76 102 78Z" fill="${d}"/>` : '';
+    const brows = stage >= 5 ? `<path d="M34 42 L54 47 M86 42 L66 47" stroke="#23263A" stroke-width="4" stroke-linecap="round"/>` : '';
+    const fangs = stage >= 5 ? `<path d="M51 82 l4 8 l4 -8Z M61 82 l4 8 l4 -8Z" fill="#FFFFFF"/>` : '';
+    const crown = stage >= 6 ? `<path d="M42 22 L46 4 L54 15 L60 1 L66 15 L74 4 L78 22Z" fill="#FFC93C" stroke="#D99A00" stroke-width="1.5"/>` : '';
+    const cheeks = stage >= 2 ? `<circle cx="31" cy="74" r="6" fill="#FF7FA0" opacity=".7"/><circle cx="89" cy="74" r="6" fill="#FF7FA0" opacity=".7"/>` : '';
+    const eyes = blink
+      ? `<path d="M32 59 Q43 67 54 59 M66 59 Q77 67 88 59" fill="none" stroke="#23263A" stroke-width="3.6" stroke-linecap="round"/>`
+      : `<circle cx="43" cy="58" r="12" fill="#FFFFFF"/><circle cx="77" cy="58" r="12" fill="#FFFFFF"/>
+         <circle cx="45" cy="59" r="6.5" fill="#23263A"/><circle cx="75" cy="59" r="6.5" fill="#23263A"/>
+         <circle cx="47.5" cy="56.5" r="2.3" fill="#FFFFFF"/><circle cx="77.5" cy="56.5" r="2.3" fill="#FFFFFF"/>`;
+    return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="240" height="240">
+      ${wings}${horns}${nubs}${stage >= 6 ? '' : tuft}
+      <circle cx="60" cy="60" r="50" fill="${c}"/>
+      <ellipse cx="60" cy="80" rx="30" ry="22" fill="${l}" opacity=".55"/>
+      ${crown}${eyes}${brows}${cheeks}
+      <path d="M51 80 Q60 89 69 80" fill="none" stroke="#23263A" stroke-width="3.2" stroke-linecap="round"/>
+      ${fangs}
+    </svg>`;
+  }
+  // Fertige Monster-Bilder (aus assets/monster, beim Bauen eingebettet). Fehlt eines, springt die einfache SVG-Zeichnung ein.
+  const ART = /*__ART__*/{};
+  const SPRITE = {}, SIZE = {};              // SIZE: Bildbreite im Verhältnis zum Körper-Durchmesser
+  for (const f of G.FAMILIES) for (let s = 1; s <= 6; s++) {
+    const art = ART[f + s], img = new Image();
+    img.src = art ? art.src : 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(monsterSVG(f, s, 0));
+    SPRITE[f + s] = img; SIZE[f + s] = art ? art.k : 1.2;
+    if (!art) { const b = new Image(); b.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(monsterSVG(f, s, 1)); SPRITE[f + s + 'b'] = b; }
+  }
+
+  // ---------- Speichern auf dem Gerät ----------
+  const KEYS = ['lang', 'best', 'album', 'transforms', 'sound', 'game'];
+  const store = {
+    get(k, fallback) { try { const v = localStorage.getItem('monsterbrei.' + k); return v === null ? fallback : JSON.parse(v); } catch (e) { return fallback; } },
+    set(k, v) { try { localStorage.setItem('monsterbrei.' + k, JSON.stringify(v)); } catch (e) { /* ohne Speicher weiterspielen */ } },
+    del(k) { try { localStorage.removeItem('monsterbrei.' + k); } catch (e) { /* egal */ } },
+  };
+
+  let lang, game, best = 0, bestAtStart = 0, aimX = G.W / 2, aiming = false;
+  let album = [], transforms = 0, shakesLeft = 1, mode = null, paused = false;
+  let sound = { sfx: true, music: true };
+  let effects = [], born = new Map(), colors = {}, shownScore = -1;
+  const t = () => TEXT[lang];
+  const nameOf = (f, s) => t().names[f][s - 1];
+  const canvas = $('canvas'), ctx = canvas.getContext('2d'), pot = $('pot');
+
+  // ---------- Töne und Musik (im Gerät erzeugt, keine Dateien nötig) ----------
+  const audio = { ctx: null, sfx: null, music: null, timer: null, step: 0, next: 0 };
+  function wakeAudio() {
+    try {
+      if (!audio.ctx) {
+        const AC = window.AudioContext || window.webkitAudioContext; if (!AC) return;
+        audio.ctx = new AC();
+        audio.sfx = audio.ctx.createGain(); audio.sfx.connect(audio.ctx.destination);
+        audio.music = audio.ctx.createGain(); audio.music.connect(audio.ctx.destination);
+        applySound();
+      }
+      if (audio.ctx.state === 'suspended') audio.ctx.resume();
+      if (!audio.timer) { audio.next = audio.ctx.currentTime + .1; audio.timer = setInterval(musicTick, 100); }
+    } catch (e) { /* ohne Ton weiterspielen */ }
+  }
+  function applySound() {
+    if (!audio.ctx) return;
+    audio.sfx.gain.value = sound.sfx ? 1 : 0;
+    audio.music.gain.value = sound.music ? 1 : 0;
+  }
+  function tone(out, freq, at, dur, type, vol, slideTo) {
+    if (!audio.ctx || audio.ctx.state !== 'running') return;
+    const c = audio.ctx, t0 = Math.max(c.currentTime, at), o = c.createOscillator(), g = c.createGain();
+    o.type = type; o.frequency.setValueAtTime(freq, t0);
+    if (slideTo) o.frequency.exponentialRampToValueAtTime(slideTo, t0 + dur);
+    g.gain.setValueAtTime(0.0001, t0); g.gain.exponentialRampToValueAtTime(vol, t0 + 0.012); g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+    o.connect(g); g.connect(out); o.start(t0); o.stop(t0 + dur + 0.03);
+  }
+  const NOTE = [262, 294, 330, 392, 440, 523, 587, 659, 784];
+  const sfx = {
+    now: () => audio.ctx ? audio.ctx.currentTime : 0,
+    drop() { tone(audio.sfx, 520, sfx.now(), .1, 'sine', .16, 240); },
+    merge(stage) { const n = sfx.now(), f = NOTE[stage]; tone(audio.sfx, f, n, .13, 'triangle', .22); tone(audio.sfx, f * 1.5, n + .07, .2, 'triangle', .2); },
+    found() { const n = sfx.now(); [5, 6, 7, 8].forEach((i, k) => tone(audio.sfx, NOTE[i], n + .12 + k * .09, .18, 'square', .07)); },
+    fireworks() { const n = sfx.now(); for (let i = 0; i < 9; i++) tone(audio.sfx, NOTE[3 + (i * 5) % 6] * 2, n + i * .07, .22, 'triangle', .13); },
+    transform() { const n = sfx.now(); tone(audio.sfx, 300, n, .22, 'sine', .2, 760); tone(audio.sfx, 600, n + .12, .2, 'sine', .14, 1100); },
+    shake() { const n = sfx.now(); for (let i = 0; i < 5; i++) tone(audio.sfx, 110 + i * 12, n + i * .05, .12, 'sawtooth', .1, 70); },
+    over() { const n = sfx.now(); [3, 2, 0].forEach((i, k) => tone(audio.sfx, NOTE[i], n + k * .2, .32, 'triangle', .2)); tone(audio.sfx, 131, n + .6, .6, 'sine', .2); },
+  };
+  // leise Hintergrundmelodie: 32 Achtelnoten, dazu ein Basston pro halbem Takt
+  const TUNE = [2, -1, 3, -1, 4, -1, 3, 2, 1, -1, 2, -1, 3, -1, -1, -1, 5, -1, 4, -1, 3, -1, 2, 3, 4, -1, 3, -1, 2, -1, 0, -1];
+  const BASS = [131, 131, 110, 110, 87, 87, 98, 98];
+  function musicTick() {
+    const c = audio.ctx; if (!c || c.state !== 'running') return;
+    if (audio.next < c.currentTime) audio.next = c.currentTime + .05;
+    while (audio.next < c.currentTime + .3) {
+      const i = audio.step % 32;
+      if (TUNE[i] >= 0) tone(audio.music, NOTE[TUNE[i]], audio.next, .34, 'sine', .035);
+      if (i % 4 === 0) tone(audio.music, BASS[i / 4], audio.next, .7, 'triangle', .04);
+      audio.step++; audio.next += .3;
+    }
+  }
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) { saveGame(); if (audio.ctx) audio.ctx.suspend().catch(() => {}); }
+  });
+
+  // ---------- Zeichnen ----------
+  let scale = 1;
+  function readColors() {
+    const cs = getComputedStyle(document.documentElement);
+    for (const k of ['ink', 'ink-soft', 'danger', 'guide', 'accent']) colors[k] = cs.getPropertyValue('--' + k).trim();
+  }
+  function resize() {
+    const box = $('stage').getBoundingClientRect(), border = 10;
+    scale = Math.max(0.4, Math.min((box.width - border) / G.W, (box.height - 5) / G.H));
+    const w = Math.round(G.W * scale), h = Math.round(G.H * scale), dpr = Math.min(window.devicePixelRatio || 1, 3);
+    pot.style.width = w + border + 'px'; pot.style.height = h + 5 + 'px';
+    canvas.width = Math.round(w * dpr); canvas.height = Math.round(h * dpr);
+  }
+  const blinking = (id, now) => (now + id * 937) % (3600 + (id % 5) * 700) < 140;
+
+  function drawMonster(family, stage, x, y, r, angle, k, alpha, blink) {
+    const img = (blink && SPRITE[family + stage + 'b']) || SPRITE[family + stage], size = r * 2 * SIZE[family + stage] * k;
+    ctx.save(); ctx.translate(x, y); ctx.rotate(angle); ctx.globalAlpha = alpha;
+    if (img && img.complete && img.naturalWidth) ctx.drawImage(img, -size / 2, -size / 2, size, size);
+    else { ctx.fillStyle = PAL[family].c; ctx.beginPath(); ctx.arc(0, 0, r * k, 0, 7); ctx.fill(); }
+    ctx.restore();
+  }
+
+  function draw(now) {
+    const s = canvas.width / G.W;
+    ctx.setTransform(s, 0, 0, s, 0, 0);
+    ctx.clearRect(0, 0, G.W, G.H);
+
+    ctx.strokeStyle = colors.danger; ctx.lineWidth = 2; ctx.setLineDash([8, 8]); ctx.globalAlpha = .6;
+    ctx.beginPath(); ctx.moveTo(0, G.LINE_Y); ctx.lineTo(G.W, G.LINE_Y); ctx.stroke();
+    ctx.setLineDash([]); ctx.globalAlpha = 1;
+
+    if (mode === 'transform') {
+      ctx.fillStyle = colors.accent; ctx.textAlign = 'center'; ctx.font = '800 19px Nunito, system-ui, sans-serif';
+      ctx.fillText(t().tapMonster, G.W / 2, 58);
+    } else if (!game.over) {
+      const cur = game.current, r = G.RADII[cur.stage], x = Math.max(r, Math.min(G.W - r, aimX));
+      ctx.strokeStyle = colors.guide; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.moveTo(x, G.DROP_Y + r); ctx.lineTo(x, G.H); ctx.stroke();
+      drawMonster(cur.family, cur.stage, x, G.DROP_Y, r, 0, 1, game.ready() ? 1 : .35, blinking(0, now));
+    }
+
+    for (const m of game.monsters.values()) {
+      const age = now - (born.get(m.id) || -1e9);
+      const k = age < 240 ? 1 + .24 * Math.sin(Math.PI * age / 240) : 1;   // kurzes Hüpfen beim Verschmelzen
+      if (mode === 'transform') {                                           // antippbare Monster leuchten leicht
+        ctx.strokeStyle = colors.accent; ctx.lineWidth = 3; ctx.globalAlpha = .5 + .3 * Math.sin(now / 180);
+        ctx.beginPath(); ctx.arc(m.body.position.x, m.body.position.y, m.r + 2, 0, 7); ctx.stroke(); ctx.globalAlpha = 1;
+      }
+      drawMonster(m.family, m.stage, m.body.position.x, m.body.position.y, m.r, m.body.angle, k, 1, blinking(m.id, now) || age < 240);
+    }
+
+    effects = effects.filter(e => now - e.t0 < e.life);
+    for (const e of effects) {
+      if (now < e.t0) continue;
+      const p = (now - e.t0) / e.life;
+      ctx.globalAlpha = 1 - p; ctx.strokeStyle = e.color; ctx.fillStyle = e.color; ctx.lineWidth = 3;
+      ctx.beginPath(); ctx.arc(e.x, e.y, e.r * (1 + p * .7), 0, 7); ctx.stroke();
+      for (let i = 0; i < e.n; i++) {
+        const a = i / e.n * Math.PI * 2 + e.spin, d = e.r * (1 + p * 1.6);
+        ctx.beginPath(); ctx.arc(e.x + Math.cos(a) * d, e.y + Math.sin(a) * d, 3.5 * (1 - p) + 1, 0, 7); ctx.fill();
+      }
+    }
+    ctx.globalAlpha = 1;
+
+    if (game.drops === 0 && mode !== 'transform') {
+      ctx.fillStyle = colors['ink-soft']; ctx.textAlign = 'center';
+      ctx.font = '800 17px Nunito, system-ui, sans-serif';
+      ctx.fillText(t().hint1, G.W / 2, 250); ctx.fillText(t().hint2, G.W / 2, 274);
+      ctx.font = '700 15px Nunito, system-ui, sans-serif'; ctx.fillText(t().hint3, G.W / 2, 306);
+    }
+  }
+  const burst = (x, y, r, color, now, life, n) => effects.push({ x, y, r, color, t0: now, life: life || 380, n: n || 8, spin: Math.random() * 6 });
+
+  // ---------- Album ----------
+  function discover(family, stage) {
+    const key = family + stage;
+    if (album.includes(key)) return;
+    album.push(key); store.set('album', album);
+    const bonus = album.length % 3 === 0;
+    if (bonus) { transforms++; store.set('transforms', transforms); renderHelps(); }
+    const old = pot.querySelector('.toast'); if (old) old.remove();
+    const el = document.createElement('div');
+    el.className = 'toast';
+    el.innerHTML = `<img alt="" src="${SPRITE[key].src}"><div><small>${t().found}${bonus ? ' · ' + t().bonus : ''}</small><span>${nameOf(family, stage)}</span></div>`;
+    pot.appendChild(el);
+    setTimeout(() => el.remove(), 2700);
+    sfx.found();
+  }
+  function renderAlbum() {
+    const n = album.length;
+    $('album-count').textContent = t().albumCount(n, 3 - n % 3);
+    $('album-list').innerHTML = G.FAMILIES.map(f => `<h3>${t().fam[f]}</h3><div class="cards">` + [1, 2, 3, 4, 5, 6].map(s => {
+      const known = album.includes(f + s);
+      return `<div class="card${known ? '' : ' unknown'}"><img alt="" src="${SPRITE[f + s].src}"><div class="who"><b>${known ? nameOf(f, s) : t().unknown}</b><span>${known ? t().lore[f][s - 1] : t().unknownText}</span></div></div>`;
+    }).join('') + '</div>').join('');
+  }
+
+  // ---------- Spielschleife ----------
+  let last = 0, acc = 0, lastSave = 0;
+  function frame(now) {
+    const dt = Math.min(100, now - (last || now)); last = now;
+    if (!paused) acc += dt;
+    while (acc >= G.STEP) {
+      acc -= G.STEP;
+      for (const e of game.step()) {
+        if (e.type === 'drop') { sfx.drop(); discover(e.family, e.stage); }
+        else if (e.type === 'merge') {
+          born.set(e.id, now); burst(e.x, e.y, G.RADII[e.stage], PAL[e.family].l, now);
+          sfx.merge(e.stage); discover(e.family, e.stage);
+        } else if (e.type === 'fireworks') {
+          for (let i = 0; i < 5; i++) burst(e.x + (Math.random() - .5) * 140, e.y + (Math.random() - .5) * 140, 30 + Math.random() * 40, i % 2 ? '#FFC93C' : PAL[e.family].c, now + i * 90, 700, 12);
+          sfx.fireworks();
+        } else if (e.type === 'transform') { born.set(e.id, now); burst(e.x, e.y, G.RADII[e.stage], colors.accent, now, 450, 10); sfx.transform(); }
+        else if (e.type === 'shake') sfx.shake();
+        else if (e.type === 'over') { sfx.over(); store.del('game'); setMode(null); showOver(); }
+      }
+    }
+    if (game.score !== shownScore) {
+      shownScore = game.score; $('score').textContent = shownScore;
+      if (shownScore > best) { best = shownScore; $('best').textContent = best; store.set('best', best); }
+    }
+    if (now - lastSave > 2000) { lastSave = now; saveGame(); }
+    draw(now);
+    requestAnimationFrame(frame);
+  }
+
+  function snapshot() {
+    return { score: game.score, drops: game.drops, current: game.current, shakesLeft,
+      monsters: [...game.monsters.values()].map(m => ({ family: m.family, stage: m.stage, x: Math.round(m.body.position.x * 10) / 10, y: Math.round(m.body.position.y * 10) / 10, angle: Math.round(m.body.angle * 100) / 100 })) };
+  }
+  function saveGame() { if (game && !game.over && game.drops > 0) store.set('game', snapshot()); }
+
+  function showOver() {
+    hideOver();
+    const veil = document.createElement('div');
+    veil.className = 'veil';
+    veil.innerHTML = `<h2>${t().over}</h2><div class="pts">${game.score}</div><p>${game.score > bestAtStart && game.score > 0 ? t().newBest : t().points}</p>
+      <button class="btn" type="button" id="again">${t().again}</button>`;
+    pot.appendChild(veil);
+    $('again').addEventListener('click', () => { wakeAudio(); newGame(); });
+  }
+  function hideOver() { const v = pot.querySelector('.veil'); if (v) v.remove(); }
+
+  function newGame(saved) {
+    hideOver(); store.del('game');
+    game = G.create(Matter);
+    born = new Map(); effects = []; shownScore = -1; aimX = G.W / 2; shakesLeft = 1; mode = null;
+    bestAtStart = best;
+    if (saved && Array.isArray(saved.monsters)) {
+      for (const m of saved.monsters) if (PAL[m.family] && G.RADII[m.stage]) game.add(m.family, m.stage, m.x, m.y, m.angle || 0);
+      game.score = saved.score || 0; game.drops = saved.drops || 0;
+      if (saved.current && PAL[saved.current.family]) game.current = saved.current;
+      shakesLeft = saved.shakesLeft === 0 ? 0 : 1;
+    }
+    renderHelps();
+  }
+
+  // ---------- Hilfen ----------
+  function setMode(m) { mode = m; $('help-transform').setAttribute('aria-pressed', String(m === 'transform')); }
+  function renderHelps() {
+    $('n-transform').textContent = transforms; $('n-shake').textContent = shakesLeft;
+    $('help-transform').disabled = transforms < 1; $('help-shake').disabled = shakesLeft < 1;
+  }
+  $('help-transform').addEventListener('click', () => { wakeAudio(); if (game.over || !game.monsters.size) return; setMode(mode === 'transform' ? null : 'transform'); });
+  $('help-shake').addEventListener('click', () => {
+    wakeAudio(); setMode(null);
+    if (shakesLeft > 0 && game.shake()) { shakesLeft--; renderHelps(); }
+  });
+
+  // ---------- Steuerung: Finger/Maus ziehen und loslassen, oder Pfeiltasten + Leertaste ----------
+  function toWorld(e) { const b = canvas.getBoundingClientRect(); return { x: (e.clientX - b.left) / b.width * G.W, y: (e.clientY - b.top) / b.height * G.H }; }
+  canvas.addEventListener('pointerdown', e => {
+    wakeAudio();
+    if (mode === 'transform') return;
+    aiming = true; aimX = toWorld(e).x;
+    try { canvas.setPointerCapture(e.pointerId); } catch (err) { /* nicht nötig */ }
+  });
+  canvas.addEventListener('pointermove', e => { if (aiming || e.pointerType === 'mouse') aimX = toWorld(e).x; });
+  canvas.addEventListener('pointerup', e => {
+    const p = toWorld(e);
+    if (mode === 'transform') {
+      const m = game.monsterAt(p.x, p.y);
+      if (m && transforms > 0 && game.transform(m.id)) { transforms--; store.set('transforms', transforms); renderHelps(); setMode(null); }
+      return;
+    }
+    if (!aiming) return;
+    aiming = false; aimX = p.x; game.drop(aimX);
+  });
+  canvas.addEventListener('pointercancel', () => { aiming = false; });
+  window.addEventListener('keydown', e => {
+    if (paused || (e.target.closest && e.target.closest('button'))) return;
+    if (e.key === 'ArrowLeft' || e.key === 'a') { aimX = Math.max(0, aimX - 14); e.preventDefault(); }
+    else if (e.key === 'ArrowRight' || e.key === 'd') { aimX = Math.min(G.W, aimX + 14); e.preventDefault(); }
+    else if (e.key === ' ' || e.key === 'ArrowDown' || e.key === 'Enter') { wakeAudio(); if (mode !== 'transform') game.drop(aimX); e.preventDefault(); }
+  });
+  $('restart').addEventListener('click', () => { wakeAudio(); newGame(); });
+
+  // ---------- Album- und Einstellungs-Fenster ----------
+  function openSheet(id) { paused = true; setMode(null); resetArmed(false); if (id === 'sheet-album') renderAlbum(); $(id).hidden = false; $(id).scrollTop = 0; }
+  $('open-album').addEventListener('click', () => { wakeAudio(); openSheet('sheet-album'); });
+  $('open-settings').addEventListener('click', () => { wakeAudio(); openSheet('sheet-settings'); });
+  document.querySelectorAll('[data-close]').forEach(b => b.addEventListener('click', () => { b.closest('.sheet').hidden = true; paused = false; }));
+  document.querySelectorAll('.switch button').forEach(b => b.addEventListener('click', () => {
+    wakeAudio();
+    const what = b.parentElement.dataset.set;
+    if (what === 'lang') { lang = b.dataset.v; store.set('lang', lang); }
+    else { sound[what] = b.dataset.v === '1'; store.set('sound', sound); applySound(); }
+    renderTexts();
+  }));
+  let armed = false;
+  function resetArmed(v) { armed = v; $('reset').textContent = v ? t().resetSure : t().reset; }
+  $('reset').addEventListener('click', () => {
+    if (!armed) { resetArmed(true); return; }
+    KEYS.filter(k => k !== 'lang' && k !== 'sound').forEach(k => store.del(k));
+    best = 0; album = []; transforms = 0; $('best').textContent = 0;
+    newGame(); resetArmed(false);
+    $('sheet-settings').hidden = true; paused = false;
+  });
+
+  function renderTexts() {
+    document.documentElement.lang = lang;
+    document.querySelectorAll('[data-t]').forEach(el => { el.textContent = t()[el.dataset.t]; });
+    document.querySelectorAll('.switch').forEach(sw => {
+      const cur = sw.dataset.set === 'lang' ? lang : (sound[sw.dataset.set] ? '1' : '0');
+      sw.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.v === cur)));
+    });
+    $('chain').setAttribute('aria-label', t().chain);
+    canvas.setAttribute('aria-label', t().pot);
+    $('open-settings').setAttribute('aria-label', t().settings);
+    resetArmed(armed);
+    if (!$('sheet-album').hidden) renderAlbum();
+    if (game && game.over) showOver();
+  }
+
+  // ---------- Start ----------
+  function start(data) {
+    lang = data.lang || store.get('lang', (navigator.language || 'de').toLowerCase().startsWith('de') ? 'de' : 'en');
+    if (!TEXT[lang]) lang = 'de';
+    best = +store.get('best', 0) || 0; $('best').textContent = best;
+    const a = store.get('album', []); album = Array.isArray(a) ? a.filter(k => SPRITE[k]) : [];
+    transforms = Math.max(0, +store.get('transforms', 0) || 0);
+    const snd = store.get('sound', null); if (snd && typeof snd === 'object') sound = { sfx: snd.sfx !== false, music: snd.music !== false };
+    const chain = $('chain');
+    G.FAMILIES.forEach((f, i) => {
+      if (i) { const gap = document.createElement('span'); gap.className = 'gap'; chain.appendChild(gap); }
+      for (let s = 1; s <= 6; s++) { const img = document.createElement('img'); img.src = SPRITE[f + s].src; img.alt = ''; chain.appendChild(img); }
+    });
+    newGame(data.game || store.get('game', null));
+    renderTexts(); readColors(); resize();
+    new ResizeObserver(resize).observe($('stage'));
+    matchMedia('(prefers-color-scheme: dark)').addEventListener('change', readColors);
+    new MutationObserver(readColors).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+    requestAnimationFrame(frame);
+  }
+  const hot = window.claude && window.claude.hot;
+  if (hot && hot.snapshot) hot.snapshot(() => ({ lang, game: game.over ? null : snapshot() }));
+  if (hot && hot.ready) hot.ready(start); else start((hot && hot.data) || {});
+})();
+</script>
