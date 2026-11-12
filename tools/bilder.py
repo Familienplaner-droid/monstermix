@@ -51,16 +51,22 @@ for path in sorted(glob.glob('assets/original/*.png')):
     print(name, 'Körper-Radius', round(r), 'Faktor k', info[name]['k'], 'kB', os.path.getsize(f'assets/monster/{name}.webp') // 1024)
 json.dump(info, open('assets/monster/monster.json', 'w'), indent=1)
 
-# Kontrollbild: alle Monster auf Topf-Hintergründen, mit Körper-Kreis
-names = sorted(info); cell = 260
-sheet = Image.new('RGB', (cell * 6, cell * 2), '#FFF9EC')
+# Kontrollbild: alle Monster je Familie in einer Zeile, abwechselnd heller und dunkler Hintergrund, mit Körper-Kreis
 import PIL.ImageDraw as D
+fams = []
+for n in sorted(info):
+    f = n.rstrip('0123456789')
+    if f not in fams: fams.append(f)
+cell = 200
+sheet = Image.new('RGB', (cell * 6, cell * len(fams)), '#FFF9EC')
 dr = D.Draw(sheet)
-for i, n in enumerate(names):
-    col = int(n[-1]) - 1; row = 0 if n.startswith('feuer') else 1
-    if row: dr.rectangle([col * cell, cell, col * cell + cell, 2 * cell], fill='#1B2A33')
-    im = Image.open(f'assets/monster/{n}.webp').resize((240, 240), Image.LANCZOS)
-    sheet.paste(im, (col * cell + 10, row * cell + 10), im)
-    rr = 120 / info[n]['k']; c = (col * cell + 130, row * cell + 130)
-    dr.ellipse([c[0] - rr, c[1] - rr, c[0] + rr, c[1] + rr], outline='#00FF66', width=2)
+for row, f in enumerate(fams):
+    if row % 2: dr.rectangle([0, row * cell, cell * 6, row * cell + cell], fill='#1B2A33')
+    for col in range(6):
+        n = f + str(col + 1)
+        if n not in info: continue
+        im = Image.open(f'assets/monster/{n}.webp').resize((cell - 20, cell - 20), Image.LANCZOS)
+        sheet.paste(im, (col * cell + 10, row * cell + 10), im)
+        rr = (cell - 20) / 2 / info[n]['k']; c = (col * cell + cell / 2, row * cell + cell / 2)
+        dr.ellipse([c[0] - rr, c[1] - rr, c[0] + rr, c[1] + rr], outline='#00FF66', width=2)
 sheet.save(sys.argv[1] if len(sys.argv) > 1 else '/tmp/kontrolle.png')

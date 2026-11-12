@@ -6,7 +6,8 @@
 :root {
   --bg: #E6F5E4;          /* Monsterwiese */
   --bg-deep: #CDEBCB;
-  --pot: #FFF9EC;         /* Topf-Inneres */
+  --pot: #FFF9EC;         /* Topf-Inneres: Monsterwiese */
+  --pot-wald: #EEF5E1; --pot-wolken: #F4EFFF; --pot-sturm: #ECE8F4;
   --pot-rim: #5B4A6B;     /* Topfwand */
   --card: #FFFFFF;
   --ink: #1D3A2C;
@@ -25,6 +26,7 @@
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     --bg: #12211A; --bg-deep: #0D1913; --pot: #1B2A33; --pot-rim: #8E7AA6; --card: #1F382B;
+    --pot-wald: #1A2C22; --pot-wolken: #231E33; --pot-sturm: #1E2130;
     --ink: #E7F5EA; --ink-soft: #A3C2B0; --accent: #A98BFF; --on-accent: #1B1038; --danger: #FF8A6B;
     --guide: rgba(231, 245, 234, .25); --shade: rgba(0, 0, 0, .4); --veil: rgba(27, 42, 51, .9);
     --silhouette: brightness(0) invert(1);
@@ -33,6 +35,7 @@
 }
 :root[data-theme="dark"] {
   --bg: #12211A; --bg-deep: #0D1913; --pot: #1B2A33; --pot-rim: #8E7AA6; --card: #1F382B;
+  --pot-wald: #1A2C22; --pot-wolken: #231E33; --pot-sturm: #1E2130;
   --ink: #E7F5EA; --ink-soft: #A3C2B0; --accent: #A98BFF; --on-accent: #1B1038; --danger: #FF8A6B;
   --guide: rgba(231, 245, 234, .25); --shade: rgba(0, 0, 0, .4); --veil: rgba(27, 42, 51, .9);
   --silhouette: brightness(0) invert(1);
@@ -77,8 +80,24 @@ h2 { font-family: var(--font-display); font-weight: 800; font-size: 1.7rem; line
 .stat.small b { font-size: 1.15rem; color: var(--ink-soft); line-height: 1.35; }
 .bar .btn { margin-left: auto; }
 
+
 .stage { flex: 1; min-height: 300px; display: flex; justify-content: center; align-items: flex-start; }
 .pot { position: relative; max-width: 100%; border: 5px solid var(--pot-rim); border-top: 0; border-radius: 0 0 26px 26px; background: var(--pot); overflow: hidden; box-shadow: 0 4px 0 var(--shade); }
+.pot[data-pot="wald"] { background: var(--pot-wald); }
+.pot[data-pot="wolken"] { background: var(--pot-wolken); }
+.pot[data-pot="sturm"] { background: var(--pot-sturm); }
+.potline { align-self: center; display: flex; align-items: center; gap: 8px; max-width: 100%; min-height: 40px; padding: 4px 14px 4px 6px; border-radius: 999px; background: var(--bg-deep); color: var(--ink); font-weight: 800; }
+.potline img { width: 30px; height: 30px; flex: none; }
+.potline span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-family: var(--font-display); font-size: 1.05rem; }
+.potline svg { width: 18px; height: 18px; flex: none; color: var(--ink-soft); }
+.card.potcard { width: 100%; text-align: left; font: inherit; color: inherit; border: 0; cursor: pointer; }
+.card.potcard .pair { display: flex; flex: none; }
+.card.potcard .pair img { width: 44px; height: 44px; }
+.card.potcard .pair img + img { margin-left: -10px; }
+.card.potcard[aria-current="true"] { outline: 3px solid var(--accent); outline-offset: -3px; }
+.card.potcard.locked { cursor: default; }
+.card.potcard.locked .pair img { filter: var(--silhouette); opacity: .22; }
+.card.potcard .tag { margin-left: auto; flex: none; font-size: .8rem; font-weight: 800; color: var(--ink-soft); }
 .pot canvas { display: block; width: 100%; height: 100%; touch-action: none; user-select: none; -webkit-user-select: none; cursor: grab; }
 
 .toast { position: absolute; left: 50%; top: 20%; transform: translateX(-50%); display: flex; align-items: center; gap: 8px; background: var(--gold); color: var(--on-gold); border-radius: 999px; padding: 4px 16px 4px 6px; font-weight: 800; white-space: nowrap; max-width: calc(100% - 16px); pointer-events: none; box-shadow: 0 3px 0 var(--shade); animation: toast 2.6s ease-out forwards; }
@@ -148,6 +167,9 @@ h2 { font-family: var(--font-display); font-weight: 800; font-size: 1.7rem; line
     <button class="btn ghost small" id="restart" type="button" data-t="restart"></button>
   </div>
 
+  <button class="potline" id="open-pots" type="button"><img alt="" id="pot-icon"><span id="pot-name"></span>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+
   <div class="stage" id="stage">
     <div class="pot" id="pot"><canvas id="canvas" tabindex="0"></canvas></div>
   </div>
@@ -163,6 +185,12 @@ h2 { font-family: var(--font-display); font-weight: 800; font-size: 1.7rem; line
     <div class="sheet-head"><h2 data-t="album"></h2><button class="btn small" type="button" data-close data-t="close"></button></div>
     <p id="album-count"></p>
     <div id="album-list"></div>
+  </div>
+
+  <div class="sheet" id="sheet-pots" hidden>
+    <div class="sheet-head"><h2 data-t="pots"></h2><button class="btn small" type="button" data-close data-t="close"></button></div>
+    <p data-t="potsInfo"></p>
+    <div class="cards" id="pot-list"></div>
   </div>
 
   <div class="sheet" id="sheet-settings" hidden>
@@ -196,20 +224,27 @@ h2 { font-family: var(--font-display); font-weight: 800; font-size: 1.7rem; line
       adSimTitle: 'Werbung (Vorschau)', adSimText: 'In der App läuft an dieser Stelle ein echtes Werbevideo.', adSimCancel: 'Abbrechen',
       privacyAds: 'Werbe-Einwilligung', change: 'Ändern',
       found: 'Neu entdeckt', bonus: '+1 Verwandeln',
-      albumCount: (n, left) => `${n} von 12 Monstern entdeckt.` + (n < 12 ? ` Noch ${left} bis zum nächsten Verwandeln.` : ''),
+      albumCount: (n, all, left) => `${n} von ${all} Monstern entdeckt.` + (n < all ? ` Noch ${left} bis zum nächsten Verwandeln.` : ''),
+      pots: 'Töpfe', potsInfo: 'In jedem Topf spielen zwei andere Familien. Ein hoher Bestwert öffnet den nächsten Topf.',
+      potNames: { wiese: 'Monsterwiese', wald: 'Pilzwald', wolken: 'Wolkenberg', sturm: 'Gewitterschlucht' },
+      potLocked: (n, prev) => `Erreiche ${n} Punkte in „${prev}“.`, potBest: n => `Bestwert ${n}`, potNow: 'Aktuell',
+      potUnlocked: 'Neuer Topf frei', chainOf: (f, a, b) => `${f} von ${a} bis ${b}`, chainIntro: 'Reihenfolge der Monster: ',
       unknown: '???', unknownText: 'Noch nicht entdeckt.',
       sfx: 'Ton', music: 'Musik', language: 'Sprache', on: 'An', off: 'Aus',
       resetInfo: 'Löscht Bestwert, Album, Hilfen und die laufende Partie auf diesem Gerät.', reset: 'Alles zurücksetzen', resetSure: 'Wirklich alles löschen?',
-      chain: 'Reihenfolge der Monster: Feuer von Funke bis Glutdrache, Wasser von Tropfen bis Meeresdrache',
       pot: 'Topf – mit Pfeiltasten zielen, mit Leertaste fallen lassen',
-      fam: { fire: 'Feuer', water: 'Wasser' },
+      fam: { fire: 'Feuer', water: 'Wasser', earth: 'Erde', air: 'Luft' },
       names: {
         fire: ['Funke', 'Flämmchen', 'Glutling', 'Feuerkobold', 'Lavatroll', 'Glutdrache'],
         water: ['Tropfen', 'Blubb', 'Pfützling', 'Wellenwicht', 'Nebelgeist', 'Meeresdrache'],
+        earth: ['Steinchen', 'Kiesel', 'Felsling', 'Erdkobold', 'Felstroll', 'Erddrache'],
+        air: ['Wölkchen', 'Windhauch', 'Böling', 'Sturmkobold', 'Wolkengeist', 'Sturmdrache'],
       },
       lore: {
         fire: ['Winzig, warm und sehr aufgeregt. Zündet vor allem Gespräche an.', 'Tanzt den ganzen Tag. Fürchtet nur Leute, die Geburtstagskerzen auspusten.', 'Hält sich für gefährlich. Ist in Wahrheit ein prima Handwärmer.', 'Röstet heimlich Marshmallows über dem eigenen Kopf.', 'Sehr langsam. Wo er einmal saß, wächst kein Gras mehr.', 'Der Chef im Topf. Treffen sich zwei, gibt es Feuerwerk.'],
         water: ['Fällt gern irgendwo herunter. Meistens auf Nasen.', 'Kennt nur ein einziges Wort. Rate mal, welches.', 'Wartet geduldig auf Gummistiefel.', 'Surft auf sich selbst. Angeber.', 'Wollte gruselig sein. Ist aber nur feucht.', 'Kennt jeden Fisch beim Vornamen. Treffen sich zwei, bleibt nur Gischt.'],
+        earth: ['Hat einen Keimling auf dem Kopf und ist sehr stolz darauf. Gießen erwünscht.', 'Liegt am liebsten im Fluss herum und staunt. Über alles.', 'Trägt zwei Steine auf dem Kopf. Keiner weiß, wie sie da hingekommen sind.', 'Gräbt Löcher, nur um zu sehen, ob sie halten.', 'Grummelt seit hundert Jahren. Auf ihm wachsen trotzdem Pilze.', 'Sammelt grüne Kristalle. Treffen sich zwei, bebt kurz der ganze Topf.'],
+        air: ['So leicht, dass es manchmal vergisst herunterzufallen.', 'Pustet heimlich Kerzen aus. Das Flämmchen ist nicht begeistert.', 'Hat vier kleine Flügel und benutzt keinen davon.', 'Reibt sich an Teppichen und verteilt kleine Stromschläge.', 'Donnert, wenn er schlecht geschlafen hat. Also meistens.', 'Thront über den Wolken. Treffen sich zwei, gibt es einen Regenbogen.'],
       },
     },
     en: {
@@ -222,20 +257,27 @@ h2 { font-family: var(--font-display); font-weight: 800; font-size: 1.7rem; line
       adSimTitle: 'Ad (preview)', adSimText: 'In the app, a real video ad plays here.', adSimCancel: 'Cancel',
       privacyAds: 'Ad consent', change: 'Change',
       found: 'Discovered', bonus: '+1 Transform',
-      albumCount: (n, left) => `${n} of 12 monsters discovered.` + (n < 12 ? ` ${left} more until the next Transform.` : ''),
+      albumCount: (n, all, left) => `${n} of ${all} monsters discovered.` + (n < all ? ` ${left} more until the next Transform.` : ''),
+      pots: 'Pots', potsInfo: 'Each pot has two different families. A high best score opens the next pot.',
+      potNames: { wiese: 'Monster Meadow', wald: 'Mushroom Forest', wolken: 'Cloud Peak', sturm: 'Thunder Gorge' },
+      potLocked: (n, prev) => `Reach ${n} points in “${prev}”.`, potBest: n => `Best ${n}`, potNow: 'Current',
+      potUnlocked: 'New pot unlocked', chainOf: (f, a, b) => `${f} from ${a} to ${b}`, chainIntro: 'Monster order: ',
       unknown: '???', unknownText: 'Not discovered yet.',
       sfx: 'Sound', music: 'Music', language: 'Language', on: 'On', off: 'Off',
       resetInfo: 'Deletes best score, album, helpers and the current game on this device.', reset: 'Reset everything', resetSure: 'Really delete everything?',
-      chain: 'Monster order: fire from Spark to Ember Dragon, water from Droplet to Sea Dragon',
       pot: 'Pot – aim with the arrow keys, drop with the space bar',
-      fam: { fire: 'Fire', water: 'Water' },
+      fam: { fire: 'Fire', water: 'Water', earth: 'Earth', air: 'Air' },
       names: {
         fire: ['Spark', 'Flamelet', 'Emberling', 'Fire Goblin', 'Lava Troll', 'Ember Dragon'],
         water: ['Droplet', 'Blub', 'Puddling', 'Wave Imp', 'Mist Ghost', 'Sea Dragon'],
+        earth: ['Pebblet', 'Pebble', 'Rockling', 'Earth Goblin', 'Rock Troll', 'Earth Dragon'],
+        air: ['Cloudlet', 'Breeze', 'Gustling', 'Storm Goblin', 'Cloud Ghost', 'Storm Dragon'],
       },
       lore: {
         fire: ['Tiny, warm and very excited. Mostly sets conversations on fire.', 'Dances all day. Only fears people who blow out birthday candles.', 'Thinks it is dangerous. Is actually a great hand warmer.', 'Secretly toasts marshmallows over its own head.', 'Very slow. Where it once sat, no grass will grow.', 'Boss of the pot. When two meet, there are fireworks.'],
         water: ['Loves falling off things. Mostly onto noses.', 'Knows exactly one word. Guess which.', 'Waits patiently for rubber boots.', 'Surfs on itself. Show-off.', 'Wanted to be spooky. Is only damp.', 'Knows every fish by first name. When two meet, only spray remains.'],
+        earth: ['Has a sprout on its head and is very proud of it. Watering welcome.', 'Likes lying around in rivers, amazed. By everything.', 'Carries two stones on its head. Nobody knows how they got there.', 'Digs holes just to see if they hold.', 'Has been grumbling for a hundred years. Mushrooms grow on it anyway.', 'Collects green crystals. When two meet, the whole pot shakes for a moment.'],
+        air: ['So light that it sometimes forgets to fall down.', 'Secretly blows out candles. The Flamelet is not amused.', 'Has four tiny wings and uses none of them.', 'Rubs itself on carpets and hands out little electric shocks.', 'Thunders when it slept badly. So, mostly.', 'Reigns above the clouds. When two meet, there is a rainbow.'],
       },
     },
   };
@@ -244,6 +286,8 @@ h2 { font-family: var(--font-display); font-weight: 800; font-size: 1.7rem; line
   const PAL = {
     fire:  { c: '#FF8A4C', d: '#E8502A', l: '#FFD27A' },
     water: { c: '#4FA8F5', d: '#2A6FD6', l: '#BDE6FF' },
+    earth: { c: '#B9804A', d: '#7A4E2A', l: '#E9C99A' },
+    air:   { c: '#B79CF0', d: '#7F5AD6', l: '#EDE4FF' },
   };
   function monsterSVG(family, stage, blink) {
     const { c, d, l } = PAL[family];
@@ -274,7 +318,16 @@ h2 { font-family: var(--font-display); font-weight: 800; font-size: 1.7rem; line
   // Fertige Monster-Bilder (aus assets/monster, beim Bauen eingebettet). Fehlt eines, springt die einfache SVG-Zeichnung ein.
   const ART = /*__ART__*/{};
   const SPRITE = {}, SIZE = {};              // SIZE: Bildbreite im Verhältnis zum Körper-Durchmesser
-  for (const f of G.FAMILIES) for (let s = 1; s <= 6; s++) {
+  const FAMILIES = ['fire', 'water', 'earth', 'air'];
+  // Töpfe: je zwei Familien. Ein Topf öffnet sich, wenn im vorherigen der Bestwert UNLOCK erreicht ist.
+  const UNLOCK = 300;
+  const POTS = [
+    { id: 'wiese', families: ['fire', 'water'] },
+    { id: 'wald', families: ['earth', 'water'] },
+    { id: 'wolken', families: ['air', 'fire'] },
+    { id: 'sturm', families: ['earth', 'air'] },
+  ];
+  for (const f of FAMILIES) for (let s = 1; s <= 6; s++) {
     const art = ART[f + s], img = new Image();
     img.src = art ? art.src : 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(monsterSVG(f, s, 0));
     SPRITE[f + s] = img; SIZE[f + s] = art ? art.k : 1.2;
@@ -349,14 +402,18 @@ h2 { font-family: var(--font-display); font-weight: 800; font-size: 1.7rem; line
   })();
 
   // ---------- Speichern auf dem Gerät ----------
-  const KEYS = ['lang', 'best', 'album', 'transforms', 'sound', 'game'];
+
   const store = {
     get(k, fallback) { try { const v = localStorage.getItem('potlings.' + k); return v === null ? fallback : JSON.parse(v); } catch (e) { return fallback; } },
     set(k, v) { try { localStorage.setItem('potlings.' + k, JSON.stringify(v)); } catch (e) { /* ohne Speicher weiterspielen */ } },
     del(k) { try { localStorage.removeItem('potlings.' + k); } catch (e) { /* egal */ } },
+    keys() { try { return Object.keys(localStorage).filter(k => k.startsWith('potlings.')).map(k => k.slice(9)); } catch (e) { return []; } },
   };
 
   let lang, game, best = 0, bestAtStart = 0, aimX = G.W / 2, aiming = false;
+  let potId = 'wiese', bests = {};
+  const potOf = id => POTS.find(p => p.id === id) || POTS[0];
+  const potUnlocked = i => i === 0 || (bests[POTS[i - 1].id] || 0) >= UNLOCK;
   let album = [], transforms = 0, shakesLeft = 1, revivesLeft = 1, mode = null, paused = false;
   let sound = { sfx: true, music: true };
   let effects = [], born = new Map(), colors = {}, shownScore = -1;
@@ -495,24 +552,27 @@ h2 { font-family: var(--font-display); font-weight: 800; font-size: 1.7rem; line
   const burst = (x, y, r, color, now, life, n) => effects.push({ x, y, r, color, t0: now, life: life || 380, n: n || 8, spin: Math.random() * 6 });
 
   // ---------- Album ----------
+  function toast(src, small, text) {
+    const old = pot.querySelector('.toast'); if (old) old.remove();
+    const el = document.createElement('div');
+    el.className = 'toast';
+    el.innerHTML = `<img alt="" src="${src}"><div><small>${small}</small><span>${text}</span></div>`;
+    pot.appendChild(el);
+    setTimeout(() => el.remove(), 2700);
+  }
   function discover(family, stage) {
     const key = family + stage;
     if (album.includes(key)) return;
     album.push(key); store.set('album', album);
     const bonus = album.length % 3 === 0;
     if (bonus) { transforms++; store.set('transforms', transforms); renderHelps(); }
-    const old = pot.querySelector('.toast'); if (old) old.remove();
-    const el = document.createElement('div');
-    el.className = 'toast';
-    el.innerHTML = `<img alt="" src="${SPRITE[key].src}"><div><small>${t().found}${bonus ? ' · ' + t().bonus : ''}</small><span>${nameOf(family, stage)}</span></div>`;
-    pot.appendChild(el);
-    setTimeout(() => el.remove(), 2700);
+    toast(SPRITE[key].src, t().found + (bonus ? ' · ' + t().bonus : ''), nameOf(family, stage));
     sfx.found();
   }
   function renderAlbum() {
     const n = album.length;
-    $('album-count').textContent = t().albumCount(n, 3 - n % 3);
-    $('album-list').innerHTML = G.FAMILIES.map(f => `<h3>${t().fam[f]}</h3><div class="cards">` + [1, 2, 3, 4, 5, 6].map(s => {
+    $('album-count').textContent = t().albumCount(n, FAMILIES.length * 6, 3 - n % 3);
+    $('album-list').innerHTML = FAMILIES.map(f => `<h3>${t().fam[f]}</h3><div class="cards">` + [1, 2, 3, 4, 5, 6].map(s => {
       const known = album.includes(f + s);
       return `<div class="card${known ? '' : ' unknown'}"><img alt="" src="${SPRITE[f + s].src}"><div class="who"><b>${known ? nameOf(f, s) : t().unknown}</b><span>${known ? t().lore[f][s - 1] : t().unknownText}</span></div></div>`;
     }).join('') + '</div>').join('');
@@ -536,12 +596,12 @@ h2 { font-family: var(--font-display); font-weight: 800; font-size: 1.7rem; line
         } else if (e.type === 'transform') { born.set(e.id, now); burst(e.x, e.y, G.RADII[e.stage], colors.accent, now, 450, 10); sfx.transform(); }
         else if (e.type === 'shake') sfx.shake();
         else if (e.type === 'revive') { for (const r of e.removed) burst(r.x, r.y, r.r, PAL[r.family] ? PAL[r.family].l : colors.accent, now, 500, 10); sfx.fireworks(); }
-        else if (e.type === 'over') { sfx.over(); store.del('game'); setMode(null); overNote = ''; showOver(); }
+        else if (e.type === 'over') { sfx.over(); store.del('game.' + potId); setMode(null); overNote = ''; showOver(); }
       }
     }
     if (game.score !== shownScore) {
       shownScore = game.score; $('score').textContent = shownScore;
-      if (shownScore > best) { best = shownScore; $('best').textContent = best; store.set('best', best); }
+      if (shownScore > best) { setBest(shownScore); }
     }
     if (now - lastSave > 2000) { lastSave = now; saveGame(); }
     draw(now);
@@ -552,7 +612,16 @@ h2 { font-family: var(--font-display); font-weight: 800; font-size: 1.7rem; line
     return { score: game.score, drops: game.drops, current: game.current, shakesLeft, revivesLeft,
       monsters: [...game.monsters.values()].map(m => ({ family: m.family, stage: m.stage, x: Math.round(m.body.position.x * 10) / 10, y: Math.round(m.body.position.y * 10) / 10, angle: Math.round(m.body.angle * 100) / 100 })) };
   }
-  function saveGame() { if (game && !game.over && game.drops > 0) store.set('game', snapshot()); }
+  function saveGame() { if (game && !game.over && game.drops > 0) store.set('game.' + potId, snapshot()); }
+  function setBest(n) {
+    const i = POTS.findIndex(p => p.id === potId);
+    const wasOpen = i + 1 < POTS.length && potUnlocked(i + 1);
+    best = n; bests[potId] = n; store.set('bests', bests); $('best').textContent = best;
+    if (i + 1 < POTS.length && !wasOpen && potUnlocked(i + 1)) {
+      const next = POTS[i + 1];
+      toast(SPRITE[next.families[0] + '1'].src, t().potUnlocked, t().potNames[next.id]); sfx.found();
+    }
+  }
 
   const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="4" fill="currentColor" opacity=".25"/><path d="M10 8.5v7l6-3.5z" fill="currentColor"/></svg>';
   let adBusy = false, overNote = '';
@@ -581,14 +650,15 @@ h2 { font-family: var(--font-display); font-weight: 800; font-size: 1.7rem; line
   function hideOver() { const v = pot.querySelector('.veil'); if (v) v.remove(); }
 
   function newGame(saved) {
-    hideOver(); store.del('game');
-    game = G.create(Matter);
+    hideOver(); store.del('game.' + potId);
+    game = G.create(Matter, { families: potOf(potId).families });
     born = new Map(); effects = []; shownScore = -1; aimX = G.W / 2; shakesLeft = 1; revivesLeft = 1; overNote = ''; mode = null;
     bestAtStart = best;
     if (saved && Array.isArray(saved.monsters)) {
-      for (const m of saved.monsters) if (PAL[m.family] && G.RADII[m.stage]) game.add(m.family, m.stage, m.x, m.y, m.angle || 0);
+      const fams = potOf(potId).families;
+      for (const m of saved.monsters) if (fams.includes(m.family) && G.RADII[m.stage]) game.add(m.family, m.stage, m.x, m.y, m.angle || 0);
       game.score = saved.score || 0; game.drops = saved.drops || 0;
-      if (saved.current && PAL[saved.current.family]) game.current = saved.current;
+      if (saved.current && fams.includes(saved.current.family)) game.current = saved.current;
       shakesLeft = saved.shakesLeft === 0 ? 0 : 1;
       revivesLeft = saved.revivesLeft === 0 ? 0 : 1;
     }
@@ -639,6 +709,43 @@ h2 { font-family: var(--font-display); font-weight: 800; font-size: 1.7rem; line
   function openSheet(id) { paused = true; setMode(null); resetArmed(false); if (id === 'sheet-album') renderAlbum(); $('privacy-row').hidden = !Ads.privacyAvailable(); $(id).hidden = false; $(id).scrollTop = 0; }
   $('privacy-ads').addEventListener('click', () => { Ads.privacyForm().catch(() => {}); });
   $('open-album').addEventListener('click', () => { wakeAudio(); openSheet('sheet-album'); });
+  $('open-pots').addEventListener('click', () => { wakeAudio(); renderPots(); openSheet('sheet-pots'); });
+  function renderPots() {
+    $('pot-list').innerHTML = POTS.map((p, i) => {
+      const open = potUnlocked(i), cur = p.id === potId;
+      const tag = cur ? t().potNow : open ? t().potBest(bests[p.id] || 0) : '';
+      const sub = open ? p.families.map(f => t().fam[f]).join(' + ') : t().potLocked(UNLOCK, t().potNames[POTS[i - 1].id]);
+      return `<button class="card potcard${open ? '' : ' locked'}" type="button" id="pot-${p.id}" data-pot="${p.id}"${cur ? ' aria-current="true"' : ''}${open ? '' : ' aria-disabled="true"'}>
+        <span class="pair">${p.families.map(f => `<img alt="" src="${SPRITE[f + '1'].src}">`).join('')}</span>
+        <span class="who"><b>${t().potNames[p.id]}</b><span>${sub}</span></span><span class="tag">${tag}</span></button>`;
+    }).join('');
+    $('pot-list').querySelectorAll('.potcard').forEach(b => b.addEventListener('click', () => {
+      const i = POTS.findIndex(p => p.id === b.dataset.pot);
+      if (!potUnlocked(i)) return;
+      if (POTS[i].id !== potId) switchPot(POTS[i].id);
+      $('sheet-pots').hidden = true; paused = false;
+    }));
+  }
+  function switchPot(id) {
+    saveGame();
+    potId = id; store.set('pot', potId);
+    best = bests[potId] || 0; $('best').textContent = best;
+    pot.dataset.pot = potId;
+    newGame(store.get('game.' + potId, null));
+    renderPotUI();
+  }
+  function renderPotUI() {
+    const p = potOf(potId);
+    $('pot-icon').src = SPRITE[p.families[0] + '1'].src;
+    $('pot-name').textContent = t().potNames[p.id];
+    $('open-pots').setAttribute('aria-label', t().pots + ': ' + t().potNames[p.id]);
+    const chain = $('chain'); chain.innerHTML = '';
+    p.families.forEach((f, i) => {
+      if (i) { const gap = document.createElement('span'); gap.className = 'gap'; chain.appendChild(gap); }
+      for (let s = 1; s <= 6; s++) { const img = document.createElement('img'); img.src = SPRITE[f + s].src; img.alt = ''; chain.appendChild(img); }
+    });
+    chain.setAttribute('aria-label', t().chainIntro + p.families.map(f => t().chainOf(t().fam[f], nameOf(f, 1), nameOf(f, 6))).join(', '));
+  }
   $('open-settings').addEventListener('click', () => { wakeAudio(); openSheet('sheet-settings'); });
   document.querySelectorAll('[data-close]').forEach(b => b.addEventListener('click', () => { b.closest('.sheet').hidden = true; paused = false; }));
   document.querySelectorAll('.switch button').forEach(b => b.addEventListener('click', () => {
@@ -652,9 +759,10 @@ h2 { font-family: var(--font-display); font-weight: 800; font-size: 1.7rem; line
   function resetArmed(v) { armed = v; $('reset').textContent = v ? t().resetSure : t().reset; }
   $('reset').addEventListener('click', () => {
     if (!armed) { resetArmed(true); return; }
-    KEYS.filter(k => k !== 'lang' && k !== 'sound').forEach(k => store.del(k));
-    best = 0; album = []; transforms = 0; $('best').textContent = 0;
-    newGame(); resetArmed(false);
+    store.keys().filter(k => k !== 'lang' && k !== 'sound').forEach(k => store.del(k));
+    best = 0; bests = {}; album = []; transforms = 0; $('best').textContent = 0;
+    potId = 'wiese'; pot.dataset.pot = potId;
+    newGame(); renderPotUI(); resetArmed(false);
     $('sheet-settings').hidden = true; paused = false;
   });
 
@@ -665,7 +773,8 @@ h2 { font-family: var(--font-display); font-weight: 800; font-size: 1.7rem; line
       const cur = sw.dataset.set === 'lang' ? lang : (sound[sw.dataset.set] ? '1' : '0');
       sw.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.v === cur)));
     });
-    $('chain').setAttribute('aria-label', t().chain);
+    renderPotUI();
+    if (!$('sheet-pots').hidden) renderPots();
     canvas.setAttribute('aria-label', t().pot);
     $('open-settings').setAttribute('aria-label', t().settings);
     resetArmed(armed);
@@ -677,16 +786,21 @@ h2 { font-family: var(--font-display); font-weight: 800; font-size: 1.7rem; line
   function start(data) {
     lang = data.lang || store.get('lang', (navigator.language || 'de').toLowerCase().startsWith('de') ? 'de' : 'en');
     if (!TEXT[lang]) lang = 'de';
-    best = +store.get('best', 0) || 0; $('best').textContent = best;
+    const b = store.get('bests', null);
+    bests = b && typeof b === 'object' ? b : {};
+    const oldBest = +store.get('best', 0) || 0;                  // alter Bestwert (nur ein Topf) übernehmen
+    if (oldBest && !bests.wiese) { bests.wiese = oldBest; store.set('bests', bests); }
+    const oldGame = store.get('game', null);
+    if (oldGame && !store.get('game.wiese', null)) store.set('game.wiese', oldGame);
+    store.del('best'); store.del('game');
+    potId = store.get('pot', 'wiese');
+    if (POTS.findIndex(p => p.id === potId) < 0 || !potUnlocked(POTS.findIndex(p => p.id === potId))) potId = 'wiese';
+    pot.dataset.pot = potId;
+    best = bests[potId] || 0; $('best').textContent = best;
     const a = store.get('album', []); album = Array.isArray(a) ? a.filter(k => SPRITE[k]) : [];
     transforms = Math.max(0, +store.get('transforms', 0) || 0);
     const snd = store.get('sound', null); if (snd && typeof snd === 'object') sound = { sfx: snd.sfx !== false, music: snd.music !== false };
-    const chain = $('chain');
-    G.FAMILIES.forEach((f, i) => {
-      if (i) { const gap = document.createElement('span'); gap.className = 'gap'; chain.appendChild(gap); }
-      for (let s = 1; s <= 6; s++) { const img = document.createElement('img'); img.src = SPRITE[f + s].src; img.alt = ''; chain.appendChild(img); }
-    });
-    newGame(data.game || store.get('game', null));
+    newGame(data.game || store.get('game.' + potId, null));
     renderTexts(); readColors(); resize();
     new ResizeObserver(resize).observe($('stage'));
     matchMedia('(prefers-color-scheme: dark)').addEventListener('change', readColors);
@@ -695,7 +809,7 @@ h2 { font-family: var(--font-display); font-weight: 800; font-size: 1.7rem; line
     Ads.preload();
   }
   const hot = window.claude && window.claude.hot;
-  if (hot && hot.snapshot) hot.snapshot(() => ({ lang, game: game.over ? null : snapshot() }));
+  if (hot && hot.snapshot) hot.snapshot(() => { saveGame(); return { lang }; });
   if (hot && hot.ready) hot.ready(start); else start((hot && hot.data) || {});
 })();
 </script>

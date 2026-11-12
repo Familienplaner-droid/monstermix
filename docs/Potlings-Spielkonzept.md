@@ -67,24 +67,37 @@ Weitere Regeln:
 
 ## Monsterfamilien
 
-Es gibt zwei Familien mit je 6 Stufen: Feuer und Wasser. Beide bleiben getrennt – das macht das Spiel kniffliger als ein Fallspiel mit nur einer Reihe.
+Es gibt vier Familien mit je 6 Stufen (alle umgesetzt, mit Bildern). In jedem Topf spielen immer genau zwei davon.
 
-| Stufe | Feuer | Wasser |
-| --- | --- | --- |
-| 1 | Funke | Tropfen |
-| 2 | Flämmchen | Blubb |
-| 3 | Glutling | Pfützling |
-| 4 | Feuerkobold | Wellenwicht |
-| 5 | Lavatroll | Nebelgeist |
-| 6 | Glutdrache | Meeresdrache |
+| Stufe | Feuer | Wasser | Erde | Luft |
+| --- | --- | --- | --- | --- |
+| 1 | Funke | Tropfen | Steinchen | Wölkchen |
+| 2 | Flämmchen | Blubb | Kiesel | Windhauch |
+| 3 | Glutling | Pfützling | Felsling | Böling |
+| 4 | Feuerkobold | Wellenwicht | Erdkobold | Sturmkobold |
+| 5 | Lavatroll | Nebelgeist | Felstroll | Wolkengeist |
+| 6 | Glutdrache | Meeresdrache | Erddrache | Sturmdrache |
+
+Englische Namen: Spark, Flamelet, Emberling, Fire Goblin, Lava Troll, Ember Dragon · Droplet, Blub, Puddling, Wave Imp, Mist Ghost, Sea Dragon · Pebblet, Pebble, Rockling, Earth Goblin, Rock Troll, Earth Dragon · Cloudlet, Breeze, Gustling, Storm Goblin, Cloud Ghost, Storm Dragon.
 
 Gestaltungsregeln für die Figuren:
 
-- Jede Familie hat eine klare Grundfarbe (Feuer orange-rot, Wasser blau).
+- Jede Familie hat eine klare Grundfarbe (Feuer orange-rot, Wasser blau, Erde ocker-braun, Luft weiß-violett).
 - Jede Stufe ist sichtbar größer und bekommt etwas Neues: Bäckchen, Hörnchen, Hörner, Reißzähne, Krone und Flügel.
-- Unter dem Topf zeigt eine Leiste beide Reihen von klein bis groß.
+- Unter dem Topf zeigt eine Leiste die beiden Reihen des aktuellen Topfs von klein bis groß.
 
-Die Familien Erde und Luft aus Fassung 1 sind im Endlos-Spiel vorerst nicht dabei (siehe Offene Fragen).
+## Töpfe
+
+Es gibt vier Töpfe mit je zwei Familien (umgesetzt). Jeder Topf hat seinen eigenen Bestwert und seine eigene laufende Partie. Ein Topf öffnet sich, sobald im vorherigen 300 Punkte erreicht sind (*Vorschlag*, nach dem Probespielen anpassen).
+
+| Topf | Familien | Freischaltung |
+| --- | --- | --- |
+| Monsterwiese | Feuer + Wasser | von Anfang an |
+| Pilzwald | Erde + Wasser | 300 Punkte in Monsterwiese |
+| Wolkenberg | Luft + Feuer | 300 Punkte in Pilzwald |
+| Gewitterschlucht | Erde + Luft | 300 Punkte in Wolkenberg |
+
+*Vorschlag* für später: Die Töpfe werden zu Kapiteln mit kurzer Geschichte und eigenem Hintergrund (Funke und Tropfen fallen in den Topf einer Köchin und arbeiten sich von Topf zu Topf hinaus).
 
 ## Hilfen
 
@@ -95,7 +108,7 @@ Es gibt zwei Hilfen (umgesetzt, noch ohne Werbung):
 
 So bekommt man Hilfen:
 
-- Sammelalbum: je 3 neu entdeckte Monster → 1 Verwandeln (umgesetzt).
+- Sammelalbum: je 3 neu entdeckte Monster → 1 Verwandeln (umgesetzt; 24 Monster im Album).
 - Mischen: 1× pro Runde. *Vorschlag:* Im fertigen Spiel gibt es Mischen nur gegen freiwillige Werbung, weiterhin höchstens 1× pro Runde.
 - Freiwillige Werbung ansehen → 1 Verwandeln (noch nicht umgesetzt).
 - *Vorschlag:* Tagestopf gespielt → 1 Verwandeln (siehe Offene Fragen).
@@ -167,7 +180,6 @@ Nach jedem Schritt gibt es eine spielbare Version zum Ausprobieren.
 
 | Frage | Vorschlag |
 | --- | --- |
-| Was wird aus Erde und Luft? | Als freischaltbare „Töpfe“: Ab einem bestimmten Bestwert öffnet sich ein neuer Topf mit eigenem Hintergrund und eigener Musik. In späteren Töpfen spielen Erde und Luft mit, was das Spiel schwerer macht. |
-| Was wird aus den 5 Welten? | Als Themen für diese Töpfe weiterverwenden: Monsterwiese, Vulkan & Meer, Eisgebirge & Wüste, Pilzwald & Sumpf, Süßigkeitenland & Wolken. |
+| Kapitel und Geschichte? | Die vier Töpfe zu Kapiteln mit kurzer Bildergeschichte, eigenem Hintergrund und eigener Musik ausbauen. |
 | Gibt es einen Ersatz für das Tagesrätsel? | „Tagestopf“: An einem Tag bekommen alle Spieler dieselbe Monster-Reihenfolge, mit eigenem Tages-Bestwert. Funktioniert ohne Server über einen Startwert aus dem Datum. |
-| Betriebssystem des Computers? | Wird für Schritt 6 gebraucht (Windows, Mac oder Linux). |
+| Betriebssystem des Computers? | Nicht mehr nötig: Die App wird automatisch bei GitHub gebaut. |

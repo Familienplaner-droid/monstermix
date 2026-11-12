@@ -3,7 +3,7 @@ const fs = require('fs');
 const page = fs.readFileSync('src/page.html', 'utf8');
 const game = fs.readFileSync('src/game.js', 'utf8');
 // Bilder: assets/monster/feuer1.webp ... wasser6.webp, Maße in monster.json (erzeugt von tools/bilder.py)
-const FAMILY = { feuer: 'fire', wasser: 'water' };
+const FAMILY = { feuer: 'fire', wasser: 'water', erde: 'earth', luft: 'air' };
 const info = JSON.parse(fs.readFileSync('assets/monster/monster.json', 'utf8'));
 const art = {};
 for (const [name, v] of Object.entries(info)) {
