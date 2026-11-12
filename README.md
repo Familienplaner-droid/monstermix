@@ -1,4 +1,4 @@
-# Monsterbrei
+# Potlings
 
 Niedliches Merge-Fallspiel für Android: Monster fallen in einen Topf, kullern und verschmelzen.
 
@@ -7,7 +7,7 @@ Niedliches Merge-Fallspiel für Android: Monster fallen in einen Topf, kullern u
 Bei jeder Änderung baut GitHub automatisch eine Testversion der App.
 
 1. Auf dem Android-Handy die Seite **Releases** dieses Repositorys öffnen.
-2. Unter „Testversion“ die Datei `Monsterbrei-Testversion.apk` herunterladen und antippen.
+2. Unter „Testversion“ die Datei `Potlings-Testversion.apk` herunterladen und antippen.
 3. Beim ersten Mal fragt Android, ob Apps aus dieser Quelle installiert werden dürfen – erlauben.
 
 Neue Testversionen lassen sich einfach über die alte installieren; der Spielstand bleibt erhalten.
@@ -21,7 +21,7 @@ Neue Testversionen lassen sich einfach über die alte installieren; der Spielsta
 | `assets/original/` | Monster-Bilder im Original |
 | `assets/monster/` | freigestellte, verkleinerte Monster-Bilder (erzeugt von `tools/bilder.py`) |
 | `test/test.js` | automatische Tests der Regeln plus Zufallspartien |
-| `build.js` | baut `dist/Monsterbrei.html` (Vorschau) und `www/index.html` (App) |
+| `build.js` | baut `dist/Potlings.html` (Vorschau) und `www/index.html` (App) |
 | `android/` | Android-Projekt (Capacitor) |
 | `docs/` | Spielkonzept |
 

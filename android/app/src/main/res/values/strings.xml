@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">Monsterbrei</string>
-    <string name="title_activity_main">Monsterbrei</string>
-    <string name="package_name">com.monsterbrei.game</string>
-    <string name="custom_url_scheme">com.monsterbrei.game</string>
+    <string name="app_name">Potlings</string>
+    <string name="title_activity_main">Potlings</string>
+    <string name="package_name">com.potlings.game</string>
+    <string name="custom_url_scheme">com.potlings.game</string>
 </resources>

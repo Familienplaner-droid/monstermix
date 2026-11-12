@@ -1,4 +1,4 @@
-package com.monsterbrei.game;
+package com.potlings.game;
 
 import com.getcapacitor.BridgeActivity;
 

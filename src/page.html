@@ -1,4 +1,4 @@
-<title>Monsterbrei</title>
+<title>Potlings</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Nunito:wght@500;700;800&display=swap">
 <style>
@@ -124,7 +124,7 @@ h2 { font-family: var(--font-display); font-weight: 800; font-size: 1.7rem; line
 
 <div class="app">
   <div class="top">
-    <h1 class="logo" aria-label="Monsterbrei"><span>Mon</span><span>ster</span><span>brei</span></h1>
+    <h1 class="logo" aria-label="Potlings"><span>Pot</span><span>lings</span></h1>
     <button class="btn ghost small" id="open-album" type="button" data-t="album"></button>
     <button class="btn ghost icon" id="open-settings" type="button">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2.4"/><circle cx="8" cy="17" r="2.4"/></svg>
@@ -264,9 +264,9 @@ h2 { font-family: var(--font-display); font-weight: 800; font-size: 1.7rem; line
   // ---------- Speichern auf dem Gerät ----------
   const KEYS = ['lang', 'best', 'album', 'transforms', 'sound', 'game'];
   const store = {
-    get(k, fallback) { try { const v = localStorage.getItem('monsterbrei.' + k); return v === null ? fallback : JSON.parse(v); } catch (e) { return fallback; } },
-    set(k, v) { try { localStorage.setItem('monsterbrei.' + k, JSON.stringify(v)); } catch (e) { /* ohne Speicher weiterspielen */ } },
-    del(k) { try { localStorage.removeItem('monsterbrei.' + k); } catch (e) { /* egal */ } },
+    get(k, fallback) { try { const v = localStorage.getItem('potlings.' + k); return v === null ? fallback : JSON.parse(v); } catch (e) { return fallback; } },
+    set(k, v) { try { localStorage.setItem('potlings.' + k, JSON.stringify(v)); } catch (e) { /* ohne Speicher weiterspielen */ } },
+    del(k) { try { localStorage.removeItem('potlings.' + k); } catch (e) { /* egal */ } },
   };
 
   let lang, game, best = 0, bestAtStart = 0, aimX = G.W / 2, aiming = false;

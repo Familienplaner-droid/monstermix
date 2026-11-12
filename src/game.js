@@ -1,4 +1,4 @@
-// Monsterbrei – Spiellogik des Fallspiels (ohne Grafik, damit sie automatisch getestet werden kann)
+// Potlings – Spiellogik des Fallspiels (ohne Grafik, damit sie automatisch getestet werden kann)
 const MonsterGame = (() => {
   const W = 360, H = 520;          // Größe des Topfs in Spiel-Einheiten
   const LINE_Y = 96;               // Rand-Linie: liegt ein Monster länger darüber, ist der Topf voll

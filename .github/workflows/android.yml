@@ -48,19 +48,19 @@ jobs:
           ./gradlew assembleDebug --no-daemon -PversionCode=${{ github.run_number }}
 
       - name: APK umbenennen
-        run: cp android/app/build/outputs/apk/debug/app-debug.apk Monsterbrei-Testversion.apk
+        run: cp android/app/build/outputs/apk/debug/app-debug.apk Potlings-Testversion.apk
 
       - uses: actions/upload-artifact@v4
         with:
-          name: Monsterbrei-Testversion
-          path: Monsterbrei-Testversion.apk
+          name: Potlings-Testversion
+          path: Potlings-Testversion.apk
 
       - name: Als Testversion veröffentlichen
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           gh release delete testversion --yes --cleanup-tag || true
-          gh release create testversion Monsterbrei-Testversion.apk \
+          gh release create testversion Potlings-Testversion.apk \
             --title "Testversion Nr. ${{ github.run_number }}" \
-            --notes "Automatisch gebaute Testversion. Datei Monsterbrei-Testversion.apk auf dem Android-Handy herunterladen und installieren." \
+            --notes "Automatisch gebaute Testversion. Datei Potlings-Testversion.apk auf dem Android-Handy herunterladen und installieren." \
             --prerelease --target "${{ github.sha }}"

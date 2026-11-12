@@ -1,10 +1,10 @@
-# Monsterbrei – Spielkonzept
+# Potlings – Spielkonzept
 
-Stand: 12.11.2026 (Fassung 2: Fallspiel statt Wisch-Rätsel)
+Stand: 12.11.2026 (Fassung 2: Fallspiel statt Wisch-Rätsel, neuer Name Potlings)
 
 ## Hinweis für die Umsetzung
 
-Dieses Dokument ist die Vorgabe für das Handyspiel „Monsterbrei“. Die Auftraggeberin bzw. der Auftraggeber hat keine Programmiererfahrung: Bitte Schritt für Schritt vorgehen, jeden Schritt einfach erklären und vor größeren Entscheidungen nachfragen.
+Dieses Dokument ist die Vorgabe für das Handyspiel „Potlings“. Die Auftraggeberin bzw. der Auftraggeber hat keine Programmiererfahrung: Bitte Schritt für Schritt vorgehen, jeden Schritt einfach erklären und vor größeren Entscheidungen nachfragen.
 
 - **Beschlossen** ist alles, was nicht als *Vorschlag* markiert ist.
 - **Vorschläge** sind sinnvolle Annahmen, die bei Bedarf geändert werden dürfen.
@@ -14,15 +14,24 @@ Dieses Dokument ist die Vorgabe für das Handyspiel „Monsterbrei“. Die Auftr
 
 | Thema | Fassung 1 | Fassung 2 |
 | --- | --- | --- |
+| Name | Monsterbrei | Potlings (international verständlich, als Name für eine Spiele-Reihe gedacht) |
 | Spielart | Raster mit Wisch-Steuerung (ähnlich 2048) | Fallspiel mit Kullern (ähnlich Fruit Drop / Wassermelonen-Spiel) |
 | Aufbau | 5 Welten mit ca. 75 handgebauten Rätsel-Leveln | Nur Endlos mit Highscore |
 | Tagesrätsel | Automatisch erzeugtes Rätsel | Entfällt; als *Vorschlag* ersetzt durch den „Tagestopf“ |
 | Level-Editor und Löser | Geplant | Entfallen |
 | Hindernisse und Spezialfelder | Fels, Eisblock, Treibsand, Zauberpilz, Wolke | Entfallen vorerst (siehe Offene Fragen) |
 
+## Name
+
+Das Spiel heißt **Potlings** – die kleinen Monster, die im Topf leben. Der Name ist bewusst als Name für eine Reihe gewählt: Weitere Spiele können andere Spielprinzipien mit denselben Figuren erzählen (z. B. „Potlings: Drop & Merge“, später „Potlings: Match“).
+
+- Vor der Veröffentlichung noch in den amtlichen Markenregistern prüfen (TMview, deckt Deutschland und die EU ab).
+- Technische App-Kennung: `com.potlings.game` – nach der Veröffentlichung im Play Store nicht mehr änderbar.
+- Namen ohne das Wort „Monster“ wurden bewusst bevorzugt, weil Monster Energy gegen solche Namen vorgeht.
+
 ## Überblick
 
-Monsterbrei ist ein niedliches Geschicklichkeits- und Knobelspiel: Man lässt kleine Monster von oben in einen Topf fallen. Sie kullern und stapeln sich, und zwei gleiche verschmelzen zum nächstgrößeren Monster. Ziel ist ein möglichst hoher Punktestand, bevor der Topf überläuft.
+Potlings ist ein niedliches Geschicklichkeits- und Knobelspiel: Man lässt kleine Monster von oben in einen Topf fallen. Sie kullern und stapeln sich, und zwei gleiche verschmelzen zum nächstgrößeren Monster. Ziel ist ein möglichst hoher Punktestand, bevor der Topf überläuft.
 
 | Eckpunkt | Entscheidung |
 | --- | --- |

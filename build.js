@@ -1,4 +1,4 @@
-// Baut aus Spiellogik, Monster-Bildern und Seite zwei fertige Dateien: dist/Monsterbrei.html (Vorschau) und www/index.html (App)
+// Baut aus Spiellogik, Monster-Bildern und Seite zwei fertige Dateien: dist/Potlings.html (Vorschau) und www/index.html (App)
 const fs = require('fs');
 const page = fs.readFileSync('src/page.html', 'utf8');
 const game = fs.readFileSync('src/game.js', 'utf8');
@@ -14,7 +14,7 @@ const html = page.replace('/*__GAME__*/', () => game).replace('/*__ART__*/{}', (
 fs.mkdirSync('dist', { recursive: true });
 fs.mkdirSync('www', { recursive: true });
 // 1) Vorschau-Seite für den Browser (lädt die Physik-Bibliothek aus dem Internet)
-fs.writeFileSync('dist/Monsterbrei.html', html);
+fs.writeFileSync('dist/Potlings.html', html);
 // 2) Seite für die Android-App: vollständig, Physik-Bibliothek eingebaut, läuft ohne Internet
 const matter = fs.readFileSync('node_modules/matter-js/build/matter.min.js', 'utf8');
 const app = html.replace(/<script src="https:\/\/cdnjs[^"]+"><\/script>/, () => '<script>' + matter + '</script>');
@@ -36,4 +36,4 @@ ${app}
 </body>
 </html>
 `);
-console.log('dist/Monsterbrei.html gebaut,', Object.keys(art).length, 'Monster-Bilder,', Math.round(fs.statSync('dist/Monsterbrei.html').size / 1024), 'kB');
+console.log('dist/Potlings.html gebaut,', Object.keys(art).length, 'Monster-Bilder,', Math.round(fs.statSync('dist/Potlings.html').size / 1024), 'kB');
