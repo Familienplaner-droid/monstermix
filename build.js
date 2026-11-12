@@ -10,7 +10,18 @@ for (const [name, v] of Object.entries(info)) {
   const m = name.match(/^([a-z]+)([1-6])$/); if (!m || !FAMILY[m[1]]) continue;
   art[FAMILY[m[1]] + m[2]] = { src: 'data:image/webp;base64,' + fs.readFileSync('assets/monster/' + name + '.webp').toString('base64'), k: v.k };
 }
-const html = page.replace('/*__GAME__*/', () => game).replace('/*__ART__*/{}', () => JSON.stringify(art));
+// Geschichtsbilder (assets/story/*.webp) und Topf-Hintergründe (assets/backgrounds/*.webp), erzeugt von tools/szenen.py
+function embedDir(dir) {
+  const out = {};
+  if (!fs.existsSync(dir)) return out;
+  for (const f of fs.readdirSync(dir).filter(f => f.endsWith('.webp')).sort()) {
+    out[f.replace(/\.webp$/, '')] = 'data:image/webp;base64,' + fs.readFileSync(dir + '/' + f).toString('base64');
+  }
+  return out;
+}
+const story = embedDir('assets/story'), backgrounds = embedDir('assets/backgrounds');
+const html = page.replace('/*__GAME__*/', () => game).replace('/*__ART__*/{}', () => JSON.stringify(art))
+  .replace('/*__STORY__*/{}', () => JSON.stringify(story)).replace('/*__BG__*/{}', () => JSON.stringify(backgrounds));
 fs.mkdirSync('dist', { recursive: true });
 fs.mkdirSync('www', { recursive: true });
 // 1) Vorschau-Seite für den Browser (lädt die Physik-Bibliothek aus dem Internet)
@@ -42,4 +53,4 @@ ${nativeScripts}${app}
 </body>
 </html>
 `);
-console.log('dist/Potlings.html gebaut,', Object.keys(art).length, 'Monster-Bilder,', Math.round(fs.statSync('dist/Potlings.html').size / 1024), 'kB');
+console.log('dist/Potlings.html gebaut,', Object.keys(art).length, 'Monster-Bilder,', Object.keys(story).length, 'Szenen,', Object.keys(backgrounds).length, 'Hintergründe,', Math.round(fs.statSync('dist/Potlings.html').size / 1024), 'kB');

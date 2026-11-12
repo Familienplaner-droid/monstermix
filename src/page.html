@@ -19,6 +19,7 @@
   --guide: rgba(29, 58, 44, .22);
   --shade: rgba(29, 58, 44, .16);
   --veil: rgba(255, 249, 236, .9);
+  --pot-veil: rgba(255, 252, 244, .42);
   --silhouette: brightness(0);
   --font-display: "Baloo 2", "Nunito", "Trebuchet MS", system-ui, sans-serif;
   --font-body: "Nunito", system-ui, -apple-system, "Segoe UI", sans-serif;
@@ -28,7 +29,7 @@
     --bg: #12211A; --bg-deep: #0D1913; --pot: #1B2A33; --pot-rim: #8E7AA6; --card: #1F382B;
     --pot-wald: #1A2C22; --pot-wolken: #231E33; --pot-sturm: #1E2130;
     --ink: #E7F5EA; --ink-soft: #A3C2B0; --accent: #A98BFF; --on-accent: #1B1038; --danger: #FF8A6B;
-    --guide: rgba(231, 245, 234, .25); --shade: rgba(0, 0, 0, .4); --veil: rgba(27, 42, 51, .9);
+    --guide: rgba(231, 245, 234, .25); --shade: rgba(0, 0, 0, .4); --veil: rgba(27, 42, 51, .9); --pot-veil: rgba(12, 18, 24, .5);
     --silhouette: brightness(0) invert(1);
     color-scheme: dark;
   }
@@ -37,7 +38,7 @@
   --bg: #12211A; --bg-deep: #0D1913; --pot: #1B2A33; --pot-rim: #8E7AA6; --card: #1F382B;
   --pot-wald: #1A2C22; --pot-wolken: #231E33; --pot-sturm: #1E2130;
   --ink: #E7F5EA; --ink-soft: #A3C2B0; --accent: #A98BFF; --on-accent: #1B1038; --danger: #FF8A6B;
-  --guide: rgba(231, 245, 234, .25); --shade: rgba(0, 0, 0, .4); --veil: rgba(27, 42, 51, .9);
+  --guide: rgba(231, 245, 234, .25); --shade: rgba(0, 0, 0, .4); --veil: rgba(27, 42, 51, .9); --pot-veil: rgba(12, 18, 24, .5);
   --silhouette: brightness(0) invert(1);
   color-scheme: dark;
 }
@@ -82,6 +83,7 @@ h2 { font-family: var(--font-display); font-weight: 800; font-size: 1.7rem; line
 
 
 .stage { flex: 1; min-height: 300px; display: flex; justify-content: center; align-items: flex-start; }
+.pot { background-size: cover; background-position: center; }
 .pot { position: relative; max-width: 100%; border: 5px solid var(--pot-rim); border-top: 0; border-radius: 0 0 26px 26px; background: var(--pot); overflow: hidden; box-shadow: 0 4px 0 var(--shade); }
 .pot[data-pot="wald"] { background: var(--pot-wald); }
 .pot[data-pot="wolken"] { background: var(--pot-wolken); }
@@ -149,7 +151,26 @@ h2 { font-family: var(--font-display); font-weight: 800; font-size: 1.7rem; line
 .switch button[aria-pressed="true"] { background: var(--accent); color: var(--on-accent); }
 .sheet .btn.wide { align-self: flex-start; }
 
-@media (prefers-reduced-motion: reduce) { .veil, .sheet { animation: none; } .toast { animation-timing-function: step-end; } }
+.story { z-index: 8; gap: 14px; }
+.story .label { font-size: .75rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-soft); }
+.scene { position: relative; width: 100%; max-width: 100%; aspect-ratio: 4 / 3; border-radius: 22px; overflow: hidden; flex: none; box-shadow: 0 4px 0 var(--shade); background: var(--card); }
+.scene > img.full { width: 100%; height: 100%; object-fit: cover; display: block; }
+.scene .cast { position: absolute; inset: 0; display: flex; align-items: flex-end; justify-content: center; gap: 2%; padding: 0 6% 9%; }
+.scene .cast img { flex: 0 1 22%; min-width: 0; width: 22%; height: auto; }
+.scene .cast img.big { flex-basis: 40%; width: 40%; }
+.scene.storm .cast img { animation: whirl 2.4s ease-in-out infinite alternate; }
+.scene.storm .cast img:nth-child(2n) { animation-delay: -1.2s; }
+.scene.storm .cast { align-items: center; padding-bottom: 0; }
+@keyframes whirl { from { transform: translateY(-14%) rotate(-25deg); } to { transform: translateY(12%) rotate(25deg); } }
+.story .text { font-size: 1.12rem; line-height: 1.5; font-weight: 700; color: var(--ink); max-width: 34ch; text-wrap: pretty; }
+.story .hint { font-weight: 800; color: var(--accent); margin: 0; }
+.story .nav { display: flex; align-items: center; gap: 10px; margin-top: auto; padding-bottom: 4px; }
+.story .dots { display: flex; gap: 6px; margin-right: auto; }
+.story .dots i { width: 8px; height: 8px; border-radius: 50%; background: var(--bg-deep); }
+.story .dots i.on { background: var(--accent); }
+.btn.link { background: transparent; box-shadow: none; color: var(--ink-soft); padding: 10px 12px; }
+.btn.wide2 { align-self: stretch; }
+@media (prefers-reduced-motion: reduce) { .veil, .sheet { animation: none; } .scene.storm .cast img { animation: none; } .toast { animation-timing-function: step-end; } }
 </style>
 
 <div class="app">
@@ -191,6 +212,19 @@ h2 { font-family: var(--font-display); font-weight: 800; font-size: 1.7rem; line
     <div class="sheet-head"><h2 data-t="pots"></h2><button class="btn small" type="button" data-close data-t="close"></button></div>
     <p data-t="potsInfo"></p>
     <div class="cards" id="pot-list"></div>
+    <button class="btn ghost wide2" id="replay-story" type="button" data-t="replayStory"></button>
+  </div>
+
+  <div class="sheet story" id="sheet-story" hidden role="dialog" aria-modal="true" aria-labelledby="story-label">
+    <div class="label" id="story-label"></div>
+    <div class="scene" id="story-scene"></div>
+    <p class="text" id="story-text"></p>
+    <p class="hint" id="story-hint" hidden></p>
+    <div class="nav">
+      <div class="dots" id="story-dots"></div>
+      <button class="btn link" id="story-skip" type="button" data-t="skip"></button>
+      <button class="btn" id="story-next" type="button"></button>
+    </div>
   </div>
 
   <div class="sheet" id="sheet-settings" hidden>
@@ -228,7 +262,25 @@ h2 { font-family: var(--font-display); font-weight: 800; font-size: 1.7rem; line
       pots: 'Töpfe', potsInfo: 'In jedem Topf spielen zwei andere Familien. Ein hoher Bestwert öffnet den nächsten Topf.',
       potNames: { wiese: 'Monsterwiese', wald: 'Pilzwald', wolken: 'Wolkenberg', sturm: 'Gewitterschlucht' },
       potLocked: (n, prev) => `Erreiche ${n} Punkte in „${prev}“.`, potBest: n => `Bestwert ${n}`, potNow: 'Aktuell',
-      potUnlocked: 'Neuer Topf frei', chainOf: (f, a, b) => `${f} von ${a} bis ${b}`, chainIntro: 'Reihenfolge der Monster: ',
+      potUnlocked: 'Neuer Topf frei',
+      replayStory: 'Geschichte noch einmal ansehen', skip: 'Überspringen', next: 'Weiter', go: 'Los geht’s!', theEnd: 'Weiterspielen',
+      hintNext: n => `Schaffe ${n} Punkte, dann geht die Reise weiter.`, hintEnd: n => `Schaffe ${n} Punkte, um den Sturm zu beenden.`,
+      chapter: { prolog: 'Prolog', wiese: 'Kapitel 1 · Monsterwiese', wald: 'Kapitel 2 · Pilzwald', wolken: 'Kapitel 3 · Wolkenberg', sturm: 'Kapitel 4 · Gewitterschlucht', ende: 'Epilog' },
+      story: {
+        p1: 'Mitten auf der Monsterwiese steht der Große Kessel. Hier wohnen die Potlings – kleine Monster aus Feuer, Wasser, Erde und Luft. Treffen sich zwei gleiche, verschmelzen sie und werden größer.',
+        p2: 'Doch eines Nachts zieht ein gewaltiges Gewitter auf. Blitze zucken, der Wind heult – und wirbelt alle Potlings in alle Himmelsrichtungen davon.',
+        k1a: 'Am Morgen wachen Funke und Tropfen in einem alten, verbeulten Topf auf. Von den anderen keine Spur.',
+        k1b: '„Allein sind wir zu klein“, sagt Tropfen. „Aber wenn wir zusammenhalten, werden wir groß genug, um sie alle zu suchen!“',
+        k2a: 'Eine Spur aus Kieselsteinen führt in den Pilzwald. Unter einem Fliegenpilz sitzt Steinchen und weint: Die Erd-Potlings haben sich zwischen den Pilzen verirrt.',
+        k2b: 'Funke bleibt lieber am Waldrand – Feuer und Pilzwald, das geht nicht gut. Also hilft Tropfen allein. Erde und Wasser: Daraus wird ein prima Matsch!',
+        k3a: 'Steinchen weiß, wohin der Sturm die Luft-Potlings geweht hat: ganz nach oben, auf den Wolkenberg.',
+        k3b: 'Kein Problem für Funke! Warme Luft steigt nach oben – und Funke ist sehr warm. Oben wartet schon Wölkchen und hüpft vor Freude.',
+        k4a: 'Wölkchen kennt den Ort, an dem das Gewitter begann: die Gewitterschlucht. Dort grollt und donnert es noch immer.',
+        k4b: 'Steinchen und Wölkchen wagen sich gemeinsam hinein. Erde gibt Halt, Luft gibt Mut.',
+        e1: 'Tief unten in der Schlucht finden sie den Wolkengeist. Er ist gar nicht böse. Er kann nur nicht schlafen – und wer nicht schläft, der donnert.',
+        e2: 'Die Erd-Potlings bauen ihm ein weiches Moosbett, die Luft-Potlings summen ein Wiegenlied. Der Wolkengeist gähnt … und schläft ein.',
+        e3: 'Der Himmel wird blau. Alle Potlings kehren zum Großen Kessel zurück und feiern ein riesiges Fest. Und der Wolkengeist? Der ist jetzt auch eingeladen.',
+      }, chainOf: (f, a, b) => `${f} von ${a} bis ${b}`, chainIntro: 'Reihenfolge der Monster: ',
       unknown: '???', unknownText: 'Noch nicht entdeckt.',
       sfx: 'Ton', music: 'Musik', language: 'Sprache', on: 'An', off: 'Aus',
       resetInfo: 'Löscht Bestwert, Album, Hilfen und die laufende Partie auf diesem Gerät.', reset: 'Alles zurücksetzen', resetSure: 'Wirklich alles löschen?',
@@ -261,7 +313,25 @@ h2 { font-family: var(--font-display); font-weight: 800; font-size: 1.7rem; line
       pots: 'Pots', potsInfo: 'Each pot has two different families. A high best score opens the next pot.',
       potNames: { wiese: 'Monster Meadow', wald: 'Mushroom Forest', wolken: 'Cloud Peak', sturm: 'Thunder Gorge' },
       potLocked: (n, prev) => `Reach ${n} points in “${prev}”.`, potBest: n => `Best ${n}`, potNow: 'Current',
-      potUnlocked: 'New pot unlocked', chainOf: (f, a, b) => `${f} from ${a} to ${b}`, chainIntro: 'Monster order: ',
+      potUnlocked: 'New pot unlocked',
+      replayStory: 'Watch the story again', skip: 'Skip', next: 'Next', go: 'Let’s go!', theEnd: 'Keep playing',
+      hintNext: n => `Reach ${n} points to continue the journey.`, hintEnd: n => `Reach ${n} points to end the storm.`,
+      chapter: { prolog: 'Prologue', wiese: 'Chapter 1 · Monster Meadow', wald: 'Chapter 2 · Mushroom Forest', wolken: 'Chapter 3 · Cloud Peak', sturm: 'Chapter 4 · Thunder Gorge', ende: 'Epilogue' },
+      story: {
+        p1: 'In the middle of the Monster Meadow stands the Great Cauldron. This is home to the Potlings – little monsters made of fire, water, earth and air. When two identical ones meet, they merge and grow bigger.',
+        p2: 'But one night a huge thunderstorm rolls in. Lightning flashes, the wind howls – and it whirls all the Potlings away in every direction.',
+        k1a: 'In the morning, Spark and Droplet wake up in an old, dented pot. There is no sign of the others.',
+        k1b: '“On our own we’re too small,” says Droplet. “But if we stick together, we’ll grow big enough to find them all!”',
+        k2a: 'A trail of pebbles leads into the Mushroom Forest. Under a toadstool sits Pebblet, crying: the earth Potlings got lost among the mushrooms.',
+        k2b: 'Spark stays at the edge of the forest – fire and mushroom forests don’t mix. So Droplet helps alone. Earth and water: that makes excellent mud!',
+        k3a: 'Pebblet knows where the storm blew the air Potlings: all the way up to Cloud Peak.',
+        k3b: 'No problem for Spark! Warm air rises – and Spark is very warm. At the top, Cloudlet is already waiting and bouncing with joy.',
+        k4a: 'Cloudlet knows where the storm began: Thunder Gorge. It is still rumbling and thundering down there.',
+        k4b: 'Pebblet and Cloudlet venture in together. Earth gives them footing, air gives them courage.',
+        e1: 'Deep down in the gorge they find the Cloud Ghost. It isn’t mean at all. It just can’t sleep – and whoever can’t sleep, thunders.',
+        e2: 'The earth Potlings build it a soft bed of moss, the air Potlings hum a lullaby. The Cloud Ghost yawns … and falls asleep.',
+        e3: 'The sky turns blue. All the Potlings return to the Great Cauldron and throw a huge party. And the Cloud Ghost? It’s invited too.',
+      }, chainOf: (f, a, b) => `${f} from ${a} to ${b}`, chainIntro: 'Monster order: ',
       unknown: '???', unknownText: 'Not discovered yet.',
       sfx: 'Sound', music: 'Music', language: 'Language', on: 'On', off: 'Off',
       resetInfo: 'Deletes best score, album, helpers and the current game on this device.', reset: 'Reset everything', resetSure: 'Really delete everything?',
@@ -613,6 +683,69 @@ h2 { font-family: var(--font-display); font-weight: 800; font-size: 1.7rem; line
       monsters: [...game.monsters.values()].map(m => ({ family: m.family, stage: m.stage, x: Math.round(m.body.position.x * 10) / 10, y: Math.round(m.body.position.y * 10) / 10, angle: Math.round(m.body.angle * 100) / 100 })) };
   }
   function saveGame() { if (game && !game.over && game.drops > 0) store.set('game.' + potId, snapshot()); }
+  // ---------- Geschichte ----------
+  // Bilder: assets/story/*.webp (Szenen) und assets/backgrounds/*.webp (Töpfe), beim Bauen eingebettet.
+  // Fehlt ein Bild, zeigt die Szene die beteiligten Monster vor einem Farbverlauf.
+  const STORY_ART = /*__STORY__*/{};
+  const POT_ART = /*__BG__*/{};
+  const SCENES = {
+    prolog1: { cast: ['fire1', 'water1', 'earth1', 'air1', 'fire2', 'water2'], bg: 'linear-gradient(#BFE6FF, #E6F5E4 55%, #9FD69B)' },
+    prolog2: { cast: ['fire1', 'water1', 'earth1', 'air1'], bg: 'linear-gradient(#2C2350, #4B3B78 60%, #2E3D2E)', storm: true },
+    kapitel1: { cast: ['fire1', 'water1'], bg: 'linear-gradient(#FFE6B8, #E6F5E4 55%, #A9D9A0)' },
+    kapitel2: { cast: ['earth1', 'water1'], bg: 'linear-gradient(#CFE6B5, #EEF5E1 50%, #8DB878)' },
+    kapitel3: { cast: ['fire1', 'air1'], bg: 'linear-gradient(#FFC9D9, #F4EFFF 55%, #FFFFFF)' },
+    kapitel4: { cast: ['earth1', 'air1'], bg: 'linear-gradient(#5B4F7A, #8C7FA8 50%, #8A6A4E)' },
+    epilog: { cast: ['earth1', 'air5', 'air1'], big: 'air5', bg: 'linear-gradient(#9FD3FF, #F4EFFF 55%, #A9D9A0)' },
+  };
+  // Kapitel: Seiten mit Szene, Text und Überschrift
+  const CHAPTERS = {
+    intro: [['prolog', 'prolog1', 'p1'], ['prolog', 'prolog2', 'p2'], ['wiese', 'kapitel1', 'k1a'], ['wiese', 'kapitel1', 'k1b']],
+    wald: [['wald', 'kapitel2', 'k2a'], ['wald', 'kapitel2', 'k2b']],
+    wolken: [['wolken', 'kapitel3', 'k3a'], ['wolken', 'kapitel3', 'k3b']],
+    sturm: [['sturm', 'kapitel4', 'k4a'], ['sturm', 'kapitel4', 'k4b']],
+    ende: [['ende', 'epilog', 'e1'], ['ende', 'epilog', 'e2'], ['ende', 'epilog', 'e3']],
+  };
+  const CHAPTER_ORDER = ['intro', 'wald', 'wolken', 'sturm', 'ende'];
+  let seenStory = [], storyQueue = [], storyPage = 0;
+
+  function playStory(ids) {
+    storyQueue = ids.flatMap(id => CHAPTERS[id].map(page => ({ id, page })));
+    if (!storyQueue.length) return;
+    for (const id of ids) if (!seenStory.includes(id)) seenStory.push(id);
+    store.set('story', seenStory);
+    storyPage = 0; paused = true; setMode(null);
+    $('sheet-story').hidden = false;
+    renderStory();
+    $('story-next').focus();
+  }
+  function renderScene(name) {
+    const el = $('story-scene'), sc = SCENES[name];
+    el.className = 'scene' + (!STORY_ART[name] && sc.storm ? ' storm' : '');
+    if (STORY_ART[name]) { el.style.background = ''; el.innerHTML = `<img class="full" alt="" src="${STORY_ART[name]}">`; return; }
+    el.style.background = sc.bg;
+    el.innerHTML = `<div class="cast">${sc.cast.map(k => `<img alt="" src="${SPRITE[k].src}"${k === sc.big ? ' class="big"' : ''}>`).join('')}</div>`;
+  }
+  function renderStory() {
+    const { id, page } = storyQueue[storyPage], [chap, scene, textKey] = page;
+    const last = storyPage === storyQueue.length - 1;
+    const lastOfChapter = last || storyQueue[storyPage + 1].id !== id;
+    $('story-label').textContent = t().chapter[chap];
+    renderScene(scene);
+    $('story-text').textContent = t().story[textKey];
+    const hint = lastOfChapter && id !== 'ende' ? (id === 'sturm' ? t().hintEnd(UNLOCK) : t().hintNext(UNLOCK)) : '';
+    $('story-hint').textContent = hint; $('story-hint').hidden = !hint;
+    $('story-next').textContent = last ? (id === 'ende' ? t().theEnd : t().go) : t().next;
+    $('story-skip').hidden = last;
+    $('story-dots').innerHTML = storyQueue.map((_, i) => `<i${i === storyPage ? ' class="on"' : ''}></i>`).join('');
+  }
+  function closeStory() { $('sheet-story').hidden = true; storyQueue = []; paused = false; }
+  $('story-next').addEventListener('click', () => { wakeAudio(); if (storyPage < storyQueue.length - 1) { storyPage++; renderStory(); } else closeStory(); });
+  $('story-skip').addEventListener('click', closeStory);
+  $('replay-story').addEventListener('click', () => {
+    $('sheet-pots').hidden = true;
+    playStory(CHAPTER_ORDER.filter(id => seenStory.includes(id)));
+  });
+
   function setBest(n) {
     const i = POTS.findIndex(p => p.id === potId);
     const wasOpen = i + 1 < POTS.length && potUnlocked(i + 1);
@@ -621,6 +754,7 @@ h2 { font-family: var(--font-display); font-weight: 800; font-size: 1.7rem; line
       const next = POTS[i + 1];
       toast(SPRITE[next.families[0] + '1'].src, t().potUnlocked, t().potNames[next.id]); sfx.found();
     }
+    if (potId === 'sturm' && n >= UNLOCK && !seenStory.includes('ende')) { sfx.fireworks(); setTimeout(() => playStory(['ende']), 900); }
   }
 
   const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="4" fill="currentColor" opacity=".25"/><path d="M10 8.5v7l6-3.5z" fill="currentColor"/></svg>';
@@ -733,9 +867,11 @@ h2 { font-family: var(--font-display); font-weight: 800; font-size: 1.7rem; line
     pot.dataset.pot = potId;
     newGame(store.get('game.' + potId, null));
     renderPotUI();
+    if (CHAPTERS[potId] && !seenStory.includes(potId)) playStory([potId]);
   }
   function renderPotUI() {
     const p = potOf(potId);
+    pot.style.backgroundImage = POT_ART[p.id] ? `linear-gradient(var(--pot-veil), var(--pot-veil)), url(${POT_ART[p.id]})` : '';
     $('pot-icon').src = SPRITE[p.families[0] + '1'].src;
     $('pot-name').textContent = t().potNames[p.id];
     $('open-pots').setAttribute('aria-label', t().pots + ': ' + t().potNames[p.id]);
@@ -760,7 +896,7 @@ h2 { font-family: var(--font-display); font-weight: 800; font-size: 1.7rem; line
   $('reset').addEventListener('click', () => {
     if (!armed) { resetArmed(true); return; }
     store.keys().filter(k => k !== 'lang' && k !== 'sound').forEach(k => store.del(k));
-    best = 0; bests = {}; album = []; transforms = 0; $('best').textContent = 0;
+    best = 0; bests = {}; album = []; transforms = 0; seenStory = []; $('best').textContent = 0;
     potId = 'wiese'; pot.dataset.pot = potId;
     newGame(); renderPotUI(); resetArmed(false);
     $('sheet-settings').hidden = true; paused = false;
@@ -775,6 +911,7 @@ h2 { font-family: var(--font-display); font-weight: 800; font-size: 1.7rem; line
     });
     renderPotUI();
     if (!$('sheet-pots').hidden) renderPots();
+    if (!$('sheet-story').hidden && storyQueue.length) renderStory();
     canvas.setAttribute('aria-label', t().pot);
     $('open-settings').setAttribute('aria-label', t().settings);
     resetArmed(armed);
@@ -807,6 +944,8 @@ h2 { font-family: var(--font-display); font-weight: 800; font-size: 1.7rem; line
     new MutationObserver(readColors).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
     requestAnimationFrame(frame);
     Ads.preload();
+    const st = store.get('story', []); seenStory = Array.isArray(st) ? st.filter(id => CHAPTERS[id]) : [];
+    if (!seenStory.includes('intro')) playStory(['intro']);
   }
   const hot = window.claude && window.claude.hot;
   if (hot && hot.snapshot) hot.snapshot(() => { saveGame(); return { lang }; });

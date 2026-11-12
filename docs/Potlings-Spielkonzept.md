@@ -97,7 +97,22 @@ Es gibt vier Töpfe mit je zwei Familien (umgesetzt). Jeder Topf hat seinen eige
 | Wolkenberg | Luft + Feuer | 300 Punkte in Pilzwald |
 | Gewitterschlucht | Erde + Luft | 300 Punkte in Wolkenberg |
 
-*Vorschlag* für später: Die Töpfe werden zu Kapiteln mit kurzer Geschichte und eigenem Hintergrund (Funke und Tropfen fallen in den Topf einer Köchin und arbeiten sich von Topf zu Topf hinaus).
+## Geschichte
+
+Die vier Töpfe sind die vier Kapitel einer kurzen Bildergeschichte (umgesetzt, Deutsch und Englisch). Jedes Kapitel hat zwei bis vier Seiten mit Bild und ein bis zwei Sätzen. Es erscheint, wenn man einen Topf zum ersten Mal betritt; Prolog und Kapitel 1 beim allerersten Start. Über das Töpfe-Fenster lässt sich alles Gesehene noch einmal ansehen.
+
+Die Familien-Paare der Töpfe sind in der Geschichte begründet: Feuer meidet den Pilzwald, warme Luft trägt Funke auf den Wolkenberg, Erde und Luft wagen sich gemeinsam in die Schlucht.
+
+| Teil | Wann | Inhalt |
+| --- | --- | --- |
+| Prolog | erster Start | Im Großen Kessel auf der Monsterwiese leben die Potlings. Ein nächtliches Gewitter wirbelt sie in alle Richtungen davon. |
+| Kapitel 1 · Monsterwiese | erster Start | Funke und Tropfen wachen in einem alten Topf auf: „Wenn wir zusammenhalten, werden wir groß genug, um sie alle zu suchen.“ |
+| Kapitel 2 · Pilzwald | erster Besuch | Steinchen weint, die Erd-Potlings haben sich verirrt. Funke bleibt am Waldrand, Tropfen hilft – Erde und Wasser machen Matsch. |
+| Kapitel 3 · Wolkenberg | erster Besuch | Warme Luft trägt Funke nach oben, wo Wölkchen wartet. |
+| Kapitel 4 · Gewitterschlucht | erster Besuch | Steinchen und Wölkchen gehen gemeinsam dorthin, wo das Gewitter begann. |
+| Epilog | 300 Punkte in der Gewitterschlucht | Der Wolkengeist donnert nur, weil er nicht schlafen kann. Moosbett und Wiegenlied – er schläft ein, der Himmel wird blau, alle feiern am Großen Kessel. |
+
+Bilder: 7 Szenen (Querformat 4:3) und 4 Topf-Hintergründe (Hochformat 2:3), von einer Bild-KI erzeugt. Solange ein Bild fehlt, zeigt das Spiel die beteiligten Monster vor einem Farbverlauf.
 
 ## Hilfen
 
@@ -180,6 +195,6 @@ Nach jedem Schritt gibt es eine spielbare Version zum Ausprobieren.
 
 | Frage | Vorschlag |
 | --- | --- |
-| Kapitel und Geschichte? | Die vier Töpfe zu Kapiteln mit kurzer Bildergeschichte, eigenem Hintergrund und eigener Musik ausbauen. |
+| Musik pro Topf? | Eigene ruhige Musik für jedes Kapitel (später mit Suno). |
 | Gibt es einen Ersatz für das Tagesrätsel? | „Tagestopf“: An einem Tag bekommen alle Spieler dieselbe Monster-Reihenfolge, mit eigenem Tages-Bestwert. Funktioniert ohne Server über einen Startwert aus dem Datum. |
 | Betriebssystem des Computers? | Nicht mehr nötig: Die App wird automatisch bei GitHub gebaut. |

@@ -36,6 +36,8 @@ npm run android    # Spiel bauen und ins Android-Projekt kopieren
 
 Neues Monster-Bild einbauen: PNG nach `assets/original/` legen (z. B. `feuer2.png`), dann `python3 tools/bilder.py` und `npm run build`.
 
+Geschichtsbilder und Topf-Hintergründe: `szene-<name>.png` bzw. `topf-<name>.png` nach `assets/original/` legen, dann `python3 tools/szenen.py` und `npm run build`. Namen: `szene-prolog1`, `szene-prolog2`, `szene-kapitel1` … `szene-kapitel4`, `szene-epilog`; `topf-wiese`, `topf-wald`, `topf-wolken`, `topf-sturm`.
+
 ## Werbung
 
 Nur freiwillige Belohnungs-Videos über Google AdMob (Erweiterung `@capacitor-community/admob`). Zurzeit laufen **Google-Test-Anzeigen**. Im Browser erscheint statt des Videos ein Platzhalter.
