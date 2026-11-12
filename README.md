@@ -38,6 +38,8 @@ Neues Monster-Bild einbauen: PNG nach `assets/original/` legen (z. B. `feuer2.pn
 
 Geschichtsbilder und Topf-Hintergründe: `szene-<name>.png` bzw. `topf-<name>.png` nach `assets/original/` legen, dann `python3 tools/szenen.py` und `npm run build`. Namen: `szene-prolog1`, `szene-prolog2`, `szene-kapitel1` … `szene-kapitel4`, `szene-epilog`; `topf-wiese`, `topf-wald`, `topf-wolken`, `topf-sturm`.
 
+Die Topf-Hintergründe kamen mit einem orangen Rahmen von der Bild-KI; die Originale liegen in `assets/original/roh/`, die zugeschnittenen Fassungen in `assets/original/`.
+
 ## Werbung
 
 Nur freiwillige Belohnungs-Videos über Google AdMob (Erweiterung `@capacitor-community/admob`). Zurzeit laufen **Google-Test-Anzeigen**. Im Browser erscheint statt des Videos ein Platzhalter.

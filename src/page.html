@@ -83,7 +83,6 @@ h2 { font-family: var(--font-display); font-weight: 800; font-size: 1.7rem; line
 
 
 .stage { flex: 1; min-height: 300px; display: flex; justify-content: center; align-items: flex-start; }
-.pot { background-size: cover; background-position: center; }
 .pot { position: relative; max-width: 100%; border: 5px solid var(--pot-rim); border-top: 0; border-radius: 0 0 26px 26px; background: var(--pot); overflow: hidden; box-shadow: 0 4px 0 var(--shade); }
 .pot[data-pot="wald"] { background: var(--pot-wald); }
 .pot[data-pot="wolken"] { background: var(--pot-wolken); }
@@ -872,6 +871,7 @@ h2 { font-family: var(--font-display); font-weight: 800; font-size: 1.7rem; line
   function renderPotUI() {
     const p = potOf(potId);
     pot.style.backgroundImage = POT_ART[p.id] ? `linear-gradient(var(--pot-veil), var(--pot-veil)), url(${POT_ART[p.id]})` : '';
+    pot.style.backgroundSize = POT_ART[p.id] ? 'cover' : ''; pot.style.backgroundPosition = POT_ART[p.id] ? 'center' : '';
     $('pot-icon').src = SPRITE[p.families[0] + '1'].src;
     $('pot-name').textContent = t().potNames[p.id];
     $('open-pots').setAttribute('aria-label', t().pots + ': ' + t().potNames[p.id]);
