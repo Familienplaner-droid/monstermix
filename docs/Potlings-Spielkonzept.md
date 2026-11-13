@@ -152,17 +152,17 @@ Bilder: 7 Szenen (Querformat 4:3) und 4 Topf-Hintergründe (Hochformat 2:3), von
 
 ## Hilfen
 
-Es gibt zwei Hilfen (umgesetzt, noch ohne Werbung):
+Es gibt zwei Hilfen, beide als Vorrat, der erhalten bleibt (umgesetzt):
 
-- **Verwandeln:** Der Spieler tippt ein Monster im Topf an, es wechselt die Familie und behält seine Stufe. Liegt es danach neben einem gleichen Monster, verschmelzen beide sofort.
+- **Verwandeln:** Der Spieler tippt ein Monster im Topf an, es wechselt die Familie und behält seine Stufe. Bei mehr als zwei Familien wählt er die Zielfamilie aus. Liegt es danach neben einem gleichen Monster, verschmelzen beide sofort.
 - **Mischen:** Der Topf wird kräftig durchgeschüttelt. Danach gibt es eine kurze Schonfrist, bis sich alles gesetzt hat.
 
 So bekommt man Hilfen:
 
-- Sammelalbum: je 3 neu entdeckte Monster → 1 Verwandeln (umgesetzt; 24 Monster im Album).
-- Mischen: 1× pro Runde. *Vorschlag:* Im fertigen Spiel gibt es Mischen nur gegen freiwillige Werbung, weiterhin höchstens 1× pro Runde.
-- Freiwillige Werbung ansehen → 1 Verwandeln (noch nicht umgesetzt).
-- *Vorschlag:* Tagestopf gespielt → 1 Verwandeln (siehe Offene Fragen).
+- **Startvorrat:** je 3× Verwandeln und Mischen.
+- **Tagesgeschenk:** beim ersten Öffnen jedes Tages je 3× Verwandeln und Mischen. Mit einem freiwilligen Video verdoppelt sich das Geschenk auf je 6×. Angezeigt werden die Tage in Folge („3 Tage in Folge“). Ohne Internet gibt es das normale Geschenk.
+- **Sammelalbum:** je 3 neu entdeckte Monster → 1× Verwandeln.
+- **Weiterspielen** bei „Topf voll“ bleibt eine eigene Belohnung (einmal pro Runde gegen Video).
 
 ## Sammelalbum
 

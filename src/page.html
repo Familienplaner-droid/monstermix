@@ -154,6 +154,16 @@ h2 { font-family: var(--font-display); font-weight: 800; font-size: 1.7rem; line
 .freecard { width: 100%; text-align: left; border: 0; cursor: pointer; font: inherit; color: inherit; }
 .freecard .pair img { width: 40px; height: 40px; }
 .sheet .note { margin: 0; font-weight: 800; color: var(--accent); }
+/* Tagesgeschenk */
+.gift { z-index: 9; justify-content: center; align-items: center; text-align: center; background: var(--veil); }
+.gift .box { background: var(--card); border-radius: 26px; padding: 22px 18px; display: flex; flex-direction: column; align-items: center; gap: 10px; width: 100%; max-width: 360px; box-shadow: 0 4px 0 var(--shade); }
+.gift .box > img { width: 96px; height: 96px; animation: pop .6s ease-out; }
+.gift .loot { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+.gift .loot span { background: var(--bg-deep); border-radius: 999px; padding: 6px 14px; font-weight: 800; font-variant-numeric: tabular-nums; }
+.gift .btn { align-self: stretch; }
+.gift .days { font-size: .8rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--accent); }
+.gift .fail { margin: 0; color: var(--danger); font-weight: 700; font-size: .85rem; }
+@keyframes pop { 0% { transform: scale(.6); } 60% { transform: scale(1.12); } 100% { transform: scale(1); } }
 /* Pokale */
 .trophies { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
 .trophy { background: var(--card); border-radius: 18px; padding: 12px 10px; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 4px; min-width: 0; }
@@ -274,6 +284,19 @@ h2 { font-family: var(--font-display); font-weight: 800; font-size: 1.7rem; line
     <button class="btn wide2" id="free-start" type="button"></button>
   </div>
 
+  <div class="sheet gift" id="sheet-gift" hidden role="dialog" aria-modal="true" aria-labelledby="gift-title">
+    <div class="box">
+      <img alt="" id="gift-img">
+      <div class="days" id="gift-days"></div>
+      <h2 id="gift-title" data-t="giftTitle"></h2>
+      <p id="gift-text"></p>
+      <div class="loot"><span id="gift-t"></span><span id="gift-s"></span></div>
+      <button class="btn video" id="gift-double" type="button"></button>
+      <button class="btn ghost" id="gift-take" type="button" data-t="giftTake"></button>
+      <p class="small fail" id="gift-note" hidden></p>
+    </div>
+  </div>
+
   <div class="sheet" id="sheet-trophies" hidden>
     <div class="sheet-head"><h2 data-t="trophies"></h2><button class="btn small" type="button" data-close data-t="close"></button></div>
     <p id="trophy-count"></p>
@@ -324,6 +347,9 @@ h2 { font-family: var(--font-display); font-weight: 800; font-size: 1.7rem; line
       privacyAds: 'Werbe-Einwilligung', change: 'Ändern',
       found: 'Neu entdeckt', bonus: '+1 Verwandeln',
       albumCount: (n, all, left) => `${n} von ${all} Monstern entdeckt.` + (n < all ? ` Noch ${left} bis zum nächsten Verwandeln.` : ''),
+      giftTitle: 'Tagesgeschenk', giftText: 'Schön, dass du wieder da bist! Für heute gibt es:', giftFirst: 'Schön, dass du da bist! Zum Start gibt es:', giftTake: 'Abholen',
+      giftDouble: 'Video ansehen: doppelt so viel', giftLoot: (n, w) => `+${n} ${w}`, giftDays: n => n > 1 ? `${n} Tage in Folge` : 'Willkommen',
+      giftNoReward: 'Video abgebrochen. Du kannst das Geschenk trotzdem abholen.', giftGot: 'Tagesgeschenk', giftGotText: (a, b) => `+${a} Verwandeln · +${b} Mischen`,
       play: 'Spielen', storyHead: 'Geschichte', freePlay: 'Freies Spiel',
       freeInfo: 'Stell dir deinen eigenen Topf zusammen: Familien, Hintergrund und Zeitdruck. Je weiter du in der Geschichte kommst, desto mehr wird frei.',
       familiesHead: 'Familien', backgroundHead: 'Hintergrund', timerHead: 'Zeitdruck', timerLabel: 'Monster fällt nach',
@@ -374,7 +400,7 @@ h2 { font-family: var(--font-display); font-weight: 800; font-size: 1.7rem; line
       }, chainOf: (f, a, b) => `${f} von ${a} bis ${b}`, chainIntro: 'Reihenfolge der Monster: ',
       unknown: '???', unknownText: 'Noch nicht entdeckt.',
       sfx: 'Ton', music: 'Musik', language: 'Sprache', on: 'An', off: 'Aus',
-      resetInfo: 'Löscht Bestwert, Album, Hilfen und die laufende Partie auf diesem Gerät.', reset: 'Alles zurücksetzen', resetSure: 'Wirklich alles löschen?',
+      resetInfo: 'Löscht Bestwerte, Album, Pokale, Hilfen und alle laufenden Partien auf diesem Gerät.', reset: 'Alles zurücksetzen', resetSure: 'Wirklich alles löschen?',
       pot: 'Topf – mit Pfeiltasten zielen, mit Leertaste fallen lassen',
       fam: { fire: 'Feuer', water: 'Wasser', earth: 'Erde', air: 'Luft', candy: 'Zucker' },
       challenge: 'Herausforderung', challengeInfo: 'Für alle, die es schwerer mögen. Gilt für jeden Topf.',
@@ -409,6 +435,9 @@ h2 { font-family: var(--font-display); font-weight: 800; font-size: 1.7rem; line
       privacyAds: 'Ad consent', change: 'Change',
       found: 'Discovered', bonus: '+1 Transform',
       albumCount: (n, all, left) => `${n} of ${all} monsters discovered.` + (n < all ? ` ${left} more until the next Transform.` : ''),
+      giftTitle: 'Daily gift', giftText: 'Nice to see you again! Today you get:', giftFirst: 'Nice to have you here! To get started you get:', giftTake: 'Collect',
+      giftDouble: 'Watch a video: get double', giftLoot: (n, w) => `+${n} ${w}`, giftDays: n => n > 1 ? `${n} days in a row` : 'Welcome',
+      giftNoReward: 'Video cancelled. You can still collect the gift.', giftGot: 'Daily gift', giftGotText: (a, b) => `+${a} Transform · +${b} Shake`,
       play: 'Play', storyHead: 'Story', freePlay: 'Free play',
       freeInfo: 'Build your own pot: families, background and time pressure. The further you get in the story, the more you unlock.',
       familiesHead: 'Families', backgroundHead: 'Background', timerHead: 'Time pressure', timerLabel: 'Monster drops after',
@@ -459,7 +488,7 @@ h2 { font-family: var(--font-display); font-weight: 800; font-size: 1.7rem; line
       }, chainOf: (f, a, b) => `${f} from ${a} to ${b}`, chainIntro: 'Monster order: ',
       unknown: '???', unknownText: 'Not discovered yet.',
       sfx: 'Sound', music: 'Music', language: 'Language', on: 'On', off: 'Off',
-      resetInfo: 'Deletes best score, album, helpers and the current game on this device.', reset: 'Reset everything', resetSure: 'Really delete everything?',
+      resetInfo: 'Deletes best scores, album, trophies, helpers and all current games on this device.', reset: 'Reset everything', resetSure: 'Really delete everything?',
       pot: 'Pot – aim with the arrow keys, drop with the space bar',
       fam: { fire: 'Fire', water: 'Water', earth: 'Earth', air: 'Air', candy: 'Candy' },
       challenge: 'Challenge', challengeInfo: 'For anyone who likes it harder. Applies to every pot.',
@@ -633,7 +662,8 @@ h2 { font-family: var(--font-display); font-weight: 800; font-size: 1.7rem; line
     const now = POTS.filter((p, i) => potUnlocked(i)).map(p => p.id);
     if (now.length !== opened.length) { opened = now; store.set('opened', opened); }
   }
-  let album = [], transforms = 0, shakesLeft = 1, revivesLeft = 1, mode = null, paused = false;
+  let album = [], transforms = 0, shakes = 0, revivesLeft = 1, mode = null, paused = false;
+  const GIFT = 3, START_HELPS = 3;                    // Tagesgeschenk und Startvorrat je Hilfe
   let sound = { sfx: true, music: true };
   let effects = [], floats = [], born = new Map(), colors = {}, shownScore = -1;
   const t = () => TEXT[lang];
@@ -826,7 +856,7 @@ h2 { font-family: var(--font-display); font-weight: 800; font-size: 1.7rem; line
 
   // ---------- Statistik und Pokale ----------
   const defaultStats = () => ({ merges: 0, drops: 0, games: 0, fireworks: 0, bestStreak: 0, maxChain: 0, dragons: {}, bestRound: 0,
-    stormBest: 0, fiveBest: 0, days: 0, lastDay: '', transformsUsed: 0, revives: 0 });
+    stormBest: 0, fiveBest: 0, days: 0, inARow: 0, lastDay: '', transformsUsed: 0, revives: 0 });
   let stats = defaultStats(), trophies = {}, chainNow = 0, lastTrophyCheck = 0, toastQueue = [];
   // Pokale: Ziele für Bronze, Silber, Gold (bei nur einem Ziel gibt es direkt Gold)
   const TROPHIES = [
@@ -877,6 +907,41 @@ h2 { font-family: var(--font-display); font-weight: 800; font-size: 1.7rem; line
     }).join('');
   }
   $('open-trophies').addEventListener('click', () => { wakeAudio(); openSheet('sheet-trophies'); });
+  // ---------- Tagesgeschenk: einmal am Tag Hilfen, mit Video doppelt ----------
+  let giftPending = false;
+  const GIFT_ICON = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96">
+    <rect x="14" y="40" width="68" height="46" rx="8" fill="#7A4DE0"/><rect x="10" y="28" width="76" height="18" rx="6" fill="#9C77F0"/>
+    <rect x="42" y="28" width="12" height="58" fill="#FFC93C"/><path d="M48 28c-6-14-24-18-24-8 0 6 10 8 24 8zM48 28c6-14 24-18 24-8 0 6-10 8-24 8z" fill="#FFC93C"/>
+    <circle cx="70" cy="58" r="3" fill="#FFFFFF" opacity=".6"/><circle cx="26" cy="70" r="2.5" fill="#FFFFFF" opacity=".5"/></svg>`);
+  function showGift() {
+    giftPending = false; paused = true; setMode(null); closePicker();
+    $('gift-img').src = GIFT_ICON;
+    $('gift-days').textContent = t().giftDays(stats.inARow || 1);
+    $('gift-text').textContent = stats.days <= 1 ? t().giftFirst : t().giftText;
+    $('gift-t').textContent = t().giftLoot(GIFT, t().transform);
+    $('gift-s').textContent = t().giftLoot(GIFT, t().shake);
+    $('gift-double').innerHTML = `${PLAY_ICON}<span>${t().giftDouble}</span>`; $('gift-double').disabled = false;
+    $('gift-note').hidden = true;
+    $('sheet-gift').hidden = false;
+  }
+  function takeGift(factor) {
+    const n = GIFT * factor;
+    transforms += n; shakes += n;
+    store.set('transforms', transforms); store.set('shakes', shakes); store.set('gift', new Date().toLocaleDateString('sv'));
+    renderHelps();
+    $('sheet-gift').hidden = true; paused = false;
+    toast(GIFT_ICON, t().giftGot, t().giftGotText(n, n)); sfx.found();
+  }
+  $('gift-take').addEventListener('click', () => { wakeAudio(); takeGift(1); });
+  $('gift-double').addEventListener('click', async () => {
+    wakeAudio(); $('gift-double').disabled = true;
+    const r = await Ads.show();
+    if (r === 'reward') { takeGift(2); return; }
+    paused = true;
+    $('gift-note').textContent = r === 'cancel' ? t().giftNoReward : t().adFail;
+    $('gift-note').hidden = false; $('gift-double').disabled = false;
+  });
+
   // Punkte einer Runde in die Statistik übernehmen
   function noteScore(score) {
     if (score > stats.bestRound) stats.bestRound = score;
@@ -927,6 +992,7 @@ h2 { font-family: var(--font-display); font-weight: 800; font-size: 1.7rem; line
     }
     if (now - lastTrophyCheck > 1000) {
       lastTrophyCheck = now; checkTrophies();
+      if (giftPending && [...document.querySelectorAll('.sheet')].every(el => el.hidden)) showGift();
       if (toastQueue.length && !pot.querySelector('.toast')) { const [src, small, text] = toastQueue.shift(); toast(src, small, text); sfx.found(); }
     }
     if (now - lastSave > 2000) { lastSave = now; saveGame(); store.set('stats', stats); }
@@ -935,7 +1001,7 @@ h2 { font-family: var(--font-display); font-weight: 800; font-size: 1.7rem; line
   }
 
   function snapshot() {
-    return { score: game.score, drops: game.drops, current: game.current, shakesLeft, revivesLeft, families: game.families, timer: game.autoDrop,
+    return { score: game.score, drops: game.drops, current: game.current, revivesLeft, families: game.families, timer: game.autoDrop,
       monsters: [...game.monsters.values()].map(m => ({ family: m.family, stage: m.stage, x: Math.round(m.body.position.x * 10) / 10, y: Math.round(m.body.position.y * 10) / 10, angle: Math.round(m.body.angle * 100) / 100 })) };
   }
   function saveGame() { if (game && !game.over && game.drops > 0) store.set('game.' + potId, snapshot()); }
@@ -1048,14 +1114,13 @@ h2 { font-family: var(--font-display); font-weight: 800; font-size: 1.7rem; line
     const timer = potId !== 'frei' ? 0 : saved && Number.isFinite(saved.timer) ? saved.timer : free.timer;
     game = G.create(Matter, { families: savedFams || familiesFor(potId), autoDrop: timer });
     best = bests[bestKey()] || 0; $('best').textContent = best;
-    born = new Map(); effects = []; shownScore = -1; aimX = G.W / 2; shakesLeft = 1; revivesLeft = 1; overNote = ''; mode = null;
+    born = new Map(); effects = []; shownScore = -1; aimX = G.W / 2; revivesLeft = 1; overNote = ''; mode = null;
     bestAtStart = best;
     if (saved && Array.isArray(saved.monsters)) {
       const fams = game.families;
       for (const m of saved.monsters) if (fams.includes(m.family) && G.RADII[m.stage]) game.add(m.family, m.stage, m.x, m.y, m.angle || 0);
       game.score = saved.score || 0; game.drops = saved.drops || 0;
       if (saved.current && fams.includes(saved.current.family)) game.current = saved.current;
-      shakesLeft = saved.shakesLeft === 0 ? 0 : 1;
       revivesLeft = saved.revivesLeft === 0 ? 0 : 1;
       saveGame();                                     // sofort wieder sichern, falls die App gleich geschlossen wird
     }
@@ -1066,13 +1131,13 @@ h2 { font-family: var(--font-display); font-weight: 800; font-size: 1.7rem; line
   // ---------- Hilfen ----------
   function setMode(m) { mode = m; $('help-transform').setAttribute('aria-pressed', String(m === 'transform')); }
   function renderHelps() {
-    $('n-transform').textContent = transforms; $('n-shake').textContent = shakesLeft;
-    $('help-transform').disabled = transforms < 1; $('help-shake').disabled = shakesLeft < 1;
+    $('n-transform').textContent = transforms; $('n-shake').textContent = shakes;
+    $('help-transform').disabled = transforms < 1; $('help-shake').disabled = shakes < 1;
   }
   $('help-transform').addEventListener('click', () => { wakeAudio(); closePicker(); if (game.over || !game.monsters.size) return; setMode(mode === 'transform' ? null : 'transform'); });
   $('help-shake').addEventListener('click', () => {
     wakeAudio(); setMode(null);
-    if (shakesLeft > 0 && game.shake()) { shakesLeft--; renderHelps(); }
+    if (shakes > 0 && game.shake()) { shakes--; store.set('shakes', shakes); renderHelps(); }
   });
 
   function doTransform(m, fam) {
@@ -1234,7 +1299,8 @@ h2 { font-family: var(--font-display); font-weight: 800; font-size: 1.7rem; line
   $('reset').addEventListener('click', () => {
     if (!armed) { resetArmed(true); return; }
     store.keys().filter(k => k !== 'lang' && k !== 'sound').forEach(k => store.del(k));
-    best = 0; bests = {}; opened = []; album = []; transforms = 0; seenStory = []; $('best').textContent = 0;
+    best = 0; bests = {}; opened = []; album = []; transforms = START_HELPS; shakes = START_HELPS; seenStory = []; $('best').textContent = 0;
+    store.set('transforms', transforms); store.set('shakes', shakes);
     free = { families: ['fire', 'water'], bg: 'wiese', timer: 0 }; stats = defaultStats(); trophies = {};
     potId = 'wiese';
     newGame(); renderPotUI(); resetArmed(false);
@@ -1283,7 +1349,10 @@ h2 { font-family: var(--font-display); font-weight: 800; font-size: 1.7rem; line
     potId = store.get('pot', 'wiese');
     if (potId !== 'frei' && (POTS.findIndex(p => p.id === potId) < 0 || !potUnlocked(POTS.findIndex(p => p.id === potId)))) potId = 'wiese';
     const a = store.get('album', []); album = Array.isArray(a) ? a.filter(k => SPRITE[k]) : [];
-    transforms = Math.max(0, +store.get('transforms', 0) || 0);
+    const tf = store.get('transforms', null), sh = store.get('shakes', null);
+    transforms = tf === null ? START_HELPS : Math.max(0, +tf || 0);
+    shakes = sh === null ? START_HELPS : Math.max(0, +sh || 0);
+    store.set('transforms', transforms); store.set('shakes', shakes);
     const st0 = store.get('story', []); seenStory = Array.isArray(st0) ? st0.filter(id => CHAPTERS[id]) : [];
     const fr = store.get('free', null);
     if (fr && typeof fr === 'object') {
@@ -1294,7 +1363,12 @@ h2 { font-family: var(--font-display); font-weight: 800; font-size: 1.7rem; line
     stats = Object.assign(defaultStats(), store.get('stats', {}) || {});
     const tr = store.get('trophies', null); trophies = tr && typeof tr === 'object' ? tr : {};
     const today = new Date().toLocaleDateString('sv');
-    if (stats.lastDay !== today) { stats.lastDay = today; stats.days++; store.set('stats', stats); }
+    if (stats.lastDay !== today) {
+      const y = new Date(); y.setDate(y.getDate() - 1);
+      stats.inARow = stats.lastDay === y.toLocaleDateString('sv') ? (stats.inARow || 1) + 1 : 1;
+      stats.lastDay = today; stats.days++; store.set('stats', stats);
+    }
+    giftPending = store.get('gift', '') !== today;
     const snd = store.get('sound', null); if (snd && typeof snd === 'object') sound = { sfx: snd.sfx !== false, music: snd.music !== false };
     newGame(data.game || store.get('game.' + potId, null));
     renderTexts(); readColors(); resize();
