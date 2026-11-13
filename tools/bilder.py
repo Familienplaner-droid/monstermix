@@ -33,8 +33,10 @@ def cutout(rgba):
     return out, mask
 
 info = {}
+import re
 for path in sorted(glob.glob('assets/original/*.png')):
     name = os.path.splitext(os.path.basename(path))[0]
+    if not re.fullmatch(r'(feuer|wasser|erde|luft|zucker)[1-6]', name): continue   # nur Monster-Bilder
     rgba = np.array(Image.open(path).convert('RGBA'))
     out, mask = cutout(rgba)
     dist = ndi.distance_transform_edt(mask)           # größter Kreis, der in den Körper passt
