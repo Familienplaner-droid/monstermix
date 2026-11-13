@@ -174,7 +174,7 @@ Das Spiel ist kostenlos und zeigt nur Werbung, die der Spieler selbst auslöst; 
 
 - **Belohnungs-Werbung:** nur auf Knopfdruck. Keine Banner, keine Zwangs-Werbung.
   - **Weiterspielen** (umgesetzt, mit Google-Test-Anzeigen): Bei „Topf voll“ einmal pro Runde ein Video ansehen; dafür verschwinden alle Monster, die in die obere Topfhälfte ragen. Bricht man das Video ab, gibt es keine Belohnung.
-  - *Vorschlag, noch offen:* Mischen 1× pro Runde gegen Video statt gratis; +1 Verwandeln gegen Video mit Tageslimit.
+  - **Tagesgeschenk verdoppeln** (umgesetzt, mit Google-Test-Anzeigen): einmal am Tag je 3× Verwandeln und Mischen zusätzlich.
 - **Einwilligung (DSGVO):** Vor dem ersten Video fragt Googles Einwilligungs-Tool (UMP) nach, falls nötig. In den Einstellungen lässt sich die Einwilligung später ändern (umgesetzt; das Formular selbst wird im AdMob-Konto eingerichtet).
 - **Kauf „Werbefrei“:** einmalig, 1,99 €. *Vorschlag:* Danach gibt es die Belohnungen ohne Video, mit gleicher Begrenzung.
 - **Technik:** Werbung über Google AdMob, Kauf über Google Play Billing (*Vorschlag*).
