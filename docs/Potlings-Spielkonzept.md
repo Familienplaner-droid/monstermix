@@ -100,14 +100,14 @@ Für erfahrene Spieler, die es schwerer haben möchten. In den Einstellungen, gi
 
 ## Töpfe
 
-Es gibt vier Töpfe mit je zwei Familien (umgesetzt). Jeder Topf hat seinen eigenen Bestwert und seine eigene laufende Partie. Ein Topf öffnet sich, sobald im vorherigen 300 Punkte erreicht sind (*Vorschlag*, nach dem Probespielen anpassen).
+Es gibt vier Töpfe mit je zwei Familien (umgesetzt). Jeder Topf hat seinen eigenen Bestwert und seine eigene laufende Partie. Ein Topf öffnet sich, sobald im vorherigen 1000 Punkte erreicht sind (nach dem Probespielen von 300 erhöht). Einmal geöffnete Töpfe bleiben offen.
 
 | Topf | Familien | Freischaltung |
 | --- | --- | --- |
 | Monsterwiese | Feuer + Wasser | von Anfang an |
-| Pilzwald | Erde + Wasser | 300 Punkte in Monsterwiese |
-| Wolkenberg | Luft + Feuer | 300 Punkte in Pilzwald |
-| Gewitterschlucht | Erde + Luft | 300 Punkte in Wolkenberg |
+| Pilzwald | Erde + Wasser | 1000 Punkte in Monsterwiese |
+| Wolkenberg | Luft + Feuer | 1000 Punkte in Pilzwald |
+| Gewitterschlucht | Erde + Luft | 1000 Punkte in Wolkenberg |
 
 ## Geschichte
 
@@ -122,7 +122,7 @@ Die Familien-Paare der Töpfe sind in der Geschichte begründet: Feuer meidet de
 | Kapitel 2 · Pilzwald | erster Besuch | Steinchen weint, die Erd-Potlings haben sich verirrt. Funke bleibt am Waldrand, Tropfen hilft – Erde und Wasser machen Matsch. |
 | Kapitel 3 · Wolkenberg | erster Besuch | Warme Luft trägt Funke nach oben, wo Wölkchen wartet. |
 | Kapitel 4 · Gewitterschlucht | erster Besuch | Steinchen und Wölkchen gehen gemeinsam dorthin, wo das Gewitter begann. |
-| Epilog | 300 Punkte in der Gewitterschlucht | Der Wolkengeist donnert nur, weil er nicht schlafen kann. Moosbett und Wiegenlied – er schläft ein, der Himmel wird blau, alle feiern am Großen Kessel. |
+| Epilog | 1000 Punkte in der Gewitterschlucht | Der Wolkengeist donnert nur, weil er nicht schlafen kann. Moosbett und Wiegenlied – er schläft ein, der Himmel wird blau, alle feiern am Großen Kessel. |
 
 Bilder: 7 Szenen (Querformat 4:3) und 4 Topf-Hintergründe (Hochformat 2:3), von einer Bild-KI erzeugt. Solange ein Bild fehlt, zeigt das Spiel die beteiligten Monster vor einem Farbverlauf.
 

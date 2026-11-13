@@ -426,7 +426,7 @@ h2 { font-family: var(--font-display); font-weight: 800; font-size: 1.7rem; line
   const SPRITE = {}, SIZE = {};              // SIZE: Bildbreite im Verhältnis zum Körper-Durchmesser
   const FAMILIES = ['fire', 'water', 'earth', 'air', 'candy'];
   // Töpfe: je zwei Familien. Ein Topf öffnet sich, wenn im vorherigen der Bestwert UNLOCK erreicht ist.
-  const UNLOCK = 300;
+  const UNLOCK = 1000;
   const POTS = [
     { id: 'wiese', families: ['fire', 'water'] },
     { id: 'wald', families: ['earth', 'water'] },
@@ -523,7 +523,12 @@ h2 { font-family: var(--font-display); font-weight: 800; font-size: 1.7rem; line
   // Familien einer Runde: die zwei des Topfs, dann weitere in fester Reihenfolge
   const familiesFor = id => { const base = potOf(id).families; return base.concat(FAMILIES.filter(f => !base.includes(f))).slice(0, challenge.families); };
   const potOf = id => POTS.find(p => p.id === id) || POTS[0];
-  const potUnlocked = i => i === 0 || (bests[POTS[i - 1].id] || 0) >= UNLOCK;
+  let opened = [];                                   // einmal geöffnete Töpfe bleiben offen
+  const potUnlocked = i => i === 0 || opened.includes(POTS[i].id) || (bests[POTS[i - 1].id] || 0) >= UNLOCK;
+  function rememberOpened() {
+    const now = POTS.filter((p, i) => potUnlocked(i)).map(p => p.id);
+    if (now.length !== opened.length) { opened = now; store.set('opened', opened); }
+  }
   let album = [], transforms = 0, shakesLeft = 1, revivesLeft = 1, mode = null, paused = false;
   let sound = { sfx: true, music: true };
   let effects = [], floats = [], born = new Map(), colors = {}, shownScore = -1;
@@ -827,7 +832,7 @@ h2 { font-family: var(--font-display); font-weight: 800; font-size: 1.7rem; line
   function setBest(n) {
     const i = POTS.findIndex(p => p.id === potId);
     const wasOpen = i + 1 < POTS.length && potUnlocked(i + 1);
-    best = n; bests[potId] = n; store.set('bests', bests); $('best').textContent = best;
+    best = n; bests[potId] = n; store.set('bests', bests); $('best').textContent = best; rememberOpened();
     if (i + 1 < POTS.length && !wasOpen && potUnlocked(i + 1)) {
       const next = POTS[i + 1];
       toast(SPRITE[next.families[0] + '1'].src, t().potUnlocked, t().potNames[next.id]); sfx.found();
@@ -1009,7 +1014,7 @@ h2 { font-family: var(--font-display); font-weight: 800; font-size: 1.7rem; line
   $('reset').addEventListener('click', () => {
     if (!armed) { resetArmed(true); return; }
     store.keys().filter(k => k !== 'lang' && k !== 'sound').forEach(k => store.del(k));
-    best = 0; bests = {}; album = []; transforms = 0; seenStory = []; $('best').textContent = 0;
+    best = 0; bests = {}; opened = []; album = []; transforms = 0; seenStory = []; $('best').textContent = 0;
     potId = 'wiese'; pot.dataset.pot = potId;
     newGame(); renderPotUI(); resetArmed(false);
     $('sheet-settings').hidden = true; paused = false;
@@ -1044,6 +1049,12 @@ h2 { font-family: var(--font-display); font-weight: 800; font-size: 1.7rem; line
     const oldGame = store.get('game', null);
     if (oldGame && !store.get('game.wiese', null)) store.set('game.wiese', oldGame);
     store.del('best'); store.del('game');
+    const op = store.get('opened', null);
+    if (Array.isArray(op)) opened = op.filter(id => POTS.some(p => p.id === id));
+    else {                                              // Umstellung von 300 auf 1000 Punkte: bisher offene Töpfe behalten
+      opened = POTS.filter((p, i) => i === 0 || (bests[POTS[i - 1].id] || 0) >= 300).map(p => p.id);
+      store.set('opened', opened);
+    }
     potId = store.get('pot', 'wiese');
     if (POTS.findIndex(p => p.id === potId) < 0 || !potUnlocked(POTS.findIndex(p => p.id === potId))) potId = 'wiese';
     pot.dataset.pot = potId;
