@@ -88,15 +88,39 @@ Gestaltungsregeln für die Figuren:
 - Jede Stufe ist sichtbar größer und bekommt etwas Neues: Bäckchen, Hörnchen, Hörner, Reißzähne, Krone und Flügel.
 - Unter dem Topf zeigt eine Leiste die beiden Reihen des aktuellen Topfs von klein bis groß.
 
-## Herausforderung (freiwillig)
+## Spielmodi
 
-Für erfahrene Spieler, die es schwerer haben möchten. In den Einstellungen, gilt für jeden Topf (umgesetzt):
+Im Fenster „Spielen“ (Knopf mit dem Topf-Namen) gibt es zwei Bereiche (umgesetzt):
 
-- **Familien im Topf: 2 bis 5.** Zu den zwei Familien des Topfs kommen weitere in fester Reihenfolge (Feuer, Wasser, Erde, Luft, Zucker). Gilt ab der nächsten Runde; eine laufende Runde behält ihre Familien.
-- **Gewitter-Modus:** Ein Ring um das wartende Monster läuft in 4 Sekunden ab, dann fällt es von allein an der zuletzt gezielten Stelle. In der letzten Sekunde tickt es leise. Während „Verwandeln“ ist der Ring angehalten.
-- Unter dem Topf-Knopf steht, welche Herausforderung aktiv ist (z. B. „Gewitter-Modus · 5 Familien“).
-- Bei mehr als zwei Familien wählt man beim Verwandeln die Zielfamilie aus.
-- Bestwerte gelten gemeinsam; mit Herausforderung sind sie schwerer zu erreichen, nicht leichter.
+- **Geschichte:** die vier Töpfe als Kapitel, immer mit zwei Familien und ohne Zeitdruck.
+- **Freies Spiel:** Man stellt sich den Topf selbst zusammen:
+  - **Familien:** beliebig 2 bis 5. Feuer und Wasser sind von Anfang an frei, Erde mit dem Pilzwald, Luft mit dem Wolkenberg, Zucker nach dem Ende der Geschichte.
+  - **Hintergrund:** jeder Topf-Hintergrund, sobald der Topf in der Geschichte geöffnet ist.
+  - **Zeitdruck:** aus, 6 s, 4 s oder 2,5 s. Ein Ring um das wartende Monster läuft ab, dann fällt es an der zuletzt gezielten Stelle; in der letzten Sekunde tickt es leise.
+  - Eigener Bestwert für jede Kombination aus Familien und Zeitdruck. Eine laufende Runde wird fortgesetzt, solange die Einstellung gleich bleibt.
+
+Die frühere „Herausforderung“ in den Einstellungen ist im Freien Spiel aufgegangen.
+
+## Pokale
+
+Eine Pokalwand (Pokal-Knopf oben) sammelt Auszeichnungen, die meisten in Bronze, Silber und Gold (umgesetzt). Neue Pokale werden im Spiel eingeblendet. Das Spiel zählt dafür Verschmelzungen, Serien, Drachen, Spieltage usw. auf dem Gerät mit.
+
+| Pokal | Bronze / Silber / Gold |
+| --- | --- |
+| Topf-Profi | 1000 / 2500 / 5000 Punkte in einer Runde |
+| Fleißiger Koch | 100 / 1000 / 5000 Verschmelzungen insgesamt |
+| Flinke Finger | Serie von 3 / 6 / 10 schnellen Würfen |
+| Kettenreaktion | 3 / 4 / 5 Verschmelzungen durch einen Wurf |
+| Drachenhort | Drachen aus 1 / 3 / 5 Familien |
+| Feuerwerk | 1 / 5 / 20× zwei Drachen verschmolzen |
+| Sammler | 10 / 20 / 30 Monster im Album |
+| Weltenbummler | 2 / 3 / 4 Töpfe geöffnet |
+| Ende gut, alles gut | Geschichte beendet (nur Gold) |
+| Sturmfest | 500 / 1000 / 2500 Punkte im Freien Spiel mit Zeitdruck 4 s oder schneller |
+| Familienfest | 300 / 1000 / 2500 Punkte mit 5 Familien |
+| Stammgast | an 3 / 7 / 30 Tagen gespielt |
+| Zauberlehrling | 1 / 10 / 50× verwandelt |
+| Zweite Chance | 1 / 5 / 20× weitergespielt (Belohnungs-Video) |
 
 ## Töpfe
 

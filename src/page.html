@@ -139,8 +139,35 @@ h2 { font-family: var(--font-display); font-weight: 800; font-size: 1.7rem; line
 .picker .opt { display: flex; flex-direction: column; align-items: center; gap: 2px; background: var(--card); border-radius: 16px; padding: 6px 8px; min-width: 64px; font-size: .8rem; font-weight: 800; box-shadow: 0 2px 0 var(--shade); }
 .picker .opt img { width: 44px; height: 44px; }
 .sheet h3.sec { margin-top: 10px; }
-#fam-note { margin: 0; font-weight: 800; color: var(--accent); }
-.switch.wide button { padding: 6px 12px; }
+/* Freies Spiel */
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.famchip { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 8px 6px; border-radius: 16px; background: var(--card); min-width: 64px; font-size: .8rem; font-weight: 800; color: var(--ink); box-shadow: 0 2px 0 var(--shade); }
+.famchip img { width: 40px; height: 40px; }
+.famchip[aria-pressed="true"], .bgpick[aria-pressed="true"] .thumb { outline: 3px solid var(--accent); outline-offset: -3px; }
+.famchip:disabled { cursor: default; color: var(--ink-soft); }
+.famchip:disabled img { filter: var(--silhouette); opacity: .22; }
+.bgpick { display: flex; flex-direction: column; align-items: center; gap: 4px; background: transparent; font-size: .7rem; font-weight: 800; color: var(--ink); width: 78px; padding: 0; }
+.bgpick > span:last-child { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.bgpick .thumb { width: 72px; aspect-ratio: 2 / 3; max-width: 100%; border-radius: 12px; background-size: cover; background-position: center; box-shadow: 0 2px 0 var(--shade); }
+.bgpick:disabled { cursor: default; color: var(--ink-soft); }
+.bgpick:disabled .thumb { filter: grayscale(1); opacity: .35; }
+.freecard { width: 100%; text-align: left; border: 0; cursor: pointer; font: inherit; color: inherit; }
+.freecard .pair img { width: 40px; height: 40px; }
+.sheet .note { margin: 0; font-weight: 800; color: var(--accent); }
+/* Pokale */
+.trophies { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.trophy { background: var(--card); border-radius: 18px; padding: 12px 10px; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 4px; min-width: 0; }
+.trophy img { width: 54px; height: 54px; }
+.trophy b { font-family: var(--font-display); font-weight: 800; font-size: 1.05rem; line-height: 1.15; }
+.trophy span { font-size: .8rem; font-weight: 700; color: var(--ink-soft); line-height: 1.3; }
+.trophy .pips { display: flex; gap: 4px; }
+.trophy .pips i { width: 10px; height: 10px; border-radius: 50%; background: var(--bg-deep); }
+.trophy .pips i.t1 { background: #CD7F32; } .trophy .pips i.t2 { background: #AEB8C2; } .trophy .pips i.t3 { background: #FFC93C; }
+.trophy .prog { width: 100%; height: 6px; border-radius: 3px; background: var(--bg-deep); overflow: hidden; }
+.trophy .prog i { display: block; height: 100%; background: var(--accent); }
+.trophy small { font-size: .75rem; font-weight: 800; color: var(--ink-soft); font-variant-numeric: tabular-nums; }
+.switch.wide button { padding: 6px 12px; white-space: nowrap; }
+.row { flex-wrap: wrap; }
 .chain .gap { width: 12px; }
 
 .sheet { position: absolute; inset: 0; z-index: 5; background: var(--bg); display: flex; flex-direction: column; gap: 12px; overflow-y: auto; animation: appear .2s ease-out; }
@@ -187,6 +214,9 @@ h2 { font-family: var(--font-display); font-weight: 800; font-size: 1.7rem; line
   <div class="top">
     <h1 class="logo" aria-label="Potlings"><span>Pot</span><span>lings</span></h1>
     <button class="btn ghost small" id="open-album" type="button" data-t="album"></button>
+    <button class="btn ghost icon" id="open-trophies" type="button">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M7 6H4a3 3 0 0 0 4 4M17 6h3a3 3 0 0 1-4 4M12 14v4M8 20h8"/></svg>
+    </button>
     <button class="btn ghost icon" id="open-settings" type="button">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2.4"/><circle cx="8" cy="17" r="2.4"/></svg>
     </button>
@@ -220,10 +250,34 @@ h2 { font-family: var(--font-display); font-weight: 800; font-size: 1.7rem; line
   </div>
 
   <div class="sheet" id="sheet-pots" hidden>
-    <div class="sheet-head"><h2 data-t="pots"></h2><button class="btn small" type="button" data-close data-t="close"></button></div>
+    <div class="sheet-head"><h2 data-t="play"></h2><button class="btn small" type="button" data-close data-t="close"></button></div>
+    <h3 class="sec" data-t="storyHead"></h3>
     <p data-t="potsInfo"></p>
     <div class="cards" id="pot-list"></div>
     <button class="btn ghost wide2" id="replay-story" type="button" data-t="replayStory"></button>
+    <h3 class="sec" data-t="freePlay"></h3>
+    <p data-t="freeInfo"></p>
+    <button class="card potcard freecard" id="open-free" type="button"></button>
+  </div>
+
+  <div class="sheet" id="sheet-free" hidden>
+    <div class="sheet-head"><h2 data-t="freePlay"></h2><button class="btn small" type="button" data-close data-t="close"></button></div>
+    <h3 class="sec" data-t="familiesHead"></h3>
+    <div class="chips" id="free-fams"></div>
+    <p class="note" id="free-fam-hint" hidden data-t="freeMin"></p>
+    <h3 class="sec" data-t="backgroundHead"></h3>
+    <div class="chips" id="free-bgs"></div>
+    <h3 class="sec" data-t="timerHead"></h3>
+    <div class="row"><span data-t="timerLabel"></span><div class="switch wide" data-set="timer"><button id="timer-0" type="button" data-v="0" data-t="off"></button><button id="timer-6" type="button" data-v="6000">6 s</button><button id="timer-4" type="button" data-v="4000">4 s</button><button id="timer-2" type="button" data-v="2500">2,5 s</button></div></div>
+    <p data-t="timerHint"></p>
+    <p class="note" id="free-best"></p>
+    <button class="btn wide2" id="free-start" type="button"></button>
+  </div>
+
+  <div class="sheet" id="sheet-trophies" hidden>
+    <div class="sheet-head"><h2 data-t="trophies"></h2><button class="btn small" type="button" data-close data-t="close"></button></div>
+    <p id="trophy-count"></p>
+    <div class="trophies" id="trophy-list"></div>
   </div>
 
   <div class="sheet story" id="sheet-story" hidden role="dialog" aria-modal="true" aria-labelledby="story-label">
@@ -243,12 +297,6 @@ h2 { font-family: var(--font-display); font-weight: 800; font-size: 1.7rem; line
     <div class="row"><span data-t="sfx"></span><div class="switch" data-set="sfx"><button id="sfx-on" type="button" data-v="1" data-t="on"></button><button id="sfx-off" type="button" data-v="0" data-t="off"></button></div></div>
     <div class="row"><span data-t="music"></span><div class="switch" data-set="music"><button id="music-on" type="button" data-v="1" data-t="on"></button><button id="music-off" type="button" data-v="0" data-t="off"></button></div></div>
     <div class="row"><span data-t="language"></span><div class="switch" data-set="lang"><button id="lang-de" type="button" data-v="de">Deutsch</button><button id="lang-en" type="button" data-v="en">English</button></div></div>
-    <h3 class="sec" data-t="challenge"></h3>
-    <p data-t="challengeInfo"></p>
-    <div class="row"><span data-t="familiesLabel"></span><div class="switch wide" data-set="families"><button id="fam-2" type="button" data-v="2">2</button><button id="fam-3" type="button" data-v="3">3</button><button id="fam-4" type="button" data-v="4">4</button><button id="fam-5" type="button" data-v="5">5</button></div></div>
-    <div class="row"><span data-t="stormLabel"></span><div class="switch" data-set="storm"><button id="storm-on" type="button" data-v="1" data-t="on"></button><button id="storm-off" type="button" data-v="0" data-t="off"></button></div></div>
-    <p data-t="stormHint"></p>
-    <p class="hint" id="fam-note" hidden data-t="nextRound"></p>
     <div class="row" id="privacy-row" hidden><span data-t="privacyAds"></span><button class="btn small" id="privacy-ads" type="button" data-t="change"></button></div>
     <p data-t="resetInfo"></p>
     <button class="btn ghost wide" id="reset" type="button"></button>
@@ -276,7 +324,33 @@ h2 { font-family: var(--font-display); font-weight: 800; font-size: 1.7rem; line
       privacyAds: 'Werbe-Einwilligung', change: 'Ändern',
       found: 'Neu entdeckt', bonus: '+1 Verwandeln',
       albumCount: (n, all, left) => `${n} von ${all} Monstern entdeckt.` + (n < all ? ` Noch ${left} bis zum nächsten Verwandeln.` : ''),
-      pots: 'Töpfe', potsInfo: 'In jedem Topf spielen zwei andere Familien. Ein hoher Bestwert öffnet den nächsten Topf.',
+      play: 'Spielen', storyHead: 'Geschichte', freePlay: 'Freies Spiel',
+      freeInfo: 'Stell dir deinen eigenen Topf zusammen: Familien, Hintergrund und Zeitdruck. Je weiter du in der Geschichte kommst, desto mehr wird frei.',
+      familiesHead: 'Familien', backgroundHead: 'Hintergrund', timerHead: 'Zeitdruck', timerLabel: 'Monster fällt nach',
+      timerHint: 'Mit Zeitdruck fällt das Monster von allein, wenn der Ring um es herum abgelaufen ist.',
+      freeMin: 'Wähle mindestens zwei Familien.', bgLocked: 'Noch zu',
+      famLocked: { earth: 'Pilzwald öffnen', air: 'Wolkenberg öffnen', candy: 'Geschichte beenden' },
+      freeBest: n => `Bestwert mit dieser Einstellung: ${n}`, freeStart: 'Los geht’s', freeResume: 'Weiterspielen',
+      timerName: ms => ms ? `Zeitdruck ${String(ms / 1000).replace('.', ',')} s` : 'Ohne Zeitdruck',
+      trophies: 'Pokale', trophyCount: (n, m) => `${n} von ${m} Pokalen gesammelt. Manche gibt es in Bronze, Silber und Gold.`,
+      trophyGot: 'Pokal', tiers: ['Bronze', 'Silber', 'Gold'], done: 'Geschafft',
+      trophy: {
+        runde: ['Topf-Profi', n => `${n} Punkte in einer Runde`],
+        koch: ['Fleißiger Koch', n => `${n} Verschmelzungen insgesamt`],
+        serie: ['Flinke Finger', n => `Eine Serie von ${n} schnellen Würfen`],
+        kette: ['Kettenreaktion', n => `${n} Verschmelzungen durch einen einzigen Wurf`],
+        drachen: ['Drachenhort', n => n === 1 ? 'Erschaffe einen Drachen' : `Drachen aus ${n} Familien`],
+        feuerwerk: ['Feuerwerk', n => n === 1 ? 'Lass zwei Drachen verschmelzen' : `${n}× zwei Drachen verschmelzen`],
+        album: ['Sammler', n => `${n} Monster im Album`],
+        welt: ['Weltenbummler', n => `${n} Töpfe geöffnet`],
+        geschichte: ['Ende gut, alles gut', () => 'Spiel die Geschichte zu Ende'],
+        sturm: ['Sturmfest', n => `${n} Punkte im Freien Spiel mit Zeitdruck 4 s oder schneller`],
+        familienfest: ['Familienfest', n => `${n} Punkte mit 5 Familien`],
+        treue: ['Stammgast', n => `An ${n} Tagen gespielt`],
+        zauber: ['Zauberlehrling', n => `${n}× verwandelt`],
+        chance: ['Zweite Chance', n => `${n}× weitergespielt`],
+      },
+      pots: 'Töpfe', potsInfo: 'Vier Töpfe, vier Kapitel. In jedem spielen zwei Familien; 1000 Punkte öffnen den nächsten.',
       potNames: { wiese: 'Monsterwiese', wald: 'Pilzwald', wolken: 'Wolkenberg', sturm: 'Gewitterschlucht' },
       potLocked: (n, prev) => `Erreiche ${n} Punkte in „${prev}“.`, potBest: n => `Bestwert ${n}`, potNow: 'Aktuell',
       potUnlocked: 'Neuer Topf frei',
@@ -335,7 +409,33 @@ h2 { font-family: var(--font-display); font-weight: 800; font-size: 1.7rem; line
       privacyAds: 'Ad consent', change: 'Change',
       found: 'Discovered', bonus: '+1 Transform',
       albumCount: (n, all, left) => `${n} of ${all} monsters discovered.` + (n < all ? ` ${left} more until the next Transform.` : ''),
-      pots: 'Pots', potsInfo: 'Each pot has two different families. A high best score opens the next pot.',
+      play: 'Play', storyHead: 'Story', freePlay: 'Free play',
+      freeInfo: 'Build your own pot: families, background and time pressure. The further you get in the story, the more you unlock.',
+      familiesHead: 'Families', backgroundHead: 'Background', timerHead: 'Time pressure', timerLabel: 'Monster drops after',
+      timerHint: 'With time pressure, the monster drops by itself when the ring around it runs out.',
+      freeMin: 'Pick at least two families.', bgLocked: 'Locked',
+      famLocked: { earth: 'Open Mushroom Forest', air: 'Open Cloud Peak', candy: 'Finish the story' },
+      freeBest: n => `Best score with these settings: ${n}`, freeStart: 'Let’s go', freeResume: 'Continue',
+      timerName: ms => ms ? `Time pressure ${ms / 1000} s` : 'No time pressure',
+      trophies: 'Trophies', trophyCount: (n, m) => `${n} of ${m} trophies collected. Some come in bronze, silver and gold.`,
+      trophyGot: 'Trophy', tiers: ['Bronze', 'Silver', 'Gold'], done: 'Done',
+      trophy: {
+        runde: ['Pot Pro', n => `${n} points in one round`],
+        koch: ['Busy Cook', n => `${n} merges in total`],
+        serie: ['Quick Fingers', n => `A streak of ${n} quick drops`],
+        kette: ['Chain Reaction', n => `${n} merges from a single drop`],
+        drachen: ['Dragon Hoard', n => n === 1 ? 'Create a dragon' : `Dragons from ${n} families`],
+        feuerwerk: ['Fireworks', n => n === 1 ? 'Merge two dragons' : `Merge two dragons ${n}×`],
+        album: ['Collector', n => `${n} monsters in the album`],
+        welt: ['Globetrotter', n => `${n} pots opened`],
+        geschichte: ['All’s Well That Ends Well', () => 'Finish the story'],
+        sturm: ['Stormproof', n => `${n} points in free play with time pressure of 4 s or faster`],
+        familienfest: ['Family Party', n => `${n} points with 5 families`],
+        treue: ['Regular', n => `Played on ${n} days`],
+        zauber: ['Sorcerer’s Apprentice', n => `Transformed ${n}×`],
+        chance: ['Second Chance', n => `Kept playing ${n}×`],
+      },
+      pots: 'Pots', potsInfo: 'Four pots, four chapters. Each has two families; 1000 points open the next one.',
       potNames: { wiese: 'Monster Meadow', wald: 'Mushroom Forest', wolken: 'Cloud Peak', sturm: 'Thunder Gorge' },
       potLocked: (n, prev) => `Reach ${n} points in “${prev}”.`, potBest: n => `Best ${n}`, potNow: 'Current',
       potUnlocked: 'New pot unlocked',
@@ -518,11 +618,15 @@ h2 { font-family: var(--font-display); font-weight: 800; font-size: 1.7rem; line
 
   let lang, game, best = 0, bestAtStart = 0, aimX = G.W / 2, aiming = false;
   let potId = 'wiese', bests = {};
-  let challenge = { families: 2, storm: false };
-  const STORM_MS = 4000;
-  // Familien einer Runde: die zwei des Topfs, dann weitere in fester Reihenfolge
-  const familiesFor = id => { const base = potOf(id).families; return base.concat(FAMILIES.filter(f => !base.includes(f))).slice(0, challenge.families); };
-  const potOf = id => POTS.find(p => p.id === id) || POTS[0];
+  // Freies Spiel: eigene Familien, Hintergrund und Zeitdruck (ms, 0 = aus)
+  const TIMERS = [0, 6000, 4000, 2500];
+  let free = { families: ['fire', 'water'], bg: 'wiese', timer: 0 };
+  const potOf = id => id === 'frei' ? { id: 'frei', families: free.families } : (POTS.find(p => p.id === id) || POTS[0]);
+  const familiesFor = id => potOf(id).families.slice();
+  const famAvailable = f => f === 'fire' || f === 'water' || (f === 'earth' && opened.includes('wald')) || (f === 'air' && opened.includes('wolken')) || (f === 'candy' && seenStory.includes('ende'));
+  const bgAvailable = id => id === 'wiese' || opened.includes(id);
+  // Bestwert gilt je Topf, im Freien Spiel je Einstellung (Familien + Zeitdruck)
+  const bestKey = () => potId !== 'frei' ? potId : 'frei:' + game.families.slice().sort().join('+') + ':' + (game.autoDrop || 0);
   let opened = [];                                   // einmal geöffnete Töpfe bleiben offen
   const potUnlocked = i => i === 0 || opened.includes(POTS[i].id) || (bests[POTS[i - 1].id] || 0) >= UNLOCK;
   function rememberOpened() {
@@ -720,6 +824,66 @@ h2 { font-family: var(--font-display); font-weight: 800; font-size: 1.7rem; line
     }).join('') + '</div>').join('');
   }
 
+  // ---------- Statistik und Pokale ----------
+  const defaultStats = () => ({ merges: 0, drops: 0, games: 0, fireworks: 0, bestStreak: 0, maxChain: 0, dragons: {}, bestRound: 0,
+    stormBest: 0, fiveBest: 0, days: 0, lastDay: '', transformsUsed: 0, revives: 0 });
+  let stats = defaultStats(), trophies = {}, chainNow = 0, lastTrophyCheck = 0, toastQueue = [];
+  // Pokale: Ziele für Bronze, Silber, Gold (bei nur einem Ziel gibt es direkt Gold)
+  const TROPHIES = [
+    { id: 'runde', goals: [1000, 2500, 5000], val: () => stats.bestRound },
+    { id: 'koch', goals: [100, 1000, 5000], val: () => stats.merges },
+    { id: 'serie', goals: [3, 6, 10], val: () => stats.bestStreak },
+    { id: 'kette', goals: [3, 4, 5], val: () => stats.maxChain },
+    { id: 'drachen', goals: [1, 3, 5], val: () => Object.keys(stats.dragons).length },
+    { id: 'feuerwerk', goals: [1, 5, 20], val: () => stats.fireworks },
+    { id: 'album', goals: [10, 20, 30], val: () => album.length },
+    { id: 'welt', goals: [2, 3, 4], val: () => opened.length },
+    { id: 'geschichte', goals: [1], val: () => seenStory.includes('ende') ? 1 : 0 },
+    { id: 'sturm', goals: [500, 1000, 2500], val: () => stats.stormBest },
+    { id: 'familienfest', goals: [300, 1000, 2500], val: () => stats.fiveBest },
+    { id: 'treue', goals: [3, 7, 30], val: () => stats.days },
+    { id: 'zauber', goals: [1, 10, 50], val: () => stats.transformsUsed },
+    { id: 'chance', goals: [1, 5, 20], val: () => stats.revives },
+  ];
+  const TIER_COLORS = ['#B9C4BC', '#CD7F32', '#AEB8C2', '#FFC93C'];
+  const tierOf = tr => tr.goals.filter(g => tr.val() >= g).length;
+  const colorOf = (tr, n) => TIER_COLORS[n === 0 ? 0 : tr.goals.length === 1 ? 3 : n];
+  const CUPS = TIER_COLORS.map(c => 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+    <path d="M18 14H9a9 9 0 0 0 12 13M46 14h9a9 9 0 0 1-12 13" fill="none" stroke="${c}" stroke-width="5" stroke-linecap="round"/>
+    <path d="M17 7h30v15a15 15 0 0 1-30 0z" fill="${c}"/><path d="M23 11v10a9 9 0 0 0 4 7" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" opacity=".55"/>
+    <rect x="28" y="36" width="8" height="10" fill="${c}"/><rect x="18" y="46" width="28" height="10" rx="4" fill="${c}"/>
+    <rect x="18" y="46" width="28" height="10" rx="4" fill="#000000" opacity=".12"/></svg>`));
+  function checkTrophies() {
+    let changed = false;
+    for (const tr of TROPHIES) {
+      const n = tierOf(tr), had = trophies[tr.id] || 0;
+      if (n > had) {
+        trophies[tr.id] = n; changed = true;
+        const tierName = tr.goals.length === 1 ? t().tiers[2] : t().tiers[n - 1];
+        toastQueue.push([CUPS[TIER_COLORS.indexOf(colorOf(tr, n))], t().trophyGot + ' · ' + tierName, t().trophy[tr.id][0]]);
+      }
+    }
+    if (changed) { store.set('trophies', trophies); store.set('stats', stats); }
+  }
+  function renderTrophies() {
+    const got = TROPHIES.reduce((a, tr) => a + (trophies[tr.id] || 0), 0), all = TROPHIES.reduce((a, tr) => a + tr.goals.length, 0);
+    $('trophy-count').textContent = t().trophyCount(got, all);
+    $('trophy-list').innerHTML = TROPHIES.map(tr => {
+      const n = trophies[tr.id] || 0, v = tr.val(), next = tr.goals[Math.min(n, tr.goals.length - 1)], doneAll = n >= tr.goals.length;
+      const [name, desc] = t().trophy[tr.id];
+      const pips = tr.goals.length > 1 ? `<div class="pips">${tr.goals.map((g, i) => `<i${i < n ? ` class="t${i + 1}"` : ''}></i>`).join('')}</div>` : '';
+      return `<div class="trophy"><img alt="" src="${CUPS[TIER_COLORS.indexOf(colorOf(tr, n))]}"><b>${name}</b><span>${desc(next)}</span>${pips}
+        ${doneAll ? `<small>${t().done}</small>` : `<div class="prog"><i style="width:${Math.min(100, Math.round(100 * v / next))}%"></i></div><small>${Math.min(v, next)} / ${next}</small>`}</div>`;
+    }).join('');
+  }
+  $('open-trophies').addEventListener('click', () => { wakeAudio(); openSheet('sheet-trophies'); });
+  // Punkte einer Runde in die Statistik übernehmen
+  function noteScore(score) {
+    if (score > stats.bestRound) stats.bestRound = score;
+    if (potId === 'frei' && game.autoDrop && game.autoDrop <= 4000 && score > stats.stormBest) stats.stormBest = score;
+    if (game.families.length >= 5 && score > stats.fiveBest) stats.fiveBest = score;
+  }
+
   // ---------- Spielschleife ----------
   let last = 0, acc = 0, lastSave = 0;
   function frame(now) {
@@ -731,37 +895,47 @@ h2 { font-family: var(--font-display); font-weight: 800; font-size: 1.7rem; line
       game.aimX = Math.max(0, Math.min(G.W, aimX));
       game.hold = mode === 'transform' || !!pot.querySelector('.picker');
       for (const e of game.step()) {
-        if (e.type === 'drop') { sfx.drop(); discover(e.family, e.stage); if (e.auto) aiming = false; if (e.streak >= G.STREAK_BONUS) sfx.streak(e.streak); }
+        if (e.type === 'drop') {
+          sfx.drop(); discover(e.family, e.stage); if (e.auto) aiming = false; if (e.streak >= G.STREAK_BONUS) sfx.streak(e.streak);
+          stats.drops++; chainNow = 0; if (e.streak > stats.bestStreak) stats.bestStreak = e.streak;
+        }
         else if (e.type === 'merge') {
           born.set(e.id, now); burst(e.x, e.y, G.RADII[e.stage], PAL[e.family].l, now);
           sfx.merge(e.stage); discover(e.family, e.stage);
+          stats.merges++; chainNow++; if (chainNow > stats.maxChain) stats.maxChain = chainNow;
+          if (e.stage === 6) stats.dragons[e.family] = (stats.dragons[e.family] || 0) + 1;
           if (e.mult > 1) floats.push({ x: e.x, y: e.y - G.RADII[e.stage], text: `+${e.points}`, t0: now });
         } else if (e.type === 'fireworks') {
           if (e.mult > 1) floats.push({ x: e.x, y: e.y, text: `+${e.points}`, t0: now });
           for (let i = 0; i < 5; i++) burst(e.x + (Math.random() - .5) * 140, e.y + (Math.random() - .5) * 140, 30 + Math.random() * 40, i % 2 ? '#FFC93C' : PAL[e.family].c, now + i * 90, 700, 12);
-          sfx.fireworks();
+          sfx.fireworks(); stats.fireworks++; stats.merges++; chainNow++; if (chainNow > stats.maxChain) stats.maxChain = chainNow;
         } else if (e.type === 'transform') { born.set(e.id, now); burst(e.x, e.y, G.RADII[e.stage], colors.accent, now, 450, 10); sfx.transform(); }
         else if (e.type === 'shake') sfx.shake();
         else if (e.type === 'revive') { for (const r of e.removed) burst(r.x, r.y, r.r, PAL[r.family] ? PAL[r.family].l : colors.accent, now, 500, 10); sfx.fireworks(); }
-        else if (e.type === 'over') { closePicker(); sfx.over(); store.del('game.' + potId); setMode(null); overNote = ''; showOver(); }
+        else if (e.type === 'over') { stats.games++; closePicker(); sfx.over(); store.del('game.' + potId); setMode(null); overNote = ''; showOver(); }
       }
     }
     const tickAfter = game.autoLeft();
     if (tickBefore !== null && tickAfter !== null && !game.over) {          // leises Ticken in der letzten Sekunde
-      const secB = Math.ceil(tickBefore * STORM_MS / 1000), secA = Math.ceil(tickAfter * STORM_MS / 1000);
+      const secB = Math.ceil(tickBefore * game.autoDrop / 1000), secA = Math.ceil(tickAfter * game.autoDrop / 1000);
       if (secA < secB && secA <= 1 && secA >= 1) sfx.tick();
     }
     if (game.score !== shownScore) {
       shownScore = game.score; $('score').textContent = shownScore;
       if (shownScore > best) { setBest(shownScore); }
+      noteScore(shownScore);
     }
-    if (now - lastSave > 2000) { lastSave = now; saveGame(); }
+    if (now - lastTrophyCheck > 1000) {
+      lastTrophyCheck = now; checkTrophies();
+      if (toastQueue.length && !pot.querySelector('.toast')) { const [src, small, text] = toastQueue.shift(); toast(src, small, text); sfx.found(); }
+    }
+    if (now - lastSave > 2000) { lastSave = now; saveGame(); store.set('stats', stats); }
     draw(now);
     requestAnimationFrame(frame);
   }
 
   function snapshot() {
-    return { score: game.score, drops: game.drops, current: game.current, shakesLeft, revivesLeft, families: game.families,
+    return { score: game.score, drops: game.drops, current: game.current, shakesLeft, revivesLeft, families: game.families, timer: game.autoDrop,
       monsters: [...game.monsters.values()].map(m => ({ family: m.family, stage: m.stage, x: Math.round(m.body.position.x * 10) / 10, y: Math.round(m.body.position.y * 10) / 10, angle: Math.round(m.body.angle * 100) / 100 })) };
   }
   function saveGame() { if (game && !game.over && game.drops > 0) store.set('game.' + potId, snapshot()); }
@@ -832,7 +1006,9 @@ h2 { font-family: var(--font-display); font-weight: 800; font-size: 1.7rem; line
   function setBest(n) {
     const i = POTS.findIndex(p => p.id === potId);
     const wasOpen = i + 1 < POTS.length && potUnlocked(i + 1);
-    best = n; bests[potId] = n; store.set('bests', bests); $('best').textContent = best; rememberOpened();
+    best = n; bests[bestKey()] = n; store.set('bests', bests); $('best').textContent = best;
+    if (i < 0) return;                                  // Freies Spiel öffnet keine Töpfe
+    rememberOpened();
     if (i + 1 < POTS.length && !wasOpen && potUnlocked(i + 1)) {
       const next = POTS[i + 1];
       toast(SPRITE[next.families[0] + '1'].src, t().potUnlocked, t().potNames[next.id]); sfx.found();
@@ -859,7 +1035,7 @@ h2 { font-family: var(--font-display); font-weight: 800; font-size: 1.7rem; line
       if (adBusy) return; adBusy = true; $('revive').disabled = true;
       const result = await Ads.show();
       adBusy = false;
-      if (result === 'reward' && game.revive()) { revivesLeft--; overNote = ''; hideOver(); saveGame(); return; }
+      if (result === 'reward' && game.revive()) { revivesLeft--; stats.revives++; overNote = ''; hideOver(); saveGame(); return; }
       overNote = result === 'cancel' ? t().adNoReward : t().adFail;
       showOver();
     });
@@ -869,7 +1045,9 @@ h2 { font-family: var(--font-display); font-weight: 800; font-size: 1.7rem; line
   function newGame(saved) {
     hideOver(); store.del('game.' + potId);
     const savedFams = saved && Array.isArray(saved.families) && saved.families.every(f => PAL[f]) ? saved.families : null;
-    game = G.create(Matter, { families: savedFams || familiesFor(potId), autoDrop: challenge.storm ? STORM_MS : 0 });
+    const timer = potId !== 'frei' ? 0 : saved && Number.isFinite(saved.timer) ? saved.timer : free.timer;
+    game = G.create(Matter, { families: savedFams || familiesFor(potId), autoDrop: timer });
+    best = bests[bestKey()] || 0; $('best').textContent = best;
     born = new Map(); effects = []; shownScore = -1; aimX = G.W / 2; shakesLeft = 1; revivesLeft = 1; overNote = ''; mode = null;
     bestAtStart = best;
     if (saved && Array.isArray(saved.monsters)) {
@@ -879,6 +1057,7 @@ h2 { font-family: var(--font-display); font-weight: 800; font-size: 1.7rem; line
       if (saved.current && fams.includes(saved.current.family)) game.current = saved.current;
       shakesLeft = saved.shakesLeft === 0 ? 0 : 1;
       revivesLeft = saved.revivesLeft === 0 ? 0 : 1;
+      saveGame();                                     // sofort wieder sichern, falls die App gleich geschlossen wird
     }
     renderHelps(); closePicker();
     if (typeof renderPotUI === 'function' && $('pot-name').textContent) renderPotUI();
@@ -898,7 +1077,7 @@ h2 { font-family: var(--font-display); font-weight: 800; font-size: 1.7rem; line
 
   function doTransform(m, fam) {
     closePicker();
-    if (transforms > 0 && game.transform(m.id, fam)) { transforms--; store.set('transforms', transforms); renderHelps(); setMode(null); }
+    if (transforms > 0 && game.transform(m.id, fam)) { transforms--; stats.transformsUsed++; store.set('transforms', transforms); renderHelps(); setMode(null); }
   }
   function openPicker(m, fams) {
     closePicker();
@@ -947,7 +1126,7 @@ h2 { font-family: var(--font-display); font-weight: 800; font-size: 1.7rem; line
   $('restart').addEventListener('click', () => { wakeAudio(); newGame(); });
 
   // ---------- Album- und Einstellungs-Fenster ----------
-  function openSheet(id) { paused = true; setMode(null); closePicker(); $('fam-note').hidden = !game || game.families.length === challenge.families; resetArmed(false); if (id === 'sheet-album') renderAlbum(); $('privacy-row').hidden = !Ads.privacyAvailable(); $(id).hidden = false; $(id).scrollTop = 0; }
+  function openSheet(id) { paused = true; setMode(null); closePicker(); resetArmed(false); if (id === 'sheet-trophies') renderTrophies(); if (id === 'sheet-album') renderAlbum(); $('privacy-row').hidden = !Ads.privacyAvailable(); $(id).hidden = false; $(id).scrollTop = 0; }
   $('privacy-ads').addEventListener('click', () => { Ads.privacyForm().catch(() => {}); });
   $('open-album').addEventListener('click', () => { wakeAudio(); openSheet('sheet-album'); });
   $('open-pots').addEventListener('click', () => { wakeAudio(); renderPots(); openSheet('sheet-pots'); });
@@ -960,6 +1139,9 @@ h2 { font-family: var(--font-display); font-weight: 800; font-size: 1.7rem; line
         <span class="pair">${p.families.map(f => `<img alt="" src="${SPRITE[f + '1'].src}">`).join('')}</span>
         <span class="who"><b>${t().potNames[p.id]}</b><span>${sub}</span></span><span class="tag">${tag}</span></button>`;
     }).join('');
+    $('open-free').innerHTML = `<span class="pair">${free.families.slice(0, 3).map(f => `<img alt="" src="${SPRITE[f + '1'].src}">`).join('')}</span>
+      <span class="who"><b>${t().freePlay}</b><span>${free.families.map(f => t().fam[f]).join(' · ')} · ${t().timerName(free.timer)}</span></span><span class="tag">${potId === 'frei' ? t().potNow : ''}</span>`;
+    if (potId === 'frei') $('open-free').setAttribute('aria-current', 'true'); else $('open-free').removeAttribute('aria-current');
     $('pot-list').querySelectorAll('.potcard').forEach(b => b.addEventListener('click', () => {
       const i = POTS.findIndex(p => p.id === b.dataset.pot);
       if (!potUnlocked(i)) return;
@@ -967,25 +1149,69 @@ h2 { font-family: var(--font-display); font-weight: 800; font-size: 1.7rem; line
       $('sheet-pots').hidden = true; paused = false;
     }));
   }
+  $('open-free').addEventListener('click', () => { $('sheet-pots').hidden = true; renderFree(); openSheet('sheet-free'); });
+  function freeKey() { return 'frei:' + free.families.slice().sort().join('+') + ':' + free.timer; }
+  function renderFree() {
+    $('free-fams').innerHTML = FAMILIES.map(f => {
+      const ok = famAvailable(f), on = free.families.includes(f);
+      return `<button class="famchip" type="button" id="free-${f}" data-f="${f}" aria-pressed="${on}"${ok ? '' : ' disabled'}${ok ? '' : ` title="${t().famLocked[f]}"`}>
+        <img alt="" src="${SPRITE[f + '1'].src}"><span>${ok ? t().fam[f] : t().famLocked[f]}</span></button>`;
+    }).join('');
+    $('free-bgs').innerHTML = POTS.map(p => {
+      const ok = bgAvailable(p.id);
+      return `<button class="bgpick" type="button" id="bg-${p.id}" data-bg="${p.id}" aria-pressed="${free.bg === p.id}"${ok ? '' : ' disabled'}>
+        <span class="thumb" style="${POT_ART[p.id] ? `background-image:url(${POT_ART[p.id]})` : 'background:var(--pot-' + p.id + ', var(--pot))'}"></span><span>${ok ? t().potNames[p.id] : t().bgLocked}</span></button>`;
+    }).join('');
+    $('free-fam-hint').hidden = free.families.length >= 2;
+    $('free-best').textContent = t().freeBest(bests[freeKey()] || 0);
+    const saved = store.get('game.frei', null);
+    const same = saved && Array.isArray(saved.families) && saved.families.slice().sort().join('+') === free.families.slice().sort().join('+') && (saved.timer || 0) === free.timer;
+    $('free-start').textContent = same ? t().freeResume : t().freeStart;
+    $('free-start').disabled = free.families.length < 2;
+    document.querySelectorAll('[data-set="timer"] button').forEach(b => b.setAttribute('aria-pressed', String(+b.dataset.v === free.timer)));
+  }
+  $('free-fams').addEventListener('click', e => {
+    const b = e.target.closest('button'); if (!b || b.disabled) return;
+    const f = b.dataset.f;
+    free.families = free.families.includes(f) ? free.families.filter(x => x !== f) : FAMILIES.filter(x => x === f || free.families.includes(x));
+    store.set('free', free); renderFree();
+  });
+  $('free-bgs').addEventListener('click', e => {
+    const b = e.target.closest('button'); if (!b || b.disabled) return;
+    free.bg = b.dataset.bg; store.set('free', free); renderFree();
+    if (potId === 'frei') renderPotUI();
+  });
+  $('free-start').addEventListener('click', () => {
+    if (free.families.length < 2) return;
+    wakeAudio();
+    const saved = store.get('game.frei', null);
+    const same = saved && Array.isArray(saved.families) && saved.families.slice().sort().join('+') === free.families.slice().sort().join('+') && (saved.timer || 0) === free.timer;
+    saveGame();
+    if (!same) store.del('game.frei');
+    potId = 'frei'; store.set('pot', potId);
+    newGame(same ? saved : null); renderPotUI();
+    $('sheet-free').hidden = true; paused = false;
+  });
   function switchPot(id) {
     saveGame();
     potId = id; store.set('pot', potId);
-    best = bests[potId] || 0; $('best').textContent = best;
-    pot.dataset.pot = potId;
     newGame(store.get('game.' + potId, null));
     renderPotUI();
     if (CHAPTERS[potId] && !seenStory.includes(potId)) playStory([potId]);
   }
   function renderPotUI() {
-    const p = potOf(potId);
-    pot.style.backgroundImage = POT_ART[p.id] ? `linear-gradient(var(--pot-veil), var(--pot-veil)), url(${POT_ART[p.id]})` : '';
-    pot.style.backgroundSize = POT_ART[p.id] ? 'cover' : ''; pot.style.backgroundPosition = POT_ART[p.id] ? 'center' : '';
-    $('pot-icon').src = SPRITE[p.families[0] + '1'].src;
-    $('pot-name').textContent = t().potNames[p.id];
-    $('open-pots').setAttribute('aria-label', t().pots + ': ' + t().potNames[p.id]);
+    const p = potOf(potId), isFree = p.id === 'frei';
+    const bg = isFree ? (bgAvailable(free.bg) ? free.bg : 'wiese') : p.id;
+    pot.dataset.pot = bg;
+    pot.style.backgroundImage = POT_ART[bg] ? `linear-gradient(var(--pot-veil), var(--pot-veil)), url(${POT_ART[bg]})` : '';
+    pot.style.backgroundSize = POT_ART[bg] ? 'cover' : ''; pot.style.backgroundPosition = POT_ART[bg] ? 'center' : '';
     const fams = game ? game.families : p.families;
+    const name = isFree ? t().freePlay : t().potNames[p.id];
+    $('pot-icon').src = SPRITE[fams[0] + '1'].src;
+    $('pot-name').textContent = name;
+    $('open-pots').setAttribute('aria-label', t().play + ': ' + name);
     const chain = $('chain'); chain.innerHTML = ''; chain.classList.toggle('many', fams.length > 2);
-    const note = t().challengeNote(fams.length, challenge.storm);
+    const note = isFree ? fams.map(f => t().fam[f]).join(' · ') + ' · ' + t().timerName(game ? game.autoDrop : free.timer) : '';
     $('challenge-note').textContent = note; $('challenge-note').hidden = !note;
     fams.forEach((f, i) => {
       if (i) { const gap = document.createElement('span'); gap.className = 'gap'; chain.appendChild(gap); }
@@ -999,14 +1225,8 @@ h2 { font-family: var(--font-display); font-weight: 800; font-size: 1.7rem; line
     wakeAudio();
     const what = b.parentElement.dataset.set;
     if (what === 'lang') { lang = b.dataset.v; store.set('lang', lang); }
-    else if (what === 'families') {
-      challenge.families = +b.dataset.v; store.set('challenge', challenge);
-      if (game.drops === 0 || game.over) newGame(); else $('fam-note').hidden = game.families.length === challenge.families;
-    } else if (what === 'storm') {
-      challenge.storm = b.dataset.v === '1'; store.set('challenge', challenge);
-      game.autoDrop = challenge.storm ? STORM_MS : 0;
-      if (game.autoDrop) game.readyAt = Math.max(game.readyAt, game.time);
-    } else { sound[what] = b.dataset.v === '1'; store.set('sound', sound); applySound(); }
+    else if (what === 'timer') { free.timer = +b.dataset.v; store.set('free', free); renderFree(); return; }
+    else { sound[what] = b.dataset.v === '1'; store.set('sound', sound); applySound(); }
     renderTexts();
   }));
   let armed = false;
@@ -1015,7 +1235,8 @@ h2 { font-family: var(--font-display); font-weight: 800; font-size: 1.7rem; line
     if (!armed) { resetArmed(true); return; }
     store.keys().filter(k => k !== 'lang' && k !== 'sound').forEach(k => store.del(k));
     best = 0; bests = {}; opened = []; album = []; transforms = 0; seenStory = []; $('best').textContent = 0;
-    potId = 'wiese'; pot.dataset.pot = potId;
+    free = { families: ['fire', 'water'], bg: 'wiese', timer: 0 }; stats = defaultStats(); trophies = {};
+    potId = 'wiese';
     newGame(); renderPotUI(); resetArmed(false);
     $('sheet-settings').hidden = true; paused = false;
   });
@@ -1025,11 +1246,15 @@ h2 { font-family: var(--font-display); font-weight: 800; font-size: 1.7rem; line
     document.querySelectorAll('[data-t]').forEach(el => { el.textContent = t()[el.dataset.t]; });
     document.querySelectorAll('.switch').forEach(sw => {
       const k = sw.dataset.set;
-      const cur = k === 'lang' ? lang : k === 'families' ? String(challenge.families) : k === 'storm' ? (challenge.storm ? '1' : '0') : (sound[k] ? '1' : '0');
+      if (k === 'timer') return;
+      const cur = k === 'lang' ? lang : (sound[k] ? '1' : '0');
       sw.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.v === cur)));
     });
     renderPotUI();
     if (!$('sheet-pots').hidden) renderPots();
+    if (!$('sheet-free').hidden) renderFree();
+    if (!$('sheet-trophies').hidden) renderTrophies();
+    $('open-trophies').setAttribute('aria-label', t().trophies);
     if (!$('sheet-story').hidden && storyQueue.length) renderStory();
     canvas.setAttribute('aria-label', t().pot);
     $('open-settings').setAttribute('aria-label', t().settings);
@@ -1056,13 +1281,20 @@ h2 { font-family: var(--font-display); font-weight: 800; font-size: 1.7rem; line
       store.set('opened', opened);
     }
     potId = store.get('pot', 'wiese');
-    if (POTS.findIndex(p => p.id === potId) < 0 || !potUnlocked(POTS.findIndex(p => p.id === potId))) potId = 'wiese';
-    pot.dataset.pot = potId;
-    best = bests[potId] || 0; $('best').textContent = best;
+    if (potId !== 'frei' && (POTS.findIndex(p => p.id === potId) < 0 || !potUnlocked(POTS.findIndex(p => p.id === potId)))) potId = 'wiese';
     const a = store.get('album', []); album = Array.isArray(a) ? a.filter(k => SPRITE[k]) : [];
     transforms = Math.max(0, +store.get('transforms', 0) || 0);
-    const ch = store.get('challenge', null);
-    if (ch && typeof ch === 'object') challenge = { families: Math.min(5, Math.max(2, +ch.families || 2)), storm: !!ch.storm };
+    const st0 = store.get('story', []); seenStory = Array.isArray(st0) ? st0.filter(id => CHAPTERS[id]) : [];
+    const fr = store.get('free', null);
+    if (fr && typeof fr === 'object') {
+      const fams = Array.isArray(fr.families) ? FAMILIES.filter(f => fr.families.includes(f)) : [];
+      free = { families: fams.length >= 2 ? fams : ['fire', 'water'], bg: POTS.some(p => p.id === fr.bg) ? fr.bg : 'wiese', timer: TIMERS.includes(fr.timer) ? fr.timer : 0 };
+    }
+    store.del('challenge');
+    stats = Object.assign(defaultStats(), store.get('stats', {}) || {});
+    const tr = store.get('trophies', null); trophies = tr && typeof tr === 'object' ? tr : {};
+    const today = new Date().toLocaleDateString('sv');
+    if (stats.lastDay !== today) { stats.lastDay = today; stats.days++; store.set('stats', stats); }
     const snd = store.get('sound', null); if (snd && typeof snd === 'object') sound = { sfx: snd.sfx !== false, music: snd.music !== false };
     newGame(data.game || store.get('game.' + potId, null));
     renderTexts(); readColors(); resize();
@@ -1071,7 +1303,6 @@ h2 { font-family: var(--font-display); font-weight: 800; font-size: 1.7rem; line
     new MutationObserver(readColors).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
     requestAnimationFrame(frame);
     Ads.preload();
-    const st = store.get('story', []); seenStory = Array.isArray(st) ? st.filter(id => CHAPTERS[id]) : [];
     if (!seenStory.includes('intro')) playStory(['intro']);
   }
   const hot = window.claude && window.claude.hot;
