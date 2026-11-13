@@ -114,8 +114,9 @@ Eine Pokalwand (Pokal-Knopf oben) sammelt Auszeichnungen, die meisten in Bronze,
 | Drachenhort | Drachen aus 1 / 3 / 5 Familien |
 | Feuerwerk | 1 / 5 / 20× zwei Drachen verschmolzen |
 | Sammler | 10 / 20 / 30 Monster im Album |
-| Weltenbummler | 2 / 3 / 4 Töpfe geöffnet |
-| Ende gut, alles gut | Geschichte beendet (nur Gold) |
+| Weltenbummler | 3 / 5 / 8 Töpfe geöffnet |
+| Ende gut, alles gut | Geschichte 1 beendet (nur Gold) |
+| Riesentorte | Geschichte 2 beendet (nur Gold) |
 | Sturmfest | 500 / 1000 / 2500 Punkte im Freien Spiel mit Zeitdruck 4 s oder schneller |
 | Familienfest | 300 / 1000 / 2500 Punkte mit 5 Familien |
 | Stammgast | an 3 / 7 / 30 Tagen gespielt |
@@ -149,6 +150,22 @@ Die Familien-Paare der Töpfe sind in der Geschichte begründet: Feuer meidet de
 | Epilog | 1000 Punkte in der Gewitterschlucht | Der Wolkengeist donnert nur, weil er nicht schlafen kann. Moosbett und Wiegenlied – er schläft ein, der Himmel wird blau, alle feiern am Großen Kessel. |
 
 Bilder: 7 Szenen (Querformat 4:3) und 4 Topf-Hintergründe (Hochformat 2:3), von einer Bild-KI erzeugt. Solange ein Bild fehlt, zeigt das Spiel die beteiligten Monster vor einem Farbverlauf.
+
+
+### Geschichte 2: „Die Riesentorte“
+
+Beginnt, sobald in der Gewitterschlucht 1000 Punkte erreicht sind (umgesetzt, Bilder folgen; bis dahin Platzhalter). Der Name „Zuckerfest“ wurde bewusst vermieden, weil er im Deutschen das Fest des Fastenbrechens bezeichnet.
+
+| Teil | Topf | Familien | Inhalt |
+| --- | --- | --- | --- |
+| Prolog | – | – | Eine Streuselspur führt ins Zuckerland. Der Zuckerdrache sitzt vor einem kalten Ofen; seine Riesentorte ist ohne die verstreuten Zucker-Potlings nicht zu backen. |
+| Kapitel 5 | Bonbonbach | Zucker + Wasser | Tropfen fischt mit Zuckerkrümel die Bonbons aus dem Bach. |
+| Kapitel 6 | Lebkuchenhöhle | Zucker + Erde | Steinchen gräbt verschüttete Gummlinge aus. |
+| Kapitel 7 | Zuckerwattewolken | Zucker + Luft | Wölkchen pustet verhedderte Bonbons frei. |
+| Kapitel 8 | Schokovulkan | Zucker + Feuer | Funke heizt den kalten Ofen wieder an. |
+| Epilog | 1000 Punkte im Schokovulkan | – | Die Torte wird größer als der Große Kessel; der Zuckerdrache bekommt das erste Stück, der Wolkengeist schläft mit Sahne auf der Nase. |
+
+Dazu ein eigener Pokal „Riesentorte“; der Pokal „Weltenbummler“ zählt jetzt 3 / 5 / 8 geöffnete Töpfe. Die neuen Töpfe stehen auch im Freien Spiel als Hintergrund zur Wahl.
 
 ## Hilfen
 

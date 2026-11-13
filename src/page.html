@@ -8,6 +8,7 @@
   --bg-deep: #CDEBCB;
   --pot: #FFF9EC;         /* Topf-Inneres: Monsterwiese */
   --pot-wald: #EEF5E1; --pot-wolken: #F4EFFF; --pot-sturm: #ECE8F4;
+  --pot-bonbon: #E8F7F5; --pot-lebkuchen: #F7ECDF; --pot-watte: #FBEFF7; --pot-schoko: #F3E5D8;
   --pot-rim: #5B4A6B;     /* Topfwand */
   --card: #FFFFFF;
   --ink: #1D3A2C;
@@ -28,6 +29,7 @@
   :root:not([data-theme="light"]) {
     --bg: #12211A; --bg-deep: #0D1913; --pot: #1B2A33; --pot-rim: #8E7AA6; --card: #1F382B;
     --pot-wald: #1A2C22; --pot-wolken: #231E33; --pot-sturm: #1E2130;
+    --pot-bonbon: #16302E; --pot-lebkuchen: #2E2219; --pot-watte: #2E2030; --pot-schoko: #2B1D17;
     --ink: #E7F5EA; --ink-soft: #A3C2B0; --accent: #A98BFF; --on-accent: #1B1038; --danger: #FF8A6B;
     --guide: rgba(231, 245, 234, .25); --shade: rgba(0, 0, 0, .4); --veil: rgba(27, 42, 51, .9); --pot-veil: rgba(12, 18, 24, .5);
     --silhouette: brightness(0) invert(1);
@@ -37,6 +39,7 @@
 :root[data-theme="dark"] {
   --bg: #12211A; --bg-deep: #0D1913; --pot: #1B2A33; --pot-rim: #8E7AA6; --card: #1F382B;
   --pot-wald: #1A2C22; --pot-wolken: #231E33; --pot-sturm: #1E2130;
+  --pot-bonbon: #16302E; --pot-lebkuchen: #2E2219; --pot-watte: #2E2030; --pot-schoko: #2B1D17;
   --ink: #E7F5EA; --ink-soft: #A3C2B0; --accent: #A98BFF; --on-accent: #1B1038; --danger: #FF8A6B;
   --guide: rgba(231, 245, 234, .25); --shade: rgba(0, 0, 0, .4); --veil: rgba(27, 42, 51, .9); --pot-veil: rgba(12, 18, 24, .5);
   --silhouette: brightness(0) invert(1);
@@ -87,6 +90,11 @@ h2 { font-family: var(--font-display); font-weight: 800; font-size: 1.7rem; line
 .pot[data-pot="wald"] { background: var(--pot-wald); }
 .pot[data-pot="wolken"] { background: var(--pot-wolken); }
 .pot[data-pot="sturm"] { background: var(--pot-sturm); }
+.pot[data-pot="bonbon"] { background: var(--pot-bonbon); }
+.pot[data-pot="lebkuchen"] { background: var(--pot-lebkuchen); }
+.pot[data-pot="watte"] { background: var(--pot-watte); }
+.pot[data-pot="schoko"] { background: var(--pot-schoko); }
+.cards .grp { margin: 6px 0 -2px; font-size: .75rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-soft); }
 .potline { align-self: center; display: flex; align-items: center; gap: 8px; max-width: 100%; min-height: 40px; padding: 4px 14px 4px 6px; border-radius: 999px; background: var(--bg-deep); color: var(--ink); font-weight: 800; }
 .potline img { width: 30px; height: 30px; flex: none; }
 .potline span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-family: var(--font-display); font-size: 1.05rem; }
@@ -98,6 +106,8 @@ h2 { font-family: var(--font-display); font-weight: 800; font-size: 1.7rem; line
 .card.potcard[aria-current="true"] { outline: 3px solid var(--accent); outline-offset: -3px; }
 .card.potcard.locked { cursor: default; }
 .card.potcard.locked .pair img { filter: var(--silhouette); opacity: .22; }
+.card.potcard .who { flex: 1; min-width: 0; }
+.card.potcard .who b { hyphens: auto; overflow-wrap: anywhere; }
 .card.potcard .tag { margin-left: auto; flex: none; font-size: .8rem; font-weight: 800; color: var(--ink-soft); }
 .pot canvas { display: block; width: 100%; height: 100%; touch-action: none; user-select: none; -webkit-user-select: none; cursor: grab; }
 
@@ -369,20 +379,22 @@ h2 { font-family: var(--font-display); font-weight: 800; font-size: 1.7rem; line
         feuerwerk: ['Feuerwerk', n => n === 1 ? 'Lass zwei Drachen verschmelzen' : `${n}× zwei Drachen verschmelzen`],
         album: ['Sammler', n => `${n} Monster im Album`],
         welt: ['Weltenbummler', n => `${n} Töpfe geöffnet`],
-        geschichte: ['Ende gut, alles gut', () => 'Spiel die Geschichte zu Ende'],
+        geschichte: ['Ende gut, alles gut', () => 'Spiel die erste Geschichte zu Ende'],
+        torte: ['Riesentorte', () => 'Spiel die zweite Geschichte zu Ende'],
         sturm: ['Sturmfest', n => `${n} Punkte im Freien Spiel mit Zeitdruck 4 s oder schneller`],
         familienfest: ['Familienfest', n => `${n} Punkte mit 5 Familien`],
         treue: ['Stammgast', n => `An ${n} Tagen gespielt`],
         zauber: ['Zauberlehrling', n => `${n}× verwandelt`],
         chance: ['Zweite Chance', n => `${n}× weitergespielt`],
       },
-      pots: 'Töpfe', potsInfo: 'Vier Töpfe, vier Kapitel. In jedem spielen zwei Familien; 1000 Punkte öffnen den nächsten.',
-      potNames: { wiese: 'Monsterwiese', wald: 'Pilzwald', wolken: 'Wolkenberg', sturm: 'Gewitterschlucht' },
+      pots: 'Töpfe', potsInfo: 'Jeder Topf ist ein Kapitel. In jedem spielen zwei Familien; 1000 Punkte öffnen den nächsten.',
+      potNames: { wiese: 'Monsterwiese', wald: 'Pilzwald', wolken: 'Wolkenberg', sturm: 'Gewitterschlucht', bonbon: 'Bonbonbach', lebkuchen: 'Lebkuchenhöhle', watte: 'Zuckerwattewolken', schoko: 'Schokovulkan' },
+      storyNames: ['Geschichte 1 · Das Gewitter', 'Geschichte 2 · Die Riesentorte'],
       potLocked: (n, prev) => `Erreiche ${n} Punkte in „${prev}“.`, potBest: n => `Bestwert ${n}`, potNow: 'Aktuell',
       potUnlocked: 'Neuer Topf frei',
       replayStory: 'Geschichte noch einmal ansehen', skip: 'Überspringen', next: 'Weiter', go: 'Los geht’s!', theEnd: 'Weiterspielen',
-      hintNext: n => `Schaffe ${n} Punkte, dann geht die Reise weiter.`, hintEnd: n => `Schaffe ${n} Punkte, um den Sturm zu beenden.`,
-      chapter: { prolog: 'Prolog', wiese: 'Kapitel 1 · Monsterwiese', wald: 'Kapitel 2 · Pilzwald', wolken: 'Kapitel 3 · Wolkenberg', sturm: 'Kapitel 4 · Gewitterschlucht', ende: 'Epilog' },
+      hintNext: n => `Schaffe ${n} Punkte, dann geht die Reise weiter.`, hintEnd: n => `Schaffe ${n} Punkte, um den Sturm zu beenden.`, hintEnd2: n => `Schaffe ${n} Punkte, damit die Torte fertig wird.`,
+      chapter: { prolog: 'Prolog', wiese: 'Kapitel 1 · Monsterwiese', wald: 'Kapitel 2 · Pilzwald', wolken: 'Kapitel 3 · Wolkenberg', sturm: 'Kapitel 4 · Gewitterschlucht', ende: 'Epilog' , prolog2: 'Geschichte 2 · Prolog', bonbon: 'Kapitel 5 · Bonbonbach', lebkuchen: 'Kapitel 6 · Lebkuchenhöhle', watte: 'Kapitel 7 · Zuckerwattewolken', schoko: 'Kapitel 8 · Schokovulkan', ende2: 'Epilog · Die Riesentorte' },
       story: {
         p1: 'Mitten auf der Monsterwiese steht der Große Kessel. Hier wohnen die Potlings – kleine Monster aus Feuer, Wasser, Erde und Luft. Treffen sich zwei gleiche, verschmelzen sie und werden größer.',
         p2: 'Doch eines Nachts zieht ein gewaltiges Gewitter auf. Blitze zucken, der Wind heult – und wirbelt alle Potlings in alle Himmelsrichtungen davon.',
@@ -396,6 +408,18 @@ h2 { font-family: var(--font-display); font-weight: 800; font-size: 1.7rem; line
         k4b: 'Steinchen und Wölkchen wagen sich gemeinsam hinein. Erde gibt Halt, Luft gibt Mut.',
         e1: 'Tief unten in der Schlucht finden sie den Wolkengeist. Er ist gar nicht böse. Er kann nur nicht schlafen – und wer nicht schläft, der donnert.',
         e2: 'Die Erd-Potlings bauen ihm ein weiches Moosbett und decken ihn mit einem großen Blatt zu. Die Luft-Potlings summen ein Wiegenlied. Der Wolkengeist gähnt … und schläft ein.',
+        z1: 'Nach dem Fest liegt ein süßer Duft in der Luft. Der Wolkengeist schnuppert: „Riecht ihr das?“ Eine Spur aus bunten Streuseln führt über die Wiese davon.',
+        z2: 'Am Ende der Spur liegt das Zuckerland. Dort sitzt der Zuckerdrache vor einem kalten Ofen. Er wollte für alle eine Riesentorte backen – doch die Zucker-Potlings sind in alle Ecken gekullert, und der Ofen ist ausgegangen.',
+        k5a: 'Im Bonbonbach glitzern bunte Bonbons zwischen den Wellen. Zuckerkrümel will sie herausfischen und rutscht immer wieder ab.',
+        k5b: 'Tropfen springt ins Wasser – hier ist er zu Hause. Gemeinsam holen sie die Bonbons ans Ufer.',
+        k6a: 'In der Lebkuchenhöhle ist ein Stück Decke eingestürzt. Darunter stecken ein paar Gummlinge fest.',
+        k6b: 'Steinchen weiß, wie man gräbt, ohne dass etwas nachrutscht. Krümel für Krümel befreien sie die Gummlinge.',
+        k7a: 'Hoch oben hängen die Zuckerwattewolken. Ein paar Bonbons haben sich darin verheddert und kommen nicht mehr heraus.',
+        k7b: 'Wölkchen pustet, so fest es kann. Die Zuckerwatte teilt sich, und die Bonbons segeln sanft nach unten.',
+        k8a: 'Alle Zutaten sind beisammen, nur die Hitze fehlt. Der Ofen des Zuckerdrachen steckt im Schokovulkan – und der ist kalt.',
+        k8b: 'Funke klettert hinein und leuchtet, so hell er kann. Langsam wird die Schokolade wieder warm und der Ofen brummt.',
+        e4: 'Die Riesentorte geht auf und wird größer und größer – am Ende ist sie größer als der Große Kessel!',
+        e5: 'Alle Potlings tragen sie gemeinsam zur Monsterwiese. Der Zuckerdrache bekommt das erste Stück. Und der Wolkengeist? Der schläft schon wieder – mit Sahne auf der Nase.',
         e3: 'Der Himmel wird blau. Alle Potlings kehren zum Großen Kessel zurück und feiern ein riesiges Fest. Und der Wolkengeist? Der ist jetzt auch eingeladen.',
       }, chainOf: (f, a, b) => `${f} von ${a} bis ${b}`, chainIntro: 'Reihenfolge der Monster: ',
       unknown: '???', unknownText: 'Noch nicht entdeckt.',
@@ -457,20 +481,22 @@ h2 { font-family: var(--font-display); font-weight: 800; font-size: 1.7rem; line
         feuerwerk: ['Fireworks', n => n === 1 ? 'Merge two dragons' : `Merge two dragons ${n}×`],
         album: ['Collector', n => `${n} monsters in the album`],
         welt: ['Globetrotter', n => `${n} pots opened`],
-        geschichte: ['All’s Well That Ends Well', () => 'Finish the story'],
+        geschichte: ['All’s Well That Ends Well', () => 'Finish the first story'],
+        torte: ['The Giant Cake', () => 'Finish the second story'],
         sturm: ['Stormproof', n => `${n} points in free play with time pressure of 4 s or faster`],
         familienfest: ['Family Party', n => `${n} points with 5 families`],
         treue: ['Regular', n => `Played on ${n} days`],
         zauber: ['Sorcerer’s Apprentice', n => `Transformed ${n}×`],
         chance: ['Second Chance', n => `Kept playing ${n}×`],
       },
-      pots: 'Pots', potsInfo: 'Four pots, four chapters. Each has two families; 1000 points open the next one.',
-      potNames: { wiese: 'Monster Meadow', wald: 'Mushroom Forest', wolken: 'Cloud Peak', sturm: 'Thunder Gorge' },
+      pots: 'Pots', potsInfo: 'Every pot is a chapter. Each has two families; 1000 points open the next one.',
+      potNames: { wiese: 'Monster Meadow', wald: 'Mushroom Forest', wolken: 'Cloud Peak', sturm: 'Thunder Gorge', bonbon: 'Candy Creek', lebkuchen: 'Gingerbread Cave', watte: 'Cotton Candy Clouds', schoko: 'Chocolate Volcano' },
+      storyNames: ['Story 1 · The Storm', 'Story 2 · The Giant Cake'],
       potLocked: (n, prev) => `Reach ${n} points in “${prev}”.`, potBest: n => `Best ${n}`, potNow: 'Current',
       potUnlocked: 'New pot unlocked',
       replayStory: 'Watch the story again', skip: 'Skip', next: 'Next', go: 'Let’s go!', theEnd: 'Keep playing',
-      hintNext: n => `Reach ${n} points to continue the journey.`, hintEnd: n => `Reach ${n} points to end the storm.`,
-      chapter: { prolog: 'Prologue', wiese: 'Chapter 1 · Monster Meadow', wald: 'Chapter 2 · Mushroom Forest', wolken: 'Chapter 3 · Cloud Peak', sturm: 'Chapter 4 · Thunder Gorge', ende: 'Epilogue' },
+      hintNext: n => `Reach ${n} points to continue the journey.`, hintEnd: n => `Reach ${n} points to end the storm.`, hintEnd2: n => `Reach ${n} points to finish the cake.`,
+      chapter: { prolog: 'Prologue', wiese: 'Chapter 1 · Monster Meadow', wald: 'Chapter 2 · Mushroom Forest', wolken: 'Chapter 3 · Cloud Peak', sturm: 'Chapter 4 · Thunder Gorge', ende: 'Epilogue' , prolog2: 'Story 2 · Prologue', bonbon: 'Chapter 5 · Candy Creek', lebkuchen: 'Chapter 6 · Gingerbread Cave', watte: 'Chapter 7 · Cotton Candy Clouds', schoko: 'Chapter 8 · Chocolate Volcano', ende2: 'Epilogue · The Giant Cake' },
       story: {
         p1: 'In the middle of the Monster Meadow stands the Great Cauldron. This is home to the Potlings – little monsters made of fire, water, earth and air. When two identical ones meet, they merge and grow bigger.',
         p2: 'But one night a huge thunderstorm rolls in. Lightning flashes, the wind howls – and it whirls all the Potlings away in every direction.',
@@ -484,6 +510,18 @@ h2 { font-family: var(--font-display); font-weight: 800; font-size: 1.7rem; line
         k4b: 'Pebblet and Cloudlet venture in together. Earth gives them footing, air gives them courage.',
         e1: 'Deep down in the gorge they find the Cloud Ghost. It isn’t mean at all. It just can’t sleep – and whoever can’t sleep, thunders.',
         e2: 'The earth Potlings build it a soft bed of moss and tuck it in with a big leaf. The air Potlings hum a lullaby. The Cloud Ghost yawns … and falls asleep.',
+        z1: 'After the party, a sweet smell hangs in the air. The Cloud Ghost sniffs: “Can you smell that?” A trail of colorful sprinkles leads away across the meadow.',
+        z2: 'At the end of the trail lies Candy Land. There the Candy Dragon sits in front of a cold oven. It wanted to bake a giant cake for everyone – but the candy Potlings rolled off in every direction, and the oven went out.',
+        k5a: 'In Candy Creek, colorful candies glitter between the waves. Sugar Crumb tries to fish them out and keeps slipping.',
+        k5b: 'Droplet jumps into the water – this is home for him. Together they bring the candies to the bank.',
+        k6a: 'Part of the ceiling in Gingerbread Cave has caved in. A few Gummlings are stuck underneath.',
+        k6b: 'Pebblet knows how to dig without anything sliding down. Crumb by crumb, they free the Gummlings.',
+        k7a: 'High up hang the Cotton Candy Clouds. A few candies got tangled in them and can’t get out.',
+        k7b: 'Cloudlet blows as hard as it can. The cotton candy parts, and the candies sail gently down.',
+        k8a: 'All the ingredients are together, only the heat is missing. The Candy Dragon’s oven sits in the Chocolate Volcano – and it is cold.',
+        k8b: 'Spark climbs inside and glows as brightly as it can. Slowly the chocolate warms up and the oven starts to hum.',
+        e4: 'The giant cake rises and grows and grows – in the end it is bigger than the Great Cauldron!',
+        e5: 'All the Potlings carry it together to the Monster Meadow. The Candy Dragon gets the first slice. And the Cloud Ghost? It’s asleep again – with cream on its nose.',
         e3: 'The sky turns blue. All the Potlings return to the Great Cauldron and throw a huge party. And the Cloud Ghost? It’s invited too.',
       }, chainOf: (f, a, b) => `${f} from ${a} to ${b}`, chainIntro: 'Monster order: ',
       unknown: '???', unknownText: 'Not discovered yet.',
@@ -561,6 +599,11 @@ h2 { font-family: var(--font-display); font-weight: 800; font-size: 1.7rem; line
     { id: 'wald', families: ['earth', 'water'] },
     { id: 'wolken', families: ['air', 'fire'] },
     { id: 'sturm', families: ['earth', 'air'] },
+    // Geschichte 2: „Die Riesentorte“ – Zucker trifft jede Familie
+    { id: 'bonbon', families: ['candy', 'water'], story: 2 },
+    { id: 'lebkuchen', families: ['candy', 'earth'], story: 2 },
+    { id: 'watte', families: ['candy', 'air'], story: 2 },
+    { id: 'schoko', families: ['candy', 'fire'], story: 2 },
   ];
   for (const f of FAMILIES) for (let s = 1; s <= 6; s++) {
     const art = ART[f + s], img = new Image();
@@ -867,8 +910,9 @@ h2 { font-family: var(--font-display); font-weight: 800; font-size: 1.7rem; line
     { id: 'drachen', goals: [1, 3, 5], val: () => Object.keys(stats.dragons).length },
     { id: 'feuerwerk', goals: [1, 5, 20], val: () => stats.fireworks },
     { id: 'album', goals: [10, 20, 30], val: () => album.length },
-    { id: 'welt', goals: [2, 3, 4], val: () => opened.length },
+    { id: 'welt', goals: [3, 5, 8], val: () => opened.length },
     { id: 'geschichte', goals: [1], val: () => seenStory.includes('ende') ? 1 : 0 },
+    { id: 'torte', goals: [1], val: () => seenStory.includes('ende2') ? 1 : 0 },
     { id: 'sturm', goals: [500, 1000, 2500], val: () => stats.stormBest },
     { id: 'familienfest', goals: [300, 1000, 2500], val: () => stats.fiveBest },
     { id: 'treue', goals: [3, 7, 30], val: () => stats.days },
@@ -1018,6 +1062,13 @@ h2 { font-family: var(--font-display); font-weight: 800; font-size: 1.7rem; line
     kapitel3: { cast: ['fire1', 'air1'], bg: 'linear-gradient(#FFC9D9, #F4EFFF 55%, #FFFFFF)' },
     kapitel4: { cast: ['earth1', 'air1'], bg: 'linear-gradient(#5B4F7A, #8C7FA8 50%, #8A6A4E)' },
     epilog: { cast: ['earth1', 'air5', 'air1'], big: 'air5', bg: 'linear-gradient(#9FD3FF, #F4EFFF 55%, #A9D9A0)' },
+    zucker1: { cast: ['fire1', 'air5', 'water1'], big: 'air5', bg: 'linear-gradient(#FFB997, #FFE3EF 55%, #A9D9A0)' },
+    zucker2: { cast: ['candy1', 'candy6', 'candy1'], big: 'candy6', bg: 'linear-gradient(#FFD6EC, #FFF0F7 55%, #F6C9A8)' },
+    kapitel5: { cast: ['water1', 'candy1'], bg: 'linear-gradient(#BDEFF0, #E8F7F5 55%, #FFC2DE)' },
+    kapitel6: { cast: ['earth1', 'candy3'], bg: 'linear-gradient(#E9C99A, #F7ECDF 55%, #B9804A)' },
+    kapitel7: { cast: ['air1', 'candy2'], bg: 'linear-gradient(#FFD6EC, #F4EFFF 55%, #CFE7FF)' },
+    kapitel8: { cast: ['fire1', 'candy6'], big: 'candy6', bg: 'linear-gradient(#6B4130, #A9643C 55%, #FFB45C)' },
+    epilog2: { cast: ['fire1', 'water1', 'candy6', 'earth1', 'air1'], big: 'candy6', bg: 'linear-gradient(#BFE6FF, #FFF0F7 55%, #A9D9A0)' },
   };
   // Kapitel: Seiten mit Szene, Text und Überschrift
   const CHAPTERS = {
@@ -1026,8 +1077,14 @@ h2 { font-family: var(--font-display); font-weight: 800; font-size: 1.7rem; line
     wolken: [['wolken', 'kapitel3', 'k3a'], ['wolken', 'kapitel3', 'k3b']],
     sturm: [['sturm', 'kapitel4', 'k4a'], ['sturm', 'kapitel4', 'k4b']],
     ende: [['ende', 'epilog', 'e1'], ['ende', 'epilog', 'e2'], ['ende', 'epilog', 'e3']],
+    bonbon: [['prolog2', 'zucker1', 'z1'], ['prolog2', 'zucker2', 'z2'], ['bonbon', 'kapitel5', 'k5a'], ['bonbon', 'kapitel5', 'k5b']],
+    lebkuchen: [['lebkuchen', 'kapitel6', 'k6a'], ['lebkuchen', 'kapitel6', 'k6b']],
+    watte: [['watte', 'kapitel7', 'k7a'], ['watte', 'kapitel7', 'k7b']],
+    schoko: [['schoko', 'kapitel8', 'k8a'], ['schoko', 'kapitel8', 'k8b']],
+    ende2: [['ende2', 'epilog2', 'e4'], ['ende2', 'epilog2', 'e5']],
   };
-  const CHAPTER_ORDER = ['intro', 'wald', 'wolken', 'sturm', 'ende'];
+  const CHAPTER_ORDER = ['intro', 'wald', 'wolken', 'sturm', 'ende', 'bonbon', 'lebkuchen', 'watte', 'schoko', 'ende2'];
+  const STORY_END = { sturm: 'ende', schoko: 'ende2' };          // letzter Topf einer Geschichte -> Epilog
   let seenStory = [], storyQueue = [], storyPage = 0;
 
   function playStory(ids) {
@@ -1054,9 +1111,10 @@ h2 { font-family: var(--font-display); font-weight: 800; font-size: 1.7rem; line
     $('story-label').textContent = t().chapter[chap];
     renderScene(scene);
     $('story-text').textContent = t().story[textKey];
-    const hint = lastOfChapter && id !== 'ende' ? (id === 'sturm' ? t().hintEnd(UNLOCK) : t().hintNext(UNLOCK)) : '';
+    const isEnd = Object.values(STORY_END).includes(id);
+    const hint = lastOfChapter && !isEnd ? (id === 'sturm' ? t().hintEnd(UNLOCK) : id === 'schoko' ? t().hintEnd2(UNLOCK) : t().hintNext(UNLOCK)) : '';
     $('story-hint').textContent = hint; $('story-hint').hidden = !hint;
-    $('story-next').textContent = last ? (id === 'ende' ? t().theEnd : t().go) : t().next;
+    $('story-next').textContent = last ? (isEnd ? t().theEnd : t().go) : t().next;
     $('story-skip').hidden = last;
     $('story-dots').innerHTML = storyQueue.length > 6 ? `${storyPage + 1} / ${storyQueue.length}`
       : storyQueue.map((_, i) => `<i${i === storyPage ? ' class="on"' : ''}></i>`).join('');
@@ -1079,7 +1137,8 @@ h2 { font-family: var(--font-display); font-weight: 800; font-size: 1.7rem; line
       const next = POTS[i + 1];
       toast(SPRITE[next.families[0] + '1'].src, t().potUnlocked, t().potNames[next.id]); sfx.found();
     }
-    if (potId === 'sturm' && n >= UNLOCK && !seenStory.includes('ende')) { sfx.fireworks(); setTimeout(() => playStory(['ende']), 900); }
+    const end = STORY_END[potId];
+    if (end && n >= UNLOCK && !seenStory.includes(end)) { sfx.fireworks(); setTimeout(() => playStory([end]), 900); }
   }
 
   const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="4" fill="currentColor" opacity=".25"/><path d="M10 8.5v7l6-3.5z" fill="currentColor"/></svg>';
@@ -1198,9 +1257,10 @@ h2 { font-family: var(--font-display); font-weight: 800; font-size: 1.7rem; line
   function renderPots() {
     $('pot-list').innerHTML = POTS.map((p, i) => {
       const open = potUnlocked(i), cur = p.id === potId;
-      const tag = cur ? t().potNow : open ? t().potBest(bests[p.id] || 0) : '';
-      const sub = open ? p.families.map(f => t().fam[f]).join(' + ') : t().potLocked(UNLOCK, t().potNames[POTS[i - 1].id]);
-      return `<button class="card potcard${open ? '' : ' locked'}" type="button" id="pot-${p.id}" data-pot="${p.id}"${cur ? ' aria-current="true"' : ''}${open ? '' : ' aria-disabled="true"'}>
+      const story = p.story || 1, head = i === 0 || (POTS[i - 1].story || 1) !== story ? `<p class="grp">${t().storyNames[story - 1]}</p>` : '';
+      const tag = cur ? t().potNow : '';
+      const sub = open ? p.families.map(f => t().fam[f]).join(' + ') + ' · ' + t().potBest(bests[p.id] || 0) : t().potLocked(UNLOCK, t().potNames[POTS[i - 1].id]);
+      return head + `<button class="card potcard${open ? '' : ' locked'}" type="button" id="pot-${p.id}" data-pot="${p.id}"${cur ? ' aria-current="true"' : ''}${open ? '' : ' aria-disabled="true"'}>
         <span class="pair">${p.families.map(f => `<img alt="" src="${SPRITE[f + '1'].src}">`).join('')}</span>
         <span class="who"><b>${t().potNames[p.id]}</b><span>${sub}</span></span><span class="tag">${tag}</span></button>`;
     }).join('');
